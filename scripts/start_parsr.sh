@@ -4,7 +4,6 @@ set -x
 
 # set ssh config
 remote_destination=$REMOTE_WORKSTATION
-remote_destination="babel"
 
 if [ "$1" = "stop" ]; then
   ssh $remote_destination "docker stop parsr-api && docker stop parsr-ui"
