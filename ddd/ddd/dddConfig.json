@@ -1,7 +1,7 @@
 {
   "version": 0.9,
   "extractor": {
-    "pdf": "pdfminer",
+    "pdf": "pdfjs",
     "ocr": "tesseract",
     "language": ["deu"]
   },
@@ -50,7 +50,7 @@
       "header-footer-detection",
       {
         "ignorePages": [],
-        "maxMarginPercentage": 25
+        "maxMarginPercentage": 15
       }
     ],
     [

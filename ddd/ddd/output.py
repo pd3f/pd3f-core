@@ -48,9 +48,8 @@ def export(document, remove_header=True, remove_footer=True):
     return txt
 
 
-jdata = json.loads(Path("out/data.json").read_text())
+def save(input_json, output_txt):
+    jdata = json.loads(Path(input_json).read_text())
+    txt = export(jdata)
 
-
-txt = export(jdata)
-
-Path("test.txt").write_text(txt)
+    Path(output_txt).write_text(txt)

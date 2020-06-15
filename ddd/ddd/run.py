@@ -1,11 +1,12 @@
 import json
 import tempfile
 from pathlib import Path
+import importlib.resources
 
 from parsr_client import ParsrClient as client
 
 
-from utils import update_dict, write_dict
+from .utils import update_dict, write_dict
 
 
 def do_parsr(file, out_dir="out", cleaner_config=[], config={}):
@@ -16,7 +17,8 @@ def do_parsr(file, out_dir="out", cleaner_config=[], config={}):
 
     parsr = client("localhost:3001")
 
-    jdata = json.loads(Path("dddConfig.json").read_text())
+    with importlib.resources.path("ddd", "dddConfig.json") as cfg_path:
+        jdata = json.loads(cfg_path.read_text())
     jdata = update_dict(jdata, config)
 
     # update cleaner config
@@ -49,8 +51,8 @@ def do_parsr(file, out_dir="out", cleaner_config=[], config={}):
 #     "files/011020_Stellungnahme_DRB_RefE__Belaempfung-Rechtsextremismus-Hasskriminalitaet.pdf"
 # )
 
-do_parsr(
-    "files/011020_Stellungnahme_DRB_RefE__Belaempfung-Rechtsextremismus-Hasskriminalitaet.pdf",
-    out_dir="out2",
-    cleaner_config=[["reading-order-detection", {"minVerticalGapWidth": 20}]],
-)
+# do_parsr(
+#     "files/011020_Stellungnahme_DRB_RefE__Belaempfung-Rechtsextremismus-Hasskriminalitaet.pdf",
+#     out_dir="out2",
+#     cleaner_config=[["reading-order-detection", {"minVerticalGapWidth": 20}]],
+# )
