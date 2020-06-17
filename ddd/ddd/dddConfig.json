@@ -1,7 +1,7 @@
 {
   "version": 0.9,
   "extractor": {
-    "pdf": "pdfjs",
+    "pdf": "pdfminer",
     "ocr": "tesseract",
     "language": ["deu"]
   },
