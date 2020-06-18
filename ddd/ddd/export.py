@@ -1,20 +1,11 @@
 import json
 from pathlib import Path
-from collections import Counter, Iterable
+from collections import Counter
 
+from .utils import flatten
 
+# see this for more
 # https://github.com/axa-group/Parsr/blob/365ad388fd5dc7ff9c3fa7db28f45460baa899b0/server/src/output/markdown/MarkdownExporter.ts
-
-
-# https://stackoverflow.com/a/40857703/4028896
-def flatten(items):
-    """Yield items from any nested iterable; see Reference."""
-    for x in items:
-        if isinstance(x, Iterable) and not isinstance(x, (str, bytes)):
-            for sub_x in flatten(x):
-                yield sub_x
-        else:
-            yield x
 
 
 def avg_word_space(line):
@@ -106,27 +97,49 @@ class Export:
 
     def lines_to_paragraph(self, paragraph):
         lines = paragraph["content"]
-        string_lines = [self.line_to_words(l, as_string=True) for l in lines]
+        string_lines = [self.line_to_words(l) for l in lines]
+
+        if self.detect_footnotes(paragraph):
+            pass
 
         # don't test on last line
         for i in range(0, len(lines) - 1):
             # decide whether newline or simple space
             if self.add_linebreak(lines[i], lines[i + 1], paragraph):
-                string_lines[i] += "\n"
+                string_lines[i].append("\n")
             else:
-                string_lines[i] += " "
+                string_lines[i].append(" ")
 
-        # concat lines to get a proper paragraph, also
-        return "".join(string_lines) + "\n\n"
+        return {"lines": string_lines, "type": "body"}
+
+    def to_markdown(self):
+        return self.to_text(markdown=True)
+
+    def to_text(self, markdown=False):
+        txt = ""
+        for l in self.export_data:
+            if markdown and l["type"] == "heading":
+                # prepend dashes
+                txt += "#" * l["level"] + " "
+            if l["type"] == "body" or l["type"] == "heading":
+                txt += "".join([" ".join(line) for line in l["lines"]]) + "\n\n"
+        return txt
 
     def export_heading(self, e):
-        return e["level"] * "#" + " " + self.lines_to_paragraph(e)
+        return {
+            "lines": self.lines_to_paragraph(e)["lines"],
+            "type": "heading",
+            "level": e["level"],
+        }
 
     def export_paragraph(self, e):
         return self.lines_to_paragraph(e)
 
-    def save_text(self, output_txt):
-        Path(output_txt).write_text("".join(self.export_data))
+    def save_text(self, output_path):
+        Path(output_path).write_text(self.to_text())
+
+    def save_markdown(self, output_path):
+        Path(output_path).write_text(self.to_markdown())
 
     def detect_footnotes(self, paragraph):
         pass
