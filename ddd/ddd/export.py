@@ -144,7 +144,6 @@ class Export:
                         lines[i].append(" ")
 
             return {"lines": lines, "type": "footnotes"}
-            print("suup")
         else:
             # don't test on last line
             for i in range(0, len(lines) - 1):

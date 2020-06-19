@@ -22,6 +22,8 @@ def write_dict(d, fn):
 # https://stackoverflow.com/a/40857703/4028896
 def flatten(items):
     """Yield items from any nested iterable; see Reference."""
+    if items is None:
+        return
     for x in items:
         if isinstance(x, Iterable) and not isinstance(x, (str, bytes)):
             for sub_x in flatten(x):
