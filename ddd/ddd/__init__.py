@@ -1,2 +1,2 @@
 from .export import Export
-from .run import do_parsr
+from .parsr_wrapper import run_parsr
