@@ -76,14 +76,6 @@
         "tolerance": 0.25
       }
     ],
-    [
-      "table-of-contents-detection",
-      {
-        "pageKeywords": ["pagina", "page", "pag"]
-      }
-    ],
-    "ml-heading-detection",
-    "heading-detection",
     "list-detection",
     "page-number-detection",
     "hierarchy-detection"
