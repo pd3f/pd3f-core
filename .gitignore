@@ -129,7 +129,6 @@ dmypy.json
 .pyre/
 
 
-*.pdf
 data
-experiments
 .vscode/
+out*
