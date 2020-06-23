@@ -69,3 +69,6 @@ https://groups.google.com/forum/#!topic/alaveteli-users/Qr6EEFPMS_4
 ## Repair PDFs
 
 https://github.com/NicolasBernaerts/ubuntu-scripts/blob/master/pdf/pdf-repair
+
+
+[Check out my blog post](https://johannesfilter.com/python-and-pdf-a-review-of-existing-tools/)
