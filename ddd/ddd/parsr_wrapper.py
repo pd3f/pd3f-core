@@ -10,12 +10,8 @@ from .utils import update_dict, write_dict
 
 
 def run_parsr(
-    file_path, out_dir="out", cleaner_config=[], config={}, text=False, markdown=False
+    file_path, out_dir=None, cleaner_config=[], config={}, text=False, markdown=False
 ):
-
-    out_dir = Path(out_dir) / Path(file_path).stem
-    out_dir.mkdir(exist_ok=True, parents=True)
-
     parsr = client("localhost:3001")
 
     # update base config of parsr
@@ -47,6 +43,10 @@ def run_parsr(
             silent=False,
         )
 
+    if not out_dir is None:
+        out_dir = Path(out_dir) / Path(file_path).stem
+        out_dir.mkdir(exist_ok=True, parents=True)
+
         if text:
             (out_dir / "text.txt").write_text(parsr.get_text())
 
@@ -54,3 +54,4 @@ def run_parsr(
             (out_dir / "text.md").write_text(parsr.get_markdown())
 
         write_dict(parsr.get_json(), out_dir / "data.json")
+    return parsr.get_json()

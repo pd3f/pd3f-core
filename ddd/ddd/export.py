@@ -27,7 +27,15 @@ def avg_word_space(line):
 
 class Export:
     def __init__(self, input_json, remove_header=True, remove_footer=True):
-        self.input_data = json.loads(Path(input_json).read_text())
+        if type(input_json) is str:
+            self.input_data = json.loads(Path(input_json).read_text())
+        elif type(input_json) is Path:
+            self.input_data = json.loads(input_json.read_text())
+        elif type(input_json) is dict:
+            self.input_data = input_json
+        else:
+            raise ValueError("problem with reading input json data")
+
         self.remove_header = remove_header
         self.remove_footer = remove_footer
 
