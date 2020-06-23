@@ -3,6 +3,7 @@ from pathlib import Path
 from collections import Counter
 
 from .utils import flatten
+from .dehyphen import dehyphen
 
 # TODO: What to do with list?
 
@@ -26,10 +27,12 @@ def avg_word_space(line):
 
 
 class Export:
-    def __init__(self, input_json, remove_header=True, remove_footer=True):
+    def __init__(
+        self, input_json, remove_header=True, remove_footer=True, remove_hyphens=True
+    ):
         if type(input_json) is str:
             self.input_data = json.loads(Path(input_json).read_text())
-        elif type(input_json) is Path:
+        elif isinstance(input_json, Path):
             self.input_data = json.loads(input_json.read_text())
         elif type(input_json) is dict:
             self.input_data = input_json
@@ -38,6 +41,7 @@ class Export:
 
         self.remove_header = remove_header
         self.remove_footer = remove_footer
+        self.remove_hyphens = remove_hyphens
 
         self.overall_font_stats()
         self.para_stats()
@@ -153,13 +157,17 @@ class Export:
 
             return {"lines": lines, "type": "footnotes"}
         else:
+            # ordinary paragraph
             # don't test on last line
             for i in range(0, len(lines) - 1):
                 # decide whether newline or simple space
                 if self.add_linebreak(raw_lines[i], raw_lines[i + 1], paragraph):
-                    lines[i].append("\n")
+                    lines[i][-1] += "\n"
                 else:
-                    lines[i].append(" ")
+                    lines[i][-1] += " "
+
+            if self.remove_hyphens:
+                lines = dehyphen(lines)
 
             return {"lines": lines, "type": "body"}
 
