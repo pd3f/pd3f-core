@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -26,5 +26,5 @@ setup(
     packages=find_packages(),
     zip_safe=True,
     classifiers=classifiers,
-    install_requires=["parsr-client==3.1", "clean-text", "unidecode"],
+    install_requires=["parsr-client==3.1", "clean-text", "unidecode", "joblib"],
 )

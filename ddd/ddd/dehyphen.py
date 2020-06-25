@@ -1,9 +1,12 @@
 from cleantext import clean
+from joblib import Memory
 
 from .score import score_perplexity
 
+memory = Memory("~/.ddd-cache", verbose=0)
 
 # dehyphenation
+@memory.cache
 def dehyphen(lines):
     # special format. 2D List, word should not contain whitespace, except the last words per line
     later_options = []
