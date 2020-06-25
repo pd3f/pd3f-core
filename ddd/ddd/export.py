@@ -132,6 +132,7 @@ class Export:
         for p in self.input_data["pages"]:
             for e in p["elements"]:
                 c.update(font_stats(e))
+        self.body_font = c.most_common(1)[0][0]
         self.font_counter = c
         self.font_info = {}
         for x in self.input_data["fonts"]:
@@ -165,7 +166,13 @@ class Export:
                     lines[i].append("\n")
                 else:
                     # if the first chars are digits -> footnote
-                    if lines[i][0].isnumeric() and lines[i + 1][0].isnumeric():
+                    # but ensure that the first digit has a different font then the last word on the previous line
+                    if (
+                        lines[i][0].isnumeric()
+                        and lines[i + 1][0].isnumeric()
+                        and raw_lines[i + 1]["content"][0]["font"] != raw_lines[i]["content"][-1]["font"]
+                    ):
+                        print(raw_lines[i + 1]["content"][0]["font"])
                         lines[i].append("\n")
                     else:
                         lines[i].append(" ")
@@ -198,16 +205,14 @@ class Export:
 
     def is_footnotes_paragraph(self, paragraph, counter, page_number):
         # TODO: more heuristic: 1. do numbers appear in text? 2. is there a drawing in it
-
         para_font = counter.most_common(1)[0][0]
-        body_font = self.font_counter.most_common(1)[0][0]
 
         # footnotes has to be different
-        if para_font == body_font:
+        if para_font == self.body_font:
             return False
 
         # footnotes has to be smaller
-        if self.font_info[para_font]["size"] > self.font_info[body_font]["size"]:
+        if self.font_info[para_font]["size"] > self.font_info[self.body_font]["size"]:
             return False
 
         # check if this is the last paragraph
