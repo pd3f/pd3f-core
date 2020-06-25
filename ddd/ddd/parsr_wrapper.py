@@ -1,10 +1,9 @@
+import importlib.resources
 import json
 import tempfile
 from pathlib import Path
-import importlib.resources
 
 from parsr_client import ParsrClient as client
-
 
 from .utils import update_dict, write_dict
 

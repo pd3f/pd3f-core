@@ -1,6 +1,5 @@
 import json
-
-from collections import abc, Iterable
+from collections import Iterable, abc
 
 
 def update_dict(d, u):
