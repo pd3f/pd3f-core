@@ -2,10 +2,13 @@ from cleantext import clean
 
 from .score import score_perplexity
 
+
 # dehyphenation
 def dehyphen(lines):
     # special format. 2D List, word should not contain whitespace, except the last words per line
-    print(lines)
+    later_options = []
+    later_idx = []
+
     for idx, l in enumerate(lines):
         # don't work on last line
         if idx == len(lines) - 1:
@@ -17,35 +20,58 @@ def dehyphen(lines):
             continue
 
         last_char = clean(last_word.strip()[-1])
-        if last_char == "-":
-            next_word = lines[idx + 1][0]
+        if last_char != "-":
+            continue
 
-            # 1. two words (e.g. part of an abrev.), so do nothing
-            option1 = last_word + next_word
+        next_word = lines[idx + 1][0]
 
-            # 2. some compound-word (keep hyphen), remove whitespace
-            option2 = last_word.strip() + next_word
+        # 1. two words (e.g. part of an abrev.), so do nothing
+        option1 = last_word + next_word
 
-            # 3. remove hyphen, most likely to happen
-            option3 = last_word.strip()[:-1] + next_word
+        # 2. some compound-word (keep hyphen), remove whitespace
+        option2 = last_word.strip() + next_word
 
-            scores = score_perplexity([option1, option2, option3], sync=True)
-            print(scores)
-            best_score_idx = scores.index(min(scores))
-            assert best_score_idx in (0, 1, 2)
+        # 3. remove hyphen, most likely to happen
+        option3 = last_word.strip()[:-1] + next_word
 
-            # in all cases: remove last element because we add it to the beginning of the next line
+        later_options += [option1, option2, option3]
+        later_idx.append(idx)
+
+    # do it all with one request
+    all_scores = score_perplexity(later_options, sync=True)
+
+    for i, idx in enumerate(later_idx):
+        _, option2, option3 = later_options[i * 3 : i * 3 + 3]
+        scores = all_scores[i * 3 : i * 3 + 3]
+        print(scores)
+        best_score_idx = scores.index(min(scores))
+        assert best_score_idx in (0, 1, 2)
+
+        # option1: don't change anything
+
+        if best_score_idx == 1:
+            lines[idx + 1][0] = " " + option2
             lines[idx].pop()
 
-            # if best_score_idx == 0:
-            #     lines[idx + 1][0] = option1
-
-            # add whitespace otherwise
-
-            if best_score_idx == 1:
-                lines[idx + 1][0] = " " + option2
-
-            if best_score_idx == 2:
-                lines[idx + 1][0] = " " + option3
+        if best_score_idx == 2:
+            lines[idx + 1][0] = " " + option3
+            lines[idx].pop()
 
     return lines
+
+
+def is_split_paragraph(para1, para2):
+    assert len(para1) == len(para1.strip())
+    assert len(para2) == len(para2.strip())
+
+    p1_last_char = clean(para1[-1])
+    if not p1_last_char == "-":
+        return False
+
+    option1 = para1 + "\n\n" + para2
+    option2 = para1[:-1] + para2
+
+    scores = score_perplexity([option1, option2], sync=True)
+    if scores[0] > scores[1]:
+        return False
+    return True

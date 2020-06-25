@@ -1,9 +1,10 @@
 import json
-from pathlib import Path
 from collections import Counter
+from pathlib import Path
 
-from .utils import flatten
 from .dehyphen import dehyphen
+from .element import Document, Element
+from .utils import flatten
 
 # TODO: What to do with list?
 
@@ -26,9 +27,41 @@ def avg_word_space(line):
     return sum(margins) / len(margins)
 
 
+def add_linebreak(line, next_line, paragraph):
+    avg_space = avg_word_space(line)
+    space_para_line = line["box"]["l"] - paragraph["box"]["l"]
+    available_space = (
+        paragraph["box"]["w"] - line["box"]["w"] - avg_space - space_para_line
+    )
+    return available_space >= next_line["content"][0]["box"]["w"]
+
+
+def font_stats(outer_element):
+    def traverse(element):
+        if type(element) is dict:
+            if "font" in element:
+                return element["font"]
+            if "content" in element:
+                return traverse(element["content"])
+            return None
+        if type(element) is list:
+            return [traverse(e) for e in element]
+
+    return [x for x in flatten(traverse(outer_element)) if x is not None]
+
+
 class Export:
+    """Process parsr's JSON output into an internal document represeation. This is the beginning of the pipeline.
+    Not all the magic is happing here.
+    """
+
     def __init__(
-        self, input_json, remove_header=True, remove_footer=True, remove_hyphens=True
+        self,
+        input_json,
+        remove_header=True,
+        remove_footer=True,
+        remove_hyphens=True,
+        footnotes_last=True,
     ):
         if type(input_json) is str:
             self.input_data = json.loads(Path(input_json).read_text())
@@ -42,9 +75,10 @@ class Export:
         self.remove_header = remove_header
         self.remove_footer = remove_footer
         self.remove_hyphens = remove_hyphens
+        self.footnotes_last = footnotes_last
 
-        self.overall_font_stats()
-        self.para_stats()
+        self.document_font_stats()
+        self.paragraph_order()
 
         self.export()
 
@@ -71,9 +105,12 @@ class Export:
                         self.export_paragraph(element, page["pageNumber"])
                     )
 
-        self.export_data = cleaned_data
+        self.doc = Document(cleaned_data, self.page_para_order)
+        self.footnotes_last and self.doc.reorder_footnotes()
 
-    def para_stats(self):
+    def paragraph_order(self):
+        """Save the order of paragraphes for each page
+        """
         self.page_para_order = []
         for p in self.input_data["pages"]:
             per_page = []
@@ -88,40 +125,18 @@ class Export:
                 per_page.append(e["id"])
             self.page_para_order.append(per_page)
 
-    def font_stats(self, e):
-        def traverse(element):
-            if type(element) is dict:
-                if "font" in element:
-                    return element["font"]
-                if "content" in element:
-                    return traverse(element["content"])
-                return None
-            if type(element) is list:
-                return [traverse(e) for e in element]
-
-        return [x for x in flatten(traverse(e)) if x is not None]
-
-    def overall_font_stats(self):
-        """Get statistics about font usage
+    def document_font_stats(self):
+        """Get statistics about font usage in the document
         """
         c = Counter()
         for p in self.input_data["pages"]:
             for e in p["elements"]:
-                c.update(self.font_stats(e))
+                c.update(font_stats(e))
         self.font_counter = c
         self.font_info = {}
         for x in self.input_data["fonts"]:
             self.font_info[x["id"]] = x
             assert x["sizeUnit"] == "px"
-        print(c)
-
-    def add_linebreak(self, line, next_line, paragraph):
-        avg_space = avg_word_space(line)
-        space_para_line = line["box"]["l"] - paragraph["box"]["l"]
-        available_space = (
-            paragraph["box"]["w"] - line["box"]["w"] - avg_space - space_para_line
-        )
-        return available_space >= next_line["content"][0]["box"]["w"]
 
     def line_to_words(self, line):
         results = []
@@ -142,11 +157,11 @@ class Export:
             lines.append(rl)
             font_counter.update(rf)
 
-        if self.is_footnote_paragraph(paragraph, font_counter, page_number):
+        if self.is_footnotes_paragraph(paragraph, font_counter, page_number):
             # don't test on last line
             for i in range(0, len(lines) - 1):
                 # decide whether newline or simple space
-                if self.add_linebreak(raw_lines[i], raw_lines[i + 1], paragraph):
+                if add_linebreak(raw_lines[i], raw_lines[i + 1], paragraph):
                     lines[i].append("\n")
                 else:
                     # if the first chars are digits -> footnote
@@ -155,21 +170,20 @@ class Export:
                     else:
                         lines[i].append(" ")
 
-            return {"lines": lines, "type": "footnotes"}
+            return Element("footnotes", lines, paragraph["id"])
         else:
             # ordinary paragraph
             # don't test on last line
             for i in range(0, len(lines) - 1):
                 # decide whether newline or simple space
-                if self.add_linebreak(raw_lines[i], raw_lines[i + 1], paragraph):
+                if add_linebreak(raw_lines[i], raw_lines[i + 1], paragraph):
                     lines[i][-1] += "\n"
                 else:
                     lines[i][-1] += " "
 
             if self.remove_hyphens:
                 lines = dehyphen(lines)
-
-            return {"lines": lines, "type": "body"}
+            return Element("body", lines, paragraph["id"])
 
     def export_heading(self, e):
         raw_lines = e["content"]
@@ -177,39 +191,12 @@ class Export:
         for l in raw_lines:
             rl, _ = self.line_to_words(l)
             lines.append(rl)
-
-        return {
-            "lines": lines,
-            "type": "heading",
-            "level": e["level"],
-        }
+        return Element("heading", lines, e["id"], e["level"])
 
     def export_paragraph(self, e, page_number):
         return self.lines_to_paragraph(e, page_number)
 
-    def to_markdown(self):
-        return self.to_text(markdown=True)
-
-    def to_text(self, markdown=False):
-        txt = ""
-        for l in self.export_data:
-            if markdown and l["type"] == "heading":
-                # prepend dashes
-                txt += "#" * l["level"] + " "
-            if l["type"] == "body" or l["type"] == "heading":
-                txt += "".join([" ".join(line) for line in l["lines"]]) + "\n\n"
-
-            if l["type"] == "footnotes":
-                txt += "".join([" ".join(line) for line in l["lines"]]) + "\n\n"
-        return txt
-
-    def save_text(self, output_path):
-        Path(output_path).write_text(self.to_text())
-
-    def save_markdown(self, output_path):
-        Path(output_path).write_text(self.to_markdown())
-
-    def is_footnote_paragraph(self, paragraph, counter, page_number):
+    def is_footnotes_paragraph(self, paragraph, counter, page_number):
         # TODO: more heuristic: 1. do numbers appear in text? 2. is there a drawing in it
 
         para_font = counter.most_common(1)[0][0]
@@ -226,3 +213,8 @@ class Export:
         # check if this is the last paragraph
         return self.page_para_order[page_number - 1][-1] == paragraph["id"]
 
+    def save_markdown(self, output_path):
+        Path(output_path).write_text(self.doc.markdown())
+
+    def save_text(self, output_path):
+        Path(output_path).write_text(self.doc.text())

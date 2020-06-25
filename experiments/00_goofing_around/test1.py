@@ -2,14 +2,14 @@ from pathlib import Path
 
 import ddd
 
-for p in Path("../data/bmjv/").glob("*.pdf"):
+for p in Path("../../data/bmjv/").glob("*.pdf"):
     if p.name.startswith("00001"):
         print(p.name)
-        ddd.run_parsr(
-            str(p),
-            out_dir="out/",
-            cleaner_config=[["reading-order-detection", {"minVerticalGapWidth": 20}]],
-        )
+        # ddd.run_parsr(
+        #     str(p),
+        #     out_dir="out/",
+        #     cleaner_config=[["reading-order-detection", {"minVerticalGapWidth": 20}]],
+        # )
 
         e = ddd.Export(f"out/{p.stem}/data.json")
         e.save_markdown(f"out/{p.stem}/clean.md")
