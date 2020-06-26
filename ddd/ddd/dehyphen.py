@@ -63,18 +63,30 @@ def dehyphen(lines):
     return lines
 
 
+@memory.cache
 def is_split_paragraph(para1, para2):
-    assert len(para1) == len(para1.strip())
-    assert len(para2) == len(para2.strip())
+    options = []
+    # the lines may have newlines or whitespace in the end
+    options.append(" ".join(para1[-1]) + "\n\n" + " ".join(para2[0]))
+    options.append(" ".join(para1[-1] + para2[0]))
 
-    p1_last_char = clean(para1[-1])
-    if not p1_last_char == "-":
-        return False
+    last_word_para1 = para1[-1][-1]
+    if clean(last_word_para1[-1]) == "-":
+        options.append(" ".join(para1[-1])[:-1] + " ".join(para2[0]))
 
-    option1 = para1 + "\n\n" + para2
-    option2 = para1[:-1] + para2
+    scores = score_perplexity(options, sync=True)
 
-    scores = score_perplexity([option1, option2], sync=True)
-    if scores[0] > scores[1]:
-        return False
-    return True
+    print(options)
+    print(scores)
+
+    best_score_idx = scores.index(min(scores))
+
+    if best_score_idx == 0:
+        return None
+    if best_score_idx == 1:
+        para1[-1][-1] += " "
+        return para1 + para2
+    if best_score_idx == 2:
+        # joins the last word of para2 with the first word of para1
+        para1[-1][-1] = last_word_para1[:-1] + para2[0].pop(0) + " "
+        return para1 + para2

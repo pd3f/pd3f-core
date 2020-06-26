@@ -78,7 +78,7 @@ class Export:
         self.footnotes_last = footnotes_last
 
         self.document_font_stats()
-        self.paragraph_order()
+        self.element_order_page()
 
         self.export()
 
@@ -105,17 +105,19 @@ class Export:
                         self.export_paragraph(element, page["pageNumber"])
                     )
 
-        self.doc = Document(cleaned_data, self.page_para_order)
+        self.doc = Document(cleaned_data, self.order_page)
         self.footnotes_last and self.doc.reorder_footnotes()
+        # only do if footnootes are reordered
+        self.footnotes_last and self.remove_hyphens and self.doc.reverse_page_break()
 
-    def paragraph_order(self):
+    def element_order_page(self):
         """Save the order of paragraphes for each page
         """
-        self.page_para_order = []
+        self.order_page = []
         for p in self.input_data["pages"]:
             per_page = []
             for e in p["elements"]:
-                if not e["type"] == "paragraph":
+                if not e["type"] in ("paragraph", "heading"):
                     continue
                 if "isHeader" in e["properties"] and e["properties"]["isHeader"]:
                     continue
@@ -123,7 +125,7 @@ class Export:
                     continue
 
                 per_page.append(e["id"])
-            self.page_para_order.append(per_page)
+            self.order_page.append(per_page)
 
     def document_font_stats(self):
         """Get statistics about font usage in the document
@@ -170,9 +172,9 @@ class Export:
                     if (
                         lines[i][0].isnumeric()
                         and lines[i + 1][0].isnumeric()
-                        and raw_lines[i + 1]["content"][0]["font"] != raw_lines[i]["content"][-1]["font"]
+                        and raw_lines[i + 1]["content"][0]["font"]
+                        != raw_lines[i]["content"][-1]["font"]
                     ):
-                        print(raw_lines[i + 1]["content"][0]["font"])
                         lines[i].append("\n")
                     else:
                         lines[i].append(" ")
@@ -216,7 +218,7 @@ class Export:
             return False
 
         # check if this is the last paragraph
-        return self.page_para_order[page_number - 1][-1] == paragraph["id"]
+        return self.order_page[page_number - 1][-1] == paragraph["id"]
 
     def save_markdown(self, output_path):
         Path(output_path).write_text(self.doc.markdown())
