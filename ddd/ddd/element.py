@@ -2,10 +2,11 @@ from .dehyphen import is_split_paragraph
 
 
 class Document:
-    def __init__(self, data, order):
+    def __init__(self, data, order, remote_flair):
         self.data = data or []
         self.order = order or []
         self.merged_elements = {}
+        self.remote_flair = remote_flair
 
     def __getitem__(self, key):
         return self.data[key]

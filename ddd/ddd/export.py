@@ -62,6 +62,7 @@ class Export:
         remove_footer=True,
         remove_hyphens=True,
         footnotes_last=True,
+        remote_flair=None,
     ):
         if type(input_json) is str:
             self.input_data = json.loads(Path(input_json).read_text())
@@ -76,6 +77,7 @@ class Export:
         self.remove_footer = remove_footer
         self.remove_hyphens = remove_hyphens
         self.footnotes_last = footnotes_last
+        self.remote_flair = remote_flair
 
         self.document_font_stats()
         self.element_order_page()
@@ -105,7 +107,9 @@ class Export:
                         self.export_paragraph(element, page["pageNumber"])
                     )
 
-        self.doc = Document(cleaned_data, self.order_page)
+        self.doc = Document(
+            cleaned_data, self.order_page, remote_flair=self.remote_flair
+        )
         self.footnotes_last and self.doc.reorder_footnotes()
         # only do if footnootes are reordered
         self.footnotes_last and self.remove_hyphens and self.doc.reverse_page_break()

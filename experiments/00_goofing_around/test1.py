@@ -3,7 +3,7 @@ from pathlib import Path
 import ddd
 
 for p in Path("../../data/bmjv/").glob("*.pdf"):
-    if p.name.startswith("00001"):
+    if p.name.startswith("00003"):
         print(p.name)
         # ddd.run_parsr(
         #     str(p),

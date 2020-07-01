@@ -9,9 +9,15 @@ from .utils import update_dict, write_dict
 
 
 def run_parsr(
-    file_path, out_dir=None, cleaner_config=[], config={}, text=False, markdown=False
+    file_path,
+    out_dir=None,
+    cleaner_config=[],
+    config={},
+    text=False,
+    markdown=False,
+    hostname_port="localhost:3001",
 ):
-    parsr = client("localhost:3001")
+    parsr = client(hostname_port)
 
     # update base config of parsr
     with importlib.resources.path("ddd", "dddConfig.json") as cfg_path:

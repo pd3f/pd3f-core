@@ -26,5 +26,5 @@ setup(
     packages=find_packages(),
     zip_safe=True,
     classifiers=classifiers,
-    install_requires=["parsr-client==3.1", "clean-text", "unidecode", "joblib"],
+    install_requires=["parsr-client==3.1", "clean-text", "unidecode", "joblib", "dehyphen"],
 )
