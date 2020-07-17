@@ -1,3 +1,5 @@
+# TODO: this is oudated, put in a seperate repo to the remote work in ddd
+
 import time
 
 import requests
