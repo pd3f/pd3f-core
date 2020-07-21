@@ -126,6 +126,7 @@ class Export:
         """Save the order of paragraphes for each page
         """
         self.order_page = []
+        self.id_to_elem = {}
         for p in self.input_data["pages"]:
             per_page = []
             for e in p["elements"]:
@@ -137,6 +138,7 @@ class Export:
                     continue
 
                 per_page.append(e["id"])
+                self.id_to_elem[e["id"]] = e
             self.order_page.append(per_page)
 
     def document_font_stats(self):
@@ -154,13 +156,16 @@ class Export:
             assert x["sizeUnit"] == "px"
 
     def add_linebreak(self, line, next_line, paragraph):
-        line_font = most_used_font(line)
-        next_line_font = most_used_font(next_line)
-        if self.consider_font_size_linebreak and not roughly_same_font(
-            self.font_info[line_font], self.font_info[next_line_font]
-        ):
-            print("font", line_font, next_line_font)
-            return True
+
+        # experimental
+        if self.consider_font_size_linebreak:
+            line_font = most_used_font(line)
+            next_line_font = most_used_font(next_line)
+            if not roughly_same_font(
+                self.font_info[line_font], self.font_info[next_line_font]
+            ):
+                print("font", line_font, next_line_font)
+                return True
 
         avg_space = avg_word_space(line)
         space_para_line = line["box"]["l"] - paragraph["box"]["l"]
@@ -210,17 +215,20 @@ class Export:
             return Element("footnotes", lines, paragraph["id"])
         else:
             # ordinary paragraph
+
             # don't test on last line
+            num_newlines = 0
             for i in range(0, len(lines) - 1):
                 # decide whether newline or simple space
                 if self.add_linebreak(raw_lines[i], raw_lines[i + 1], paragraph):
                     lines[i][-1] += "\n"
+                    num_newlines += 1
                 else:
                     lines[i][-1] += " "
 
             if self.remove_hyphens:
                 lines = dehyphen(lines)
-            return Element("body", lines, paragraph["id"])
+            return Element("body", lines, paragraph["id"], num_newlines=num_newlines)
 
     def export_heading(self, e):
         raw_lines = e["content"]
@@ -235,6 +243,8 @@ class Export:
 
     def is_footnotes_paragraph(self, paragraph, counter, page_number):
         # TODO: more heuristic: 1. do numbers appear in text? 2. is there a drawing in it
+
+        # right now it expects the footnote paragraph to consists of a single paragraph
         para_font = counter.most_common(1)[0][0]
 
         # footnotes has to be different
@@ -246,7 +256,20 @@ class Export:
             return False
 
         # check if this is the last paragraph
-        return self.order_page[page_number - 1][-1] == paragraph["id"]
+        if self.order_page[page_number - 1][-1] != paragraph["id"]:
+            return False
+        
+        # if the previous element ends with `:` it expects something, so it can't be the last paragraph
+        if len(self.order_page[page_number - 1]) > 1:
+            prev_elem = self.id_to_elem[self.order_page[page_number - 1][-2]]
+            prev_elem_words, _ = self.line_to_words(prev_elem["content"][-1])
+            if prev_elem_words[-1].endswith(":"):
+                if self.debug:
+                    print(f"Id of cur para: {paragraph['id']}")
+                    print(f"not a footnote para because of : in {prev_elem_words[-1]}")
+                return False
+
+        return True
 
     def save_markdown(self, output_path):
         Path(output_path).write_text(self.doc.markdown())

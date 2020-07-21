@@ -51,6 +51,14 @@ class Document:
             if last_element.type == "heading" or next_element.type == "heading":
                 continue
 
+            # It cannot contain newlines
+            if last_element.num_newlines > 0:
+                if debug:
+                    print(
+                        f"the last element has {last_element.num_newlines} newlines. Do not try to join with the next one."
+                    )
+                continue
+
             fixed = is_split_paragraph(last_element, next_element)
             if fixed is None:
                 continue
@@ -88,12 +96,13 @@ class Document:
 
 
 class Element:
-    def __init__(self, element_type, lines, element_id, level=None):
+    def __init__(self, element_type, lines, element_id, num_newlines=0, level=None):
         assert element_type in ("body", "heading", "footnotes")
         self.type = element_type
         self.lines = lines
         self.id = element_id
         self.level = level
+        self.num_newlines = num_newlines
 
     def __getitem__(self, key):
         return self.lines[key]
