@@ -61,22 +61,13 @@
       }
     ],
     "link-detection",
-    [
-      "words-to-line",
-      {
-        "lineHeightUncertainty": 0.2,
-        "topUncertainty": 0.4,
-        "maximumSpaceBetweenWords": 100,
-        "mergeTableElements": false
-      }
-    ],
+    "words-to-line-new",
     [
       "lines-to-paragraph",
       {
         "tolerance": 0.25
       }
     ],
-    "list-detection",
     "page-number-detection",
     "hierarchy-detection"
   ],

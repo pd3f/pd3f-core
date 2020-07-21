@@ -8,7 +8,6 @@ verify_ssl = true
 [packages]
 ddd = {editable = true, path = "./../ddd"}
 jupyterlab = "*"
-clean-text = "*"
 
 [requires]
 python_version = "3.8"

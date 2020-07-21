@@ -40,6 +40,7 @@ def run_parsr(
         tmp_config.flush()  # persist
 
         # TODO: when upgrading to v3.2, use file_path and config_path
+        print("sending PDF to parsr")
         parsr.send_document(
             file=file_path,
             config=tmp_config.name,

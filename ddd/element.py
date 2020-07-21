@@ -1,12 +1,13 @@
+from tqdm import tqdm
+
 from .dehyphen import is_split_paragraph
 
 
 class Document:
-    def __init__(self, data, order, remote_flair):
+    def __init__(self, data, order):
         self.data = data or []
         self.order = order or []
         self.merged_elements = {}
-        self.remote_flair = remote_flair
 
     def __getitem__(self, key):
         return self.data[key]
@@ -33,12 +34,14 @@ class Document:
                 return ele
         return None
 
-    def reverse_page_break(self):
+    def reverse_page_break(self, debug=False):
         """join paragraphs that were split between pages
 
         gets complicated when footnotes are not re-ordered
         """
-        for idx, page in enumerate(self.order[:-1]):
+        for idx, page in tqdm(
+            enumerate(self.order[:-1]), desc="trying to reverse page breaks"
+        ):
             last_element = self.get_last_of_type_on_page(("body", "heading"), idx)
             next_element = self.get_first_of_type_on_page(("body", "heading"), idx + 1)
 
@@ -51,6 +54,10 @@ class Document:
             fixed = is_split_paragraph(last_element, next_element)
             if fixed is None:
                 continue
+
+            if debug:
+                print("joining the following paragraphs")
+                print(last_element, next_element)
             # set new paragraph
             self[self.data.index(last_element)] = fixed
             self.data.remove(next_element)

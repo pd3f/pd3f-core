@@ -2,6 +2,8 @@ import json
 from collections import Counter
 from pathlib import Path
 
+from tqdm import tqdm
+
 from .dehyphen import dehyphen
 from .element import Document, Element
 from .utils import flatten
@@ -27,13 +29,10 @@ def avg_word_space(line):
     return sum(margins) / len(margins)
 
 
-def add_linebreak(line, next_line, paragraph):
-    avg_space = avg_word_space(line)
-    space_para_line = line["box"]["l"] - paragraph["box"]["l"]
-    available_space = (
-        paragraph["box"]["w"] - line["box"]["w"] - avg_space - space_para_line
-    )
-    return available_space >= next_line["content"][0]["box"]["w"]
+def roughly_same_font(f1, f2):
+    assert f1["sizeUnit"] == "px"
+    assert f2["sizeUnit"] == "px"
+    return abs(f1["size"] - f2["size"]) < max(f1["size"], f2["size"]) * 0.2
 
 
 def font_stats(outer_element):
@@ -50,6 +49,10 @@ def font_stats(outer_element):
     return [x for x in flatten(traverse(outer_element)) if x is not None]
 
 
+def most_used_font(element):
+    return Counter(font_stats(element)).most_common(1)[0][0]
+
+
 class Export:
     """Process parsr's JSON output into an internal document represeation. This is the beginning of the pipeline.
     Not all the magic is happing here.
@@ -62,7 +65,7 @@ class Export:
         remove_footer=True,
         remove_hyphens=True,
         footnotes_last=True,
-        remote_flair=None,
+        debug=False,
     ):
         if type(input_json) is str:
             self.input_data = json.loads(Path(input_json).read_text())
@@ -77,7 +80,11 @@ class Export:
         self.remove_footer = remove_footer
         self.remove_hyphens = remove_hyphens
         self.footnotes_last = footnotes_last
-        self.remote_flair = remote_flair
+        self.debug = debug
+
+        # This feature is kind of buggy right now, improve in future.
+        # The same looking font is sometimes super different for parsr. Is it a bug?
+        self.consider_font_size_linebreak = False
 
         self.document_font_stats()
         self.element_order_page()
@@ -86,7 +93,7 @@ class Export:
 
     def export(self):
         cleaned_data = []
-        for page in self.input_data["pages"]:
+        for page in tqdm(self.input_data["pages"], desc="exporting pages"):
             for element in page["elements"]:
                 if (
                     self.remove_header
@@ -107,12 +114,13 @@ class Export:
                         self.export_paragraph(element, page["pageNumber"])
                     )
 
-        self.doc = Document(
-            cleaned_data, self.order_page, remote_flair=self.remote_flair
-        )
+        self.doc = Document(cleaned_data, self.order_page)
         self.footnotes_last and self.doc.reorder_footnotes()
+
         # only do if footnootes are reordered
-        self.footnotes_last and self.remove_hyphens and self.doc.reverse_page_break()
+        self.footnotes_last and self.remove_hyphens and self.doc.reverse_page_break(
+            debug=self.debug
+        )
 
     def element_order_page(self):
         """Save the order of paragraphes for each page
@@ -145,6 +153,22 @@ class Export:
             self.font_info[x["id"]] = x
             assert x["sizeUnit"] == "px"
 
+    def add_linebreak(self, line, next_line, paragraph):
+        line_font = most_used_font(line)
+        next_line_font = most_used_font(next_line)
+        if self.consider_font_size_linebreak and not roughly_same_font(
+            self.font_info[line_font], self.font_info[next_line_font]
+        ):
+            print("font", line_font, next_line_font)
+            return True
+
+        avg_space = avg_word_space(line)
+        space_para_line = line["box"]["l"] - paragraph["box"]["l"]
+        available_space = (
+            paragraph["box"]["w"] - line["box"]["w"] - avg_space - space_para_line
+        )
+        return available_space >= next_line["content"][0]["box"]["w"]
+
     def line_to_words(self, line):
         results = []
         fonts = []
@@ -168,7 +192,7 @@ class Export:
             # don't test on last line
             for i in range(0, len(lines) - 1):
                 # decide whether newline or simple space
-                if add_linebreak(raw_lines[i], raw_lines[i + 1], paragraph):
+                if self.add_linebreak(raw_lines[i], raw_lines[i + 1], paragraph):
                     lines[i].append("\n")
                 else:
                     # if the first chars are digits -> footnote
@@ -189,7 +213,7 @@ class Export:
             # don't test on last line
             for i in range(0, len(lines) - 1):
                 # decide whether newline or simple space
-                if add_linebreak(raw_lines[i], raw_lines[i + 1], paragraph):
+                if self.add_linebreak(raw_lines[i], raw_lines[i + 1], paragraph):
                     lines[i][-1] += "\n"
                 else:
                     lines[i][-1] += " "
