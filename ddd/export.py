@@ -1,10 +1,12 @@
 import json
+import string
 from collections import Counter
 from pathlib import Path
 
+from cleantext import clean
 from tqdm import tqdm
 
-from .dehyphen import dehyphen
+from .dehyphen import dehyphen, newline_or_not
 from .element import Document, Element
 from .utils import flatten
 
@@ -110,9 +112,8 @@ class Export:
                 if element["type"] == "heading":
                     cleaned_data.append(self.export_heading(element))
                 if element["type"] == "paragraph":
-                    cleaned_data.append(
-                        self.export_paragraph(element, page["pageNumber"])
-                    )
+                    result_para = self.export_paragraph(element, page["pageNumber"])
+                    result_para and cleaned_data.append(result_para)
 
         self.doc = Document(cleaned_data, self.order_page)
         self.footnotes_last and self.doc.reorder_footnotes()
@@ -155,7 +156,7 @@ class Export:
             self.font_info[x["id"]] = x
             assert x["sizeUnit"] == "px"
 
-    def add_linebreak(self, line, next_line, paragraph):
+    def add_linebreak(self, line, next_line, text_line, text_next_line, paragraph):
 
         # experimental
         if self.consider_font_size_linebreak:
@@ -172,7 +173,26 @@ class Export:
         available_space = (
             paragraph["box"]["w"] - line["box"]["w"] - avg_space - space_para_line
         )
-        return available_space >= next_line["content"][0]["box"]["w"]
+        if available_space >= next_line["content"][0]["box"]["w"]:
+            if self.debug:
+                print(f"adding linebreak between {text_line}{text_next_line}")
+            return True
+        # in some case lines can be removed
+        if text_next_line is None:
+            return False
+
+        # TODO: a more reasonable way?
+        if len(text_line) > 5:
+            return False
+
+        # if it ends with a string, it most likle the flair test will fail anyhow
+        if text_line[-1].strip()[-1] in string.punctuation:
+            return False
+
+        if self.debug:
+            print("testing the lines: ")
+            print(text_line, text_next_line)
+        return newline_or_not(" ".join(text_line), " ".join(text_next_line))
 
     def line_to_words(self, line):
         results = []
@@ -190,14 +210,28 @@ class Export:
 
         for l in raw_lines:
             rl, rf = self.line_to_words(l)
-            lines.append(rl)
-            font_counter.update(rf)
 
-        if self.is_footnotes_paragraph(paragraph, font_counter, page_number):
+            # "".isalnum() => False, so only check for lenth?
+            if any([clean(x, no_punct=True).isalnum() for x in rl]):
+                lines.append(rl)
+                font_counter.update(rf)
+            else:
+                if self.debug:
+                    print(f"removing {rl} because not alpha num")
+                lines.append(None)
+
+        if len(list(filter(None, lines))) == 0:
+            return None
+
+        if self.is_footnotes_paragraph(paragraph, font_counter, page_number, lines):
             # don't test on last line
             for i in range(0, len(lines) - 1):
+                if lines[i] is None:
+                    continue
                 # decide whether newline or simple space
-                if self.add_linebreak(raw_lines[i], raw_lines[i + 1], paragraph):
+                if self.add_linebreak(
+                    raw_lines[i], raw_lines[i + 1], lines[i], lines[i + 1], paragraph
+                ):
                     lines[i].append("\n")
                 else:
                     # if the first chars are digits -> footnote
@@ -212,20 +246,30 @@ class Export:
                     else:
                         lines[i].append(" ")
 
+            lines = [l for l in lines if not l is None]
             return Element("footnotes", lines, paragraph["id"])
         else:
             # ordinary paragraph
 
-            # don't test on last line
             num_newlines = 0
+            # don't test on last line
             for i in range(0, len(lines) - 1):
+                if lines[i] is None:
+                    continue
+
                 # decide whether newline or simple space
-                if self.add_linebreak(raw_lines[i], raw_lines[i + 1], paragraph):
+                if self.add_linebreak(
+                    raw_lines[i], raw_lines[i + 1], lines[i], lines[i + 1], paragraph
+                ):
                     lines[i][-1] += "\n"
+                    if self.debug:
+                        print(f"adding newline here {lines[i]}")
                     num_newlines += 1
                 else:
                     lines[i][-1] += " "
 
+            # finally remove Nones here
+            lines = [l for l in lines if not l is None]
             if self.remove_hyphens:
                 lines = dehyphen(lines)
             return Element("body", lines, paragraph["id"], num_newlines=num_newlines)
@@ -241,7 +285,7 @@ class Export:
     def export_paragraph(self, e, page_number):
         return self.lines_to_paragraph(e, page_number)
 
-    def is_footnotes_paragraph(self, paragraph, counter, page_number):
+    def is_footnotes_paragraph(self, paragraph, counter, page_number, lines):
         # TODO: more heuristic: 1. do numbers appear in text? 2. is there a drawing in it
 
         # right now it expects the footnote paragraph to consists of a single paragraph
@@ -258,7 +302,7 @@ class Export:
         # check if this is the last paragraph
         if self.order_page[page_number - 1][-1] != paragraph["id"]:
             return False
-        
+
         # if the previous element ends with `:` it expects something, so it can't be the last paragraph
         if len(self.order_page[page_number - 1]) > 1:
             prev_elem = self.id_to_elem[self.order_page[page_number - 1][-2]]
@@ -268,6 +312,14 @@ class Export:
                     print(f"Id of cur para: {paragraph['id']}")
                     print(f"not a footnote para because of : in {prev_elem_words[-1]}")
                 return False
+
+        # first line has to begin with numeral
+        for l in lines:
+            if l is None:
+                continue
+            if not l[0].strip()[0].isnumeric():
+                return False
+            break
 
         return True
 
