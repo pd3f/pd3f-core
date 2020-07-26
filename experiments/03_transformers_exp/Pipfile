@@ -9,6 +9,7 @@ verify_ssl = true
 transformers = "*"
 jupyterlab = "*"
 torch = "*"
+cython = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"
