@@ -1,3 +1,5 @@
+import re
+
 from tqdm import tqdm
 
 from .dehyphen import is_split_paragraph
@@ -92,6 +94,9 @@ class Document:
                 # prepend dashes
                 txt += "#" * element.level + " "
             txt += str(element)
+
+        # hotfix, there are sometimes too many newlines
+        txt = re.sub(r"(\n){3}", "\n\n", txt)
         return txt
 
 

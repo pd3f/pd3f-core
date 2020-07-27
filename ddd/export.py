@@ -10,8 +10,6 @@ from .dehyphen import dehyphen, newline_or_not
 from .element import Document, Element
 from .utils import flatten
 
-# TODO: What to do with list?
-
 # see this for more
 # https://github.com/axa-group/Parsr/blob/365ad388fd5dc7ff9c3fa7db28f45460baa899b0/server/src/output/markdown/MarkdownExporter.ts
 
@@ -128,7 +126,7 @@ class Export:
         self.debug = debug
 
         # This feature is kind of buggy right now, improve in future.
-        # The same looking font is sometimes super different for parsr. Is it a bug?
+        # The same looking font is sometimes super different for OCRd PDFs. Is it a bug?
         self.consider_font_size_linebreak = False
 
         self.document_font_stats()
@@ -216,13 +214,21 @@ class Export:
         available_space = (
             paragraph["box"]["w"] - line["box"]["w"] - avg_space - space_para_line
         )
+
+        # if there is no next line
+        if next_line is None or not next_line:
+            if (
+                available_space > avg_space
+                and text_line[-1].strip()[-1] in string.punctuation
+            ):
+                return True
+            else:
+                return False
+
         if available_space >= next_line["content"][0]["box"]["w"]:
             if self.debug:
                 print(f"adding linebreak between {text_line}{text_next_line}")
             return True
-        # in some case lines can be removed
-        if text_next_line is None:
-            return False
 
         # TODO: a more reasonable way (e.g. check if it spans whole width)
         if len(text_line) > 5:
@@ -301,10 +307,14 @@ class Export:
             # ordinary paragraph
             num_newlines = 0
             # don't test on last line
-            for i in list(lines)[:-1]:
+            for i in lines:
                 # decide whether newline or simple space
                 if self.add_linebreak(
-                    raw_lines[i], raw_lines[i + 1], lines[i], lines[i + 1], paragraph
+                    raw_lines[i],
+                    i != lines.last_line and raw_lines[i + 1],
+                    lines[i],
+                    i != lines.last_line and lines[i + 1],
+                    paragraph,
                 ):
                     lines[i][-1] += "\n"
                     if self.debug:
