@@ -55,6 +55,47 @@ def most_used_font(element):
     return Counter(font_stats(element)).most_common(1)[0][0]
 
 
+class LinesWithNone:
+    def __init__(self, lines, raw_lines) -> None:
+        self.lines = lines
+        self.raw_lines = raw_lines
+        self.first_line = 0
+        self.last_line = len(lines) - 1
+
+        for l in lines:
+            if l is None:
+                self.first_line += 1
+            else:
+                break
+
+        for l in reversed(lines):
+            if l is None:
+                self.last_line -= 1
+            else:
+                break
+
+    def __getitem__(self, key):
+        return self.lines[key]
+
+    def valid(self):
+        return [l for l in self.lines if not l is None]
+
+    def __iter__(self):
+        self.cur = self.first_line
+        return self
+
+    def __next__(self):
+        if self.cur <= self.last_line:
+            cur_tmp = self.cur
+            while self.cur <= self.last_line:
+                self.cur += 1
+                if not self.cur is None:
+                    break
+            return cur_tmp
+        else:
+            raise StopIteration
+
+
 class Export:
     """Process parsr's JSON output into an internal document represeation. This is the beginning of the pipeline.
     Not all the magic is happing here.
@@ -63,6 +104,7 @@ class Export:
     def __init__(
         self,
         input_json,
+        remove_punct_paragraph=True,
         remove_header=True,
         remove_footer=True,
         remove_hyphens=True,
@@ -78,6 +120,7 @@ class Export:
         else:
             raise ValueError("problem with reading input json data")
 
+        self.remove_punct_paragraph = remove_punct_paragraph
         self.remove_header = remove_header
         self.remove_footer = remove_footer
         self.remove_hyphens = remove_hyphens
@@ -181,7 +224,7 @@ class Export:
         if text_next_line is None:
             return False
 
-        # TODO: a more reasonable way?
+        # TODO: a more reasonable way (e.g. check if it spans whole width)
         if len(text_line) > 5:
             return False
 
@@ -195,13 +238,13 @@ class Export:
         return newline_or_not(" ".join(text_line), " ".join(text_next_line))
 
     def line_to_words(self, line):
-        results = []
+        words = []
         fonts = []
         for word in line["content"]:
             if word["type"] == "word":
-                results.append(word["content"])
+                words.append(word["content"])
                 fonts.append(word["font"])
-        return results, fonts
+        return words, fonts
 
     def lines_to_paragraph(self, paragraph, page_number):
         raw_lines = paragraph["content"]
@@ -212,7 +255,9 @@ class Export:
             rl, rf = self.line_to_words(l)
 
             # "".isalnum() => False, so only check for lenth?
-            if any([clean(x, no_punct=True).isalnum() for x in rl]):
+            if not self.remove_punct_paragraph or any(
+                [clean(x, no_punct=True).isalnum() for x in rl]
+            ):
                 lines.append(rl)
                 font_counter.update(rf)
             else:
@@ -220,20 +265,25 @@ class Export:
                     print(f"removing {rl} because not alpha num")
                 lines.append(None)
 
-        if len(list(filter(None, lines))) == 0:
+        lines = LinesWithNone(lines, raw_lines)
+
+        # NB: the returned paragraph can be None (invalid)
+        if len(lines.valid()) == 0:
             return None
 
         if self.is_footnotes_paragraph(paragraph, font_counter, page_number, lines):
             # don't test on last line
-            for i in range(0, len(lines) - 1):
-                if lines[i] is None:
-                    continue
+            for i in list(lines)[:-1]:
                 # decide whether newline or simple space
                 if self.add_linebreak(
                     raw_lines[i], raw_lines[i + 1], lines[i], lines[i + 1], paragraph
                 ):
                     lines[i].append("\n")
                 else:
+                    # skip if next line was removed
+                    if lines[i + 1] is None:
+                        lines[i].append("\n")
+                        continue
                     # if the first chars are digits -> footnote
                     # but ensure that the first digit has a different font then the last word on the previous line
                     if (
@@ -245,18 +295,13 @@ class Export:
                         lines[i].append("\n")
                     else:
                         lines[i].append(" ")
-
-            lines = [l for l in lines if not l is None]
-            return Element("footnotes", lines, paragraph["id"])
+            # TODO: dehyphen
+            return Element("footnotes", lines.valid(), paragraph["id"])
         else:
             # ordinary paragraph
-
             num_newlines = 0
             # don't test on last line
-            for i in range(0, len(lines) - 1):
-                if lines[i] is None:
-                    continue
-
+            for i in list(lines)[:-1]:
                 # decide whether newline or simple space
                 if self.add_linebreak(
                     raw_lines[i], raw_lines[i + 1], lines[i], lines[i + 1], paragraph
@@ -269,7 +314,7 @@ class Export:
                     lines[i][-1] += " "
 
             # finally remove Nones here
-            lines = [l for l in lines if not l is None]
+            lines = lines.valid()
             if self.remove_hyphens:
                 lines = dehyphen(lines)
             return Element("body", lines, paragraph["id"], num_newlines=num_newlines)
@@ -313,13 +358,9 @@ class Export:
                     print(f"not a footnote para because of : in {prev_elem_words[-1]}")
                 return False
 
-        # first line has to begin with numeral
-        for l in lines:
-            if l is None:
-                continue
-            if not l[0].strip()[0].isnumeric():
-                return False
-            break
+        # first line has to start with a numeral
+        if not lines.valid()[0][0].strip()[0].isnumeric():
+            return False
 
         return True
 
