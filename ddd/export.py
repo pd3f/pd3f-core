@@ -35,18 +35,24 @@ def roughly_same_font(f1, f2):
     return abs(f1["size"] - f2["size"]) < max(f1["size"], f2["size"]) * 0.2
 
 
-def font_stats(outer_element):
+def extract_elements(outer_element, element_type):
     def traverse(element):
         if type(element) is dict:
-            if "font" in element:
-                return element["font"]
+            if "type" in element and element["type"] == element_type:
+                return element
             if "content" in element:
                 return traverse(element["content"])
             return None
         if type(element) is list:
             return [traverse(e) for e in element]
 
-    return [x for x in flatten(traverse(outer_element)) if x is not None]
+    return [
+        x for x in flatten(traverse(outer_element), keep_dict=True) if x is not None
+    ]
+
+
+def font_stats(outer_element):
+    return [x["font"] for x in extract_elements(outer_element, "word")]
 
 
 def most_used_font(element):
@@ -54,6 +60,9 @@ def most_used_font(element):
 
 
 class LinesWithNone:
+    """Utility class to make it easier to work with lines that may be None (invalid).
+    """
+
     def __init__(self, lines, raw_lines) -> None:
         self.lines = lines
         self.raw_lines = raw_lines
@@ -93,6 +102,9 @@ class LinesWithNone:
         else:
             raise StopIteration
 
+    def __len__(self):
+        return len(self.valid())
+
 
 class Export:
     """Process parsr's JSON output into an internal document represeation. This is the beginning of the pipeline.
@@ -130,6 +142,7 @@ class Export:
         self.consider_font_size_linebreak = False
 
         self.document_font_stats()
+        self.document_paragraph_stats()
         self.element_order_page()
 
         self.export()
@@ -197,7 +210,59 @@ class Export:
             self.font_info[x["id"]] = x
             assert x["sizeUnit"] == "px"
 
-    def add_linebreak(self, line, next_line, text_line, text_next_line, paragraph):
+    def get_lineheight(self, l1, l2):
+        return l2["box"]["t"] - l1["box"]["t"] - l1["box"]["h"]
+
+    def is_body_lineheight(self, l1, l2):
+        lh = self.get_lineheight(l1, l2)
+        # check!
+
+    def document_paragraph_stats(self):
+        """
+        """
+
+        def calc_line_space(lines):
+            if len(lines) <= 1:
+                return []
+            lineheights = []
+            for i, _ in enumerate(lines[:-1]):
+                lineheights.append(self.get_lineheight(lines[i], lines[i + 1]))
+            return lineheights
+
+        self.counter_width = Counter()
+        self.counter_height = Counter()
+        self.counter_lineheight = Counter()
+
+        for p in self.input_data["pages"]:
+            for e in p["elements"]:
+                li = extract_elements(e, "line")
+                self.counter_width.update([x["box"]["w"] for x in li])
+                self.counter_height.update([x["box"]["h"] for x in li])
+                self.counter_lineheight.update(calc_line_space(li))
+
+        values = []
+        counts = []
+        for value, count in self.counter_width.most_common(10):
+            values.append(value)
+            counts.append(count)
+
+        min_i = None
+        for i, _ in enumerate(counts):
+            if sum(counts[:i]) > sum(counts) / 2:
+                min_i = i
+                break
+
+        self.stats_line_width = values[min_i]
+
+        if self.debug:
+            print(f"body line width: {self.stats_line_width}")
+            print("counter width: ", self.counter_width.most_common(3))
+            print("counter height: ", self.counter_height.most_common(3))
+            print("counter lineheight: ", self.counter_lineheight.most_common(3))
+
+    def add_linebreak(
+        self, line, next_line, text_line, text_next_line, paragraph, num_lines
+    ):
 
         # experimental
         if self.consider_font_size_linebreak:
@@ -217,18 +282,28 @@ class Export:
 
         # if there is no next line
         if next_line is None or not next_line:
-            if (
-                available_space > avg_space
-                and text_line[-1].strip()[-1] in string.punctuation
-            ):
+            if available_space > avg_space:
+                # if text_line[-1].strip()[-1] in string.punctuation:
+                if self.debug:
+                    print(f"No next line, but adding \\n {text_line}")
                 return True
             else:
+                if num_lines == 1:
+                    return True
+                # if num_lines == 2:
+                #     return True
+                if self.debug:
+                    print(f"No next line, but adding space {text_line}")
                 return False
 
         if available_space >= next_line["content"][0]["box"]["w"]:
             if self.debug:
-                print(f"adding linebreak between {text_line}{text_next_line}")
+                print(
+                    f"There is enough space on the lext for the next word. So adding a linebreak between {text_line}{text_next_line}"
+                )
             return True
+
+        # get_max_lineheight of paragrah
 
         # TODO: a more reasonable way (e.g. check if it spans whole width)
         if len(text_line) > 5:
@@ -282,7 +357,12 @@ class Export:
             for i in list(lines)[:-1]:
                 # decide whether newline or simple space
                 if self.add_linebreak(
-                    raw_lines[i], raw_lines[i + 1], lines[i], lines[i + 1], paragraph
+                    raw_lines[i],
+                    raw_lines[i + 1],
+                    lines[i],
+                    lines[i + 1],
+                    paragraph,
+                    len(lines),
                 ):
                     lines[i].append("\n")
                 else:
@@ -315,6 +395,7 @@ class Export:
                     lines[i],
                     i != lines.last_line and lines[i + 1],
                     paragraph,
+                    len(lines),
                 ):
                     lines[i][-1] += "\n"
                     if self.debug:
@@ -329,6 +410,7 @@ class Export:
                 lines = dehyphen(lines)
             return Element("body", lines, paragraph["id"], num_newlines=num_newlines)
 
+    # not looking for headings right now
     def export_heading(self, e):
         raw_lines = e["content"]
         lines = []
