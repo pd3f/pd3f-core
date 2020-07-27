@@ -1,10 +1,11 @@
 import json
-from collections import Iterable, abc
+from collections import Iterable
+from collections.abc import Mapping
 
 
 def update_dict(d, u):
     for k, v in u.items():
-        if isinstance(v, abc.Mapping):
+        if isinstance(v, Mapping):
             d[k] = update_dict(d.get(k, {}), v)
         else:
             d[k] = v
@@ -18,14 +19,24 @@ def write_dict(d, fn):
         json.dump(d, f, ensure_ascii=False, indent=4)
 
 
-# https://stackoverflow.com/a/40857703/4028896
-def flatten(items):
-    """Yield items from any nested iterable; see Reference."""
+def flatten(items, keep_dict=False):
+    """Yield items from any nested iterable; see Reference.
+    # https://stackoverflow.com/a/40857703/4028896
+
+    keep_dict: do not flatten dicts
+    """
     if items is None:
         return
-    for x in items:
-        if isinstance(x, Iterable) and not isinstance(x, (str, bytes)):
-            for sub_x in flatten(x):
-                yield sub_x
-        else:
-            yield x
+    if keep_dict and isinstance(items, Mapping):
+        yield items
+    else:
+        for x in items:
+            if (
+                isinstance(x, Iterable)
+                and not isinstance(x, (str, bytes))
+                and (not keep_dict or not isinstance(x, Mapping))
+            ):
+                for sub_x in flatten(x, keep_dict):
+                    yield sub_x
+            else:
+                yield x
