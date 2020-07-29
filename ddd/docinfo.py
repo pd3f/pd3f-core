@@ -98,11 +98,11 @@ class DocumentInfo:
         self.counter_height = Counter()
         self.counter_lineheight = Counter()
 
-        for p in self.input_data["pages"]:
+        for n_page, p in enumerate(self.input_data["pages"]):
             for e in p["elements"]:
                 lis = extract_elements(e, "line")
                 for x in lis:
-                    x["page_num"] = p["pageNumber"]
+                    x["page_num"] = n_page
                     self.id_to_elem[x["id"]] = x
 
                 self.counter_width.update([x["box"]["w"] for x in lis])
@@ -140,8 +140,8 @@ class DocumentInfo:
         lh = get_lineheight(l1, l2)
         if lh is None:
             return False
-    
-        return (abs(lh - self.median_line_space) / self.median_line_space) > 0.2
+        # space between lines can only be + 0.5x the body lineheight
+        return ((lh - self.median_line_space) / self.median_line_space) > 0.5
 
     def on_same_page(self, e1, e2):
         return (
@@ -154,11 +154,11 @@ class DocumentInfo:
         """
         self.order_page = []
         self.id_to_elem = {}
-        for p in self.input_data["pages"]:
+        for n_page, p in enumerate(self.input_data["pages"]):
             per_page = []
             for e in p["elements"]:
                 # not all elements are included here
-                e["page_num"] = p["pageNumber"]
+                e["page_num"] = n_page
                 self.id_to_elem[e["id"]] = e
 
                 if not e["type"] in ("paragraph", "heading"):

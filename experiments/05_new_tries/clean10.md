@@ -11,10 +11,7 @@ Geregelt werden soll die Informationsweitergabe durch Stellen der Justiz {hoheit
 Es fehlt im Übrigen eine Regelung zur Unterrichtung der Justizbehörden durch die NADA.
 2) Zu § 9— Umgang mit personenbezogenen Daten
 
-Mit der Neuregelung erhält die NADA die Befugnis, personenbezogene Daten „zur Durchführung ihres Dopingkontrollsystems zu erheben, ...“. Die Frage ist, ob der Aufgabenbereich der NADA damit hinreichend umschrieben ist. Jedenfalls bekommt die NADA eine gesetzliche Legitimation für die Informationsverarbeitung im Rahmen Ihres Mandats. Diese Befugnis ergibt sich dem Grunde nach bereits aus den 88 28 ff. BDSG in Verbindung mit dem WADA-Code. Insofern hat der
-bereichsspezifische Ansatz ($ 1 Abs. 3 BDSG) eher deklaratorische Bedeutung. Im Übrigen bleibt der Vorschlag in wichtigen Teilbereichen hinter dem geltenden BDSG und dem WADA-Code zurück, die 
-
-bereits Regelungen zur Datenlöschung vorsehen, vgl. u.a. Art. 14.6 2. UA NADC. Zwar ist die Datenlöschung eine Phase der Datenverarbeitung ($ 3 Abs. 4 Satz 1 BDSG); sie sollte gleichwohl in einer bereichsspezifischen Regelung nochmals normiert werden. Dasselbe gilt für die Rechte der Betroffenen, insbesondere das Recht auf Auskunft, zumal ADAMS in Kanada gehostet wird.
+Mit der Neuregelung erhält die NADA die Befugnis, personenbezogene Daten „zur Durchführung ihres Dopingkontrollsystems zu erheben, ...“. Die Frage ist, ob der Aufgabenbereich der NADA damit hinreichend umschrieben ist. Jedenfalls bekommt die NADA eine gesetzliche Legitimation für die Informationsverarbeitung im Rahmen Ihres Mandats. Diese Befugnis ergibt sich dem Grunde nach bereits aus den 88 28 ff. BDSG in Verbindung mit dem WADA-Code. Insofern hat der bereichsspezifische Ansatz ($ 1 Abs. 3 BDSG) eher deklaratorische Bedeutung. Im Übrigen bleibt der Vorschlag in wichtigen Teilbereichen hinter dem geltenden BDSG und dem WADA-Code zurück, die  bereits Regelungen zur Datenlöschung vorsehen, vgl. u.a. Art. 14.6 2. UA NADC. Zwar ist die Datenlöschung eine Phase der Datenverarbeitung ($ 3 Abs. 4 Satz 1 BDSG); sie sollte gleichwohl in einer bereichsspezifischen Regelung nochmals normiert werden. Dasselbe gilt für die Rechte der Betroffenen, insbesondere das Recht auf Auskunft, zumal ADAMS in Kanada gehostet wird.
 
 3) Zu 8 10 -Umgang mit personenbezogenen Gesundheitsdaten
 

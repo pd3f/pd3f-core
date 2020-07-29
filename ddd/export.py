@@ -7,7 +7,8 @@ from cleantext import clean
 from tqdm import tqdm
 
 from .dehyphen import dehyphen, newline_or_not
-from .docinfo import DocumentInfo, avg_word_space, most_used_font, roughly_same_font
+from .docinfo import (DocumentInfo, avg_word_space, most_used_font,
+                      roughly_same_font)
 from .element import Document, Element
 
 # see this for more
@@ -102,7 +103,7 @@ class Export:
 
     def export(self):
         cleaned_data = []
-        for page in tqdm(self.input_data["pages"], desc="exporting pages"):
+        for n_page, page in enumerate(tqdm(self.input_data["pages"], desc="exporting pages")):
             for element in page["elements"]:
                 if (
                     self.remove_header
@@ -119,7 +120,7 @@ class Export:
                 if element["type"] == "heading":
                     cleaned_data.append(self.export_heading(element))
                 if element["type"] == "paragraph":
-                    result_para = self.export_paragraph(element, page["pageNumber"])
+                    result_para = self.export_paragraph(element, n_page)
                     result_para and cleaned_data.append(result_para)
 
         self.doc = Document(cleaned_data, self.info.order_page)
