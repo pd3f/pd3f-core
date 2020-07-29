@@ -1,8 +1,8 @@
 """Statistics etc.
 """
 
-
 from collections import Counter
+from statistics import median
 
 from .utils import flatten
 
@@ -53,7 +53,19 @@ def most_used_font(element):
 
 
 def get_lineheight(l1, l2):
-    return l2["box"]["t"] - l1["box"]["t"] - l1["box"]["h"]
+    # l1 or l2 can be the upper line
+    if l2["box"]["t"] < l1["box"]["t"]:
+        l1, l2 = l2, l1
+    dif = l2["box"]["t"] - l1["box"]["t"] - l1["box"]["h"]
+    # it may happen that the lines are on the same 
+    return dif if dif > 0 else None
+
+
+def median_from_counter(c):
+    data = []
+    for value, count in c.most_common():
+        data += [value] * count
+    return median(data)
 
 
 class DocumentInfo:
@@ -61,9 +73,10 @@ class DocumentInfo:
         self.input_data = input_data
         self.debug = debug
 
+        # needs to be done first
+        self.element_order_page()
         self.document_font_stats()
         self.document_paragraph_stats()
-        self.element_order_page()
 
         # free memory (code should have been re-written but whatehver)
         del self.input_data
@@ -77,7 +90,8 @@ class DocumentInfo:
                 return []
             lineheights = []
             for i, _ in enumerate(lines[:-1]):
-                lineheights.append(get_lineheight(lines[i], lines[i + 1]))
+                    if ((x := get_lineheight(lines[i], lines[i + 1])) is not None):
+                        lineheights.append(x)
             return lineheights
 
         self.counter_width = Counter()
@@ -86,27 +100,24 @@ class DocumentInfo:
 
         for p in self.input_data["pages"]:
             for e in p["elements"]:
-                li = extract_elements(e, "line")
-                self.counter_width.update([x["box"]["w"] for x in li])
-                self.counter_height.update([x["box"]["h"] for x in li])
-                self.counter_lineheight.update(calc_line_space(li))
+                lis = extract_elements(e, "line")
+                for x in lis:
+                    x["page_num"] = p["pageNumber"]
+                    self.id_to_elem[x["id"]] = x
 
-        values = []
-        counts = []
-        for value, count in self.counter_width.most_common(10):
-            values.append(value)
-            counts.append(count)
+                self.counter_width.update([x["box"]["w"] for x in lis])
+                self.counter_height.update([x["box"]["h"] for x in lis])
+                self.counter_lineheight.update(calc_line_space(lis))
 
-        min_i = None
-        for i, _ in enumerate(counts):
-            if sum(counts[:i]) > sum(counts) / 2:
-                min_i = i
-                break
-
-        self.stats_line_width = values[min_i]
+        self.median_line_width = median_from_counter(self.counter_width)
+        self.median_line_height = median_from_counter(self.counter_height)
+        # line space: line height
+        self.median_line_space = median_from_counter(self.counter_lineheight)
 
         if self.debug:
-            print(f"body line width: {self.stats_line_width}")
+            print(f"media line width: {self.median_line_width}")
+            print(f"median line height: {self.median_line_height}")
+            print(f"median line space: {self.median_line_space}")
             print("counter width: ", self.counter_width.most_common(3))
             print("counter height: ", self.counter_height.most_common(3))
             print("counter lineheight: ", self.counter_lineheight.most_common(3))
@@ -125,9 +136,18 @@ class DocumentInfo:
             self.font_info[x["id"]] = x
             assert x["sizeUnit"] == "px"
 
-    def is_body_lineheight(self, l1, l2):
+    def seperate_lines(self, l1, l2):
         lh = get_lineheight(l1, l2)
-        # check!
+        if lh is None:
+            return False
+    
+        return (abs(lh - self.median_line_space) / self.median_line_space) > 0.2
+
+    def on_same_page(self, e1, e2):
+        return (
+            self.id_to_elem[e1["id"]]["page_num"]
+            == self.id_to_elem[e2["id"]]["page_num"]
+        )
 
     def element_order_page(self):
         """Save the order of paragraphes for each page
@@ -137,6 +157,10 @@ class DocumentInfo:
         for p in self.input_data["pages"]:
             per_page = []
             for e in p["elements"]:
+                # not all elements are included here
+                e["page_num"] = p["pageNumber"]
+                self.id_to_elem[e["id"]] = e
+
                 if not e["type"] in ("paragraph", "heading"):
                     continue
                 if "isHeader" in e["properties"] and e["properties"]["isHeader"]:
@@ -145,5 +169,4 @@ class DocumentInfo:
                     continue
 
                 per_page.append(e["id"])
-                self.id_to_elem[e["id"]] = e
             self.order_page.append(per_page)

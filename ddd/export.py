@@ -173,7 +173,11 @@ class Export:
                 )
             return True
 
-        # get_max_lineheight of paragrah
+        if self.info.on_same_page(line, next_line):
+            if self.info.seperate_lines(line, next_line):
+                print("lines should be seperated")
+                print(text_line, text_next_line)
+                return True
 
         # TODO: a more reasonable way (e.g. check if it spans whole width)
         if len(text_line) > 5:
