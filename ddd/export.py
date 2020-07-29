@@ -1,14 +1,14 @@
 import json
 import string
 from collections import Counter
+from functools import cached_property
 from pathlib import Path
 
 from cleantext import clean
 from tqdm import tqdm
 
-from .dehyphen import dehyphen, newline_or_not
-from .docinfo import (DocumentInfo, avg_word_space, most_used_font,
-                      roughly_same_font)
+from .dehyphen import dehyphen_paragraph, newline_or_not
+from .docinfo import DocumentInfo, avg_word_space, most_used_font, roughly_same_font
 from .element import Document, Element
 
 # see this for more
@@ -40,6 +40,7 @@ class LinesWithNone:
     def __getitem__(self, key):
         return self.lines[key]
 
+    @cached_property
     def valid(self):
         return [l for l in self.lines if not l is None]
 
@@ -52,14 +53,14 @@ class LinesWithNone:
             cur_tmp = self.cur
             while self.cur <= self.last_line:
                 self.cur += 1
-                if not self.cur is None:
+                if len(self.lines) == self.cur or not self.lines[self.cur] is None:
                     break
             return cur_tmp
         else:
             raise StopIteration
 
     def __len__(self):
-        return len(self.valid())
+        return len(self.valid)
 
 
 class Export:
@@ -103,7 +104,9 @@ class Export:
 
     def export(self):
         cleaned_data = []
-        for n_page, page in enumerate(tqdm(self.input_data["pages"], desc="exporting pages")):
+        for n_page, page in enumerate(
+            tqdm(self.input_data["pages"], desc="exporting pages")
+        ):
             for element in page["elements"]:
                 if (
                     self.remove_header
@@ -184,7 +187,7 @@ class Export:
         if len(text_line) > 5:
             return False
 
-        # if it ends with a string, it most likle the flair test will fail anyhow
+        # if it ends with a string, it most likly that flair test will fail anyhow
         if text_line[-1].strip()[-1] in string.punctuation:
             return False
 
@@ -224,7 +227,7 @@ class Export:
         lines = LinesWithNone(lines, raw_lines)
 
         # NB: the returned paragraph can be None (invalid)
-        if len(lines.valid()) == 0:
+        if len(lines.valid) == 0:
             return None
 
         if self.is_footnotes_paragraph(paragraph, font_counter, page_number, lines):
@@ -257,7 +260,7 @@ class Export:
                     else:
                         lines[i].append(" ")
             # TODO: dehyphen
-            return Element("footnotes", lines.valid(), paragraph["id"])
+            return Element("footnotes", lines.valid, paragraph["id"])
         else:
             # ordinary paragraph
             num_newlines = 0
@@ -280,9 +283,10 @@ class Export:
                     lines[i][-1] += " "
 
             # finally remove Nones here
-            lines = lines.valid()
+            lines = lines.valid
+
             if self.remove_hyphens:
-                lines = dehyphen(lines)
+                lines = dehyphen_paragraph(lines)
             return Element("body", lines, paragraph["id"], num_newlines=num_newlines)
 
     # not looking for headings right now
@@ -299,8 +303,8 @@ class Export:
 
     def is_footnotes_paragraph(self, paragraph, counter, page_number, lines):
         # TODO: more heuristic: 1. do numbers appear in text? 2. is there a drawing in it
-
         # right now it expects the footnote paragraph to consists of a single paragraph
+
         para_font = counter.most_common(1)[0][0]
 
         # footnotes has to be different
@@ -329,7 +333,7 @@ class Export:
                 return False
 
         # first line has to start with a numeral
-        if not lines.valid()[0][0].strip()[0].isnumeric():
+        if not lines.valid[0][0].strip()[0].isnumeric():
             return False
 
         return True

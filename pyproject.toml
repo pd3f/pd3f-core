@@ -14,14 +14,14 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 
-
+# dehyphen = "*"
 [tool.poetry.dependencies]
 python = "^3.8"
 parsr-client = "3.1"
 joblib = "*"
-dehyphen = "*"
 clean-text = { version = "^0.1.1", extras = [ "gpl" ] }
 tqdm = "*"
+dehyphen = {path = "../dehyphen"}
 
 
 [tool.poetry.dev-dependencies]
