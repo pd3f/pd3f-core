@@ -8,7 +8,13 @@ from cleantext import clean
 from tqdm import tqdm
 
 from .dehyphen import dehyphen_paragraph, newline_or_not
-from .docinfo import DocumentInfo, avg_word_space, most_used_font, roughly_same_font
+from .docinfo import (
+    DocumentInfo,
+    avg_word_space,
+    most_used_font,
+    remove_duplicates,
+    roughly_same_font,
+)
 from .element import Document, Element
 
 # see this for more
@@ -72,10 +78,14 @@ class Export:
         self,
         input_json,
         remove_punct_paragraph=True,
-        remove_header=True,
-        remove_footer=True,
+        seperate_header_footer=True,
+        remove_duplicate_header_footer=True,
+        remove_header=False,
+        remove_footer=False,
         remove_hyphens=True,
         footnotes_last=True,
+        ocrd=None,
+        lang="de",
         debug=False,
     ):
         if type(input_json) is str:
@@ -88,11 +98,20 @@ class Export:
             raise ValueError("problem with reading input json data")
 
         self.remove_punct_paragraph = remove_punct_paragraph
+        self.seperate_header_footer = seperate_header_footer
+        self.remove_duplicate_header_footer = remove_duplicate_header_footer
         self.remove_header = remove_header
         self.remove_footer = remove_footer
         self.remove_hyphens = remove_hyphens
         self.footnotes_last = footnotes_last
+        self.ocrd = ocrd
+        self.lang = lang  # not used atm
         self.debug = debug
+
+        if seperate_header_footer and any((remove_footer, remove_header)):
+            raise ValueError(
+                "if `seperate_header_footer=True` cannot remove header/footer"
+            )
 
         # This feature is kind of buggy right now, improve in future.
         # The same looking font is sometimes super different for OCRd PDFs. Is it a bug?
@@ -102,31 +121,93 @@ class Export:
 
         self.export()
 
+    def export_header_footer(self):
+        headers, footers = [], []
+
+        for n_page, page in enumerate(
+            tqdm(self.input_data["pages"], desc="exporting pages")
+        ):
+            header_per_page, footer_per_page = [], []
+            for element in page["elements"]:
+                if (
+                    "isHeader" in element["properties"]
+                    and element["properties"]["isHeader"]
+                ):
+                    header_per_page.append(element)
+
+                if (
+                    "isFooter" in element["properties"]
+                    and element["properties"]["isFooter"]
+                ):
+                    footer_per_page.append(element)
+            print(n_page)
+            headers.append(header_per_page)
+            footers.append(footer_per_page)
+
+        if self.remove_duplicate_header_footer:
+            headers = remove_duplicates(headers)
+            footers = remove_duplicates(footers)
+
+        cleaned_header, cleaned_footer, footnotes = [], [], []
+        for n_page, (header_per_page, footer_per_page) in enumerate(
+            zip(headers, footers)
+        ):
+            for e in header_per_page:
+                result_para = self.export_paragraph(e, n_page, test_footnote=False)
+                result_para and cleaned_header.append(result_para)
+
+            for e in footer_per_page:
+                result_para = self.export_paragraph(e, n_page)
+                if result_para is not None:
+                    if result_para.type == "footnotes":
+                        footnotes.append(result_para)
+                    else:
+                        cleaned_footer.append(result_para)
+
+        return cleaned_header, cleaned_footer, footnotes
+
     def export(self):
+        cleaned_header = None
+        cleaned_footer = None
+        new_footnotes = None
+
+        if self.seperate_header_footer:
+            cleaned_header, cleaned_footer, new_footnotes = self.export_header_footer()
+
         cleaned_data = []
         for n_page, page in enumerate(
             tqdm(self.input_data["pages"], desc="exporting pages")
         ):
             for element in page["elements"]:
                 if (
-                    self.remove_header
+                    (self.seperate_header_footer or self.remove_header)
                     and "isHeader" in element["properties"]
                     and element["properties"]["isHeader"]
                 ):
                     continue
                 if (
-                    self.remove_footer
+                    (self.seperate_header_footer or self.remove_footer)
                     and "isFooter" in element["properties"]
                     and element["properties"]["isFooter"]
                 ):
                     continue
+                # currently not used
                 if element["type"] == "heading":
                     cleaned_data.append(self.export_heading(element))
                 if element["type"] == "paragraph":
                     result_para = self.export_paragraph(element, n_page)
                     result_para and cleaned_data.append(result_para)
 
-        self.doc = Document(cleaned_data, self.info.order_page)
+            # only append new foofnotes here, most likel get reorced anyhow
+            if new_footnotes is not None:
+                footer_on_this_page = [
+                    x for x in new_footnotes if x.page_number == n_page
+                ]
+                cleaned_data += footer_on_this_page
+
+        self.doc = Document(
+            cleaned_data, cleaned_header, cleaned_footer, self.info.order_page
+        )
         self.footnotes_last and self.doc.reorder_footnotes()
 
         # only do if footnootes are reordered
@@ -197,15 +278,14 @@ class Export:
         return newline_or_not(" ".join(text_line), " ".join(text_next_line))
 
     def line_to_words(self, line):
-        words = []
-        fonts = []
+        words, fonts = [], []
         for word in line["content"]:
             if word["type"] == "word":
                 words.append(word["content"])
                 fonts.append(word["font"])
         return words, fonts
 
-    def lines_to_paragraph(self, paragraph, page_number):
+    def lines_to_paragraph(self, paragraph, page_number, test_footnote):
         raw_lines = paragraph["content"]
         font_counter = Counter()
         lines = []
@@ -230,7 +310,9 @@ class Export:
         if len(lines.valid) == 0:
             return None
 
-        if self.is_footnotes_paragraph(paragraph, font_counter, page_number, lines):
+        if test_footnote and self.is_footnotes_paragraph(
+            paragraph, font_counter, page_number, lines
+        ):
             # don't test on last line
             for i in list(lines)[:-1]:
                 # decide whether newline or simple space
@@ -260,7 +342,9 @@ class Export:
                     else:
                         lines[i].append(" ")
             # TODO: dehyphen
-            return Element("footnotes", lines.valid, paragraph["id"])
+            return Element(
+                "footnotes", lines.valid, paragraph["id"], page_number=page_number
+            )
         else:
             # ordinary paragraph
             num_newlines = 0
@@ -287,9 +371,15 @@ class Export:
 
             if self.remove_hyphens:
                 lines = dehyphen_paragraph(lines)
-            return Element("body", lines, paragraph["id"], num_newlines=num_newlines)
+            return Element(
+                "body",
+                lines,
+                paragraph["id"],
+                page_number=page_number,
+                num_newlines=num_newlines,
+            )
 
-    # not looking for headings right now
+    # not working right now
     def export_heading(self, e):
         raw_lines = e["content"]
         lines = []
@@ -298,8 +388,8 @@ class Export:
             lines.append(rl)
         return Element("heading", lines, e["id"], e["level"])
 
-    def export_paragraph(self, e, page_number):
-        return self.lines_to_paragraph(e, page_number)
+    def export_paragraph(self, e, page_number, test_footnote=True):
+        return self.lines_to_paragraph(e, page_number, test_footnote)
 
     def is_footnotes_paragraph(self, paragraph, counter, page_number, lines):
         # TODO: more heuristic: 1. do numbers appear in text? 2. is there a drawing in it

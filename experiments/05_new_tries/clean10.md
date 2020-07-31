@@ -1,31 +1,79 @@
-Betr.: Ref.-Entwurf eines Gesetzes zur Bekämpfung von Doping im Sport (Stand: 10.11.2014)
-Hier: Datenschutzrechtliche Stellungnahme
+Genossenschafts
+BERLIN | BRANDENBURG | BREMEN | HAMBURG | HESSEN | MECKLENBURG-VORPOMMERN | .
+Verband 4
+NIEDERSACHSEN | RHEINLAND-PFALZ | SAARLAND | SACHSEN | SACHSEN-ANHALT | SCHLESWIG-HOLSTEIN | THURINGEN
 
-Der Entwurf enthält neben erweiterten strafrechtlichen Sanktionsmöglichkeiten bei DopingVerstößen in den 88 8 ff. auch datenschutzrechtliche Regelungen, mit denen die Verarbeitung personenbezogener Daten zur Dopingbekämpfung auf gesetzlicher Grundlage geregelt werden soll. Die Autoren kommen damit auch einer Forderung der Datenschutz-Beauftragten nach. Im Prinzip handelt es sich um weit gefasste Befugnisregelungen, wobei sich die Frage stellt, ob damit das informationelle Selbstbestimmungsrecht der betroffenen Athleten/innen und anderer Personen gestärkt wird. Mit Anti-Doping—Maßnahmen wird erheblich in das Persönlichkeitsrecht Betroffener eingegriffen, was auch im nicht öffentlichen Bereich grundrechtsrelevant sein kann; nach der Rechtsprechung des BVerfG bedarf es hierfür einer verfassungsgemäßen gesetzlichen Grundlage, die dem rechtsstaatlichen Gebot der Normenklarheit entspricht. Außerdem hat der Gesetzgeber den Grundsatz der Verhältnismäßigkeit zu beachten. Es bestehen Zweifel, ob mit den vorgelegten abstrakten Regelungen das informationelle Selbstbestimmungsr des Einzelnen im Vergleich zu der bisher erteilten Einwilligung besser geschützt wird. Außerdem war die Einwilligung der Betroffenen eine adäquate Lösung für den Datentransfer in Drittstaaten und für die Verarbeitung von Gesundheitsdaten.
+Verwaltungssitz Neu-Isenburg
+Wilhelm-Haas-Platz
+63263 Neu-Isenburg
+Genossenschaftsverband e.V. - Postfach 15 53 - 63235 Neu-Isenburg
+www.genossenschaftsverband.de
 
-Zu den einzelnen Regelungen:
-1) Zu $ 8- Informationsaustausch 
+An den Bundesminister der Justiz und
 
-Geregelt werden soll die Informationsweitergabe durch Stellen der Justiz {hoheitlicher Bereich) an die NADA, damit letztere ihrer disziplinarischen Funktion besser nachkommen kann. Der Entwurf enthält keine Schwelle für solche Datenübermittlungen, abgesehen von Regelungen der StPO, die hierfür nicht einschlägig sind. Zum Schutz der Athleten und sonstiger Personen sollte die NADA frühestens dann unterrichtet werden, wenn die Staatsanwaltschaft eine Anklageerhebung beabsichtigt. Zudem müssen den Justizbehörden verwertbare Erkenntnisse über mögliche dopingrelevante Verstöße nach Art. 2 NADC vorliegen.
+Vorstandsstab
+für Verbraucherschutz Barilffierhaus
+Herrn Heiko Maas
+Telefon 069 6978-3811
+11015 Berlin
+Telefax 069 6978-3427
+daniel.illerhaus
+@genossenschaftsverband.de 
 
-Es fehlt im Übrigen eine Regelung zur Unterrichtung der Justizbehörden durch die NADA.
-2) Zu § 9— Umgang mit personenbezogenen Daten
+23. März 2015
+KJU
 
-Mit der Neuregelung erhält die NADA die Befugnis, personenbezogene Daten „zur Durchführung ihres Dopingkontrollsystems zu erheben, ...“. Die Frage ist, ob der Aufgabenbereich der NADA damit hinreichend umschrieben ist. Jedenfalls bekommt die NADA eine gesetzliche Legitimation für die Informationsverarbeitung im Rahmen Ihres Mandats. Diese Befugnis ergibt sich dem Grunde nach bereits aus den 88 28 ff. BDSG in Verbindung mit dem WADA-Code. Insofern hat der bereichsspezifische Ansatz ($ 1 Abs. 3 BDSG) eher deklaratorische Bedeutung. Im Übrigen bleibt der Vorschlag in wichtigen Teilbereichen hinter dem geltenden BDSG und dem WADA-Code zurück, die  bereits Regelungen zur Datenlöschung vorsehen, vgl. u.a. Art. 14.6 2. UA NADC. Zwar ist die Datenlöschung eine Phase der Datenverarbeitung ($ 3 Abs. 4 Satz 1 BDSG); sie sollte gleichwohl in einer bereichsspezifischen Regelung nochmals normiert werden. Dasselbe gilt für die Rechte der Betroffenen, insbesondere das Recht auf Auskunft, zumal ADAMS in Kanada gehostet wird.
+Stellungnahme zum Gesetzentwurf Korruptionsbekämpfung
+im Gesundheitswesen TEN
+Die Genossenschaften m
 
-3) Zu 8 10 -Umgang mit personenbezogenen Gesundheitsdaten
+Sehr geehrter Herr Bundesminister,
 
-Es ist zu begrüßen, dass eine eigenständige gesetzliche Legitimation zum Umgang mit personenbezogenen Gesundheitsdaten geschaffen wird, im Hinblick auf deren erhöhten Schutzbedarf, vgl, $ 3 Abs. 9 BDSG. Dies gilt ungeachtet der Tatsache, dass ärztliche Diagnosedaten bei der NADA streng vertraulich aufbewahrt werden. Der Schutzbedarf wird durch eine bereichsspezifische Rechtsgrundlage realisiert, die an die Stelle der bisher praktizierten Einwilligungslösung tritt. Damit wird auch dem grundsätzlichen Verbot der Verarbeitung solcher geschützter Daten Rechnung getragen, vgl. Art. 8 der EG-Richtlinie 95/46.
+mit dem aktuellen Gesetzentwurf zur Bekämpfung der Korruption im Gesundheitswesen verfolgt die Bundesregierung ein Anliegen, welches der Genossenschaftsverband vorbehaltlos unterstützt. Gleichzeitig herrscht aufgrund unklarer Gesetzesformulierungen bei vielen unserer Mitglieder große Verunsicherung darüber, ob diese weiterhin aktiv ihrem Geschäftsmodell nachgehen können. Als Verband haben wir die Sorge, dass die bestehende und erprobte Praxis in Genossenschaften unbeabsichtigt und zu Unrecht unter den neuen Geltungsbereich des Strafgesetzbuches fallen könnte.
 
-Es müssen jedoch zusätzlich die erforderlichen technischen und organisatorischen Maßnahmen zur Datensicherheit getroffen werden, § 9 BDSG.
+Der Gesetzgeber fordert einerseits mehr Wettbewerb und mehr Handlungsfreiheit für die Akteure — andererseits würde der vorliegende Entwurf die wirtschaftliche Aktivität von Genossenschaften stark einschränken. Neben den direkten Auswirkungen auf die betroffenen Mitglieder wäre zudem der Genossenschaftsgedanke im Gesundheitswesen nicht mehr am Leben zu erhalten.
 
-Bedenken bestehen weiter gegen die Ubermittlungsbefugnis nach Absatz 2, die auch Empfanger in Drittstaaten mit umfasst. Dies ist mit den stringenten Regelungen in § 4b, c BDSG/Art. 25/26 der Richtlinie 95/46 kaum vereinbar. Eine generelle, abstrakte Regelung wie in Absatz 2 stellt noch keine Garantie dar, wie in $ 4c Abs. 2 BDSG vorgeschrieben. Das heißt, auch nach der Neuregelung muss die übermittelnde Stelle (NADA) den Datenempfänger in Drittstaaten (ohne angemessenen Datenschutzstandard) durch vertragliche Abmachungen zur Einhaltung datenschutzrechtlicher Prinzipien verpflichten (insbes, zur Zweckbindung, zur Löschung, Verbot der Weiterübermittlung und zu den Rechten des Betroffenen auf Auskunft).
+Dem Genossenschaftsverband gehören rund 90 Gesundheitsgenossenschaften in 13 Bundesländern an. Hierzu zählen Ärzte- und Apothekergenossenschaften sowie weitere Heilberufe, die sich wie alle Genossenschaften, die Förderung ihrer Mitglieder durch gemeinschaftlichen Geschäftsbetrieb zum Ziel gesetzt haben. Damit Genossenschaften gleichberechtigt neben anderen Unternehmensformen ihren Platz im Gesundheitswesen behalten können, bitten wir Sie während des Gesetzgebungsprozesses zur Korruptionsbekämpfung im Gesundheitswesen folgende Punkte zu berücksichtigen:
 
-4) Schlussbewertung
+= Anerkennung des genossenschaftlichen Geschäftsmodells im Gesundheitswesen
+Getreu der genossenschaftlichen Überzeugung, was einer alleine nicht schafft, schaffen viele, organisieren Gesundheitsgenossenschaften, wie in Handel und Handwerk seit über 150 Jahren bereits üblich, einen gemeinsamen Einkauf, fördern ihre Mitglieder durch Weiterbildung und die Unterhaltung gemeinsam genutzter Räumlichkeiten und medizinischer Geräte. Als Einkaufsgemeinschaft können die Gesundheitsgenossenschaften Rahmenvereinbarungen mit Unternehmen abschließen, die den Mitgliedern zu Sonderkonditionen Produkte und Dienstleistungen anbieten. Da- 
 
-Insgesamt ist der Gesetzesvorschlag ($8 8 bis 11) aus datenschutzrechtlicher Sicht zu begrüßen. Er führt zu mehr Rechtssicherheit, sollte aber wegen vorhandener Defizite noch nachgebessert werden. Die Alternative wäre eine allgemeine Datenschutzklausel von rein deklaratorischer Bedeutung, in Anlehnung an 8 9 des Vorschlags. Im letzteren Falie bliebe es bei der Einwilligung nach $ 4a BDSG als Rechtsgrundlage der Informationsverarbeitung.
+zu zählen beispielsweise Versicherungen, Praxisbedarf, Fahrzeugbeschaffung oder Kommunikationsdienste. So leisten die Genossenschaften einen Beitrag zum wirtschaftlichen Erfolg ihrer Mitglieder. Monetäre Leistungen der Gesundheitsgenossenschaften an ihre Mitglieder erfolgen explizit nicht. Die wirtschaftlichen Vorteile, die den Mitgliedern einer Genossenschaft entstehen, gehen ausdrücklich nicht zu Lasten der Allgemeinheit. Ganz im Gegenteil ist es so, dass die Entlastungen die den Mitgliedern entstehen, dem Staat und letztlich den Patienten zu Gute kommen. Vergleichbares gilt für Apothekengenossenschaften. Auch hier besteht die klare Zielsetzung, durch gemeinschaftliches Handeln Vorteile für das einzelne Mitglied und auch die Genossenschaft an sich zu erzielen. Auch hier stehen gemeinsamer Einkauf, gemeinsames Marketing, gemeinsame Verhandlungen mit Lieferanten oder Kostenträgern im Fokus, mit dem Ziel, den Einzelnen durch die Genossenschaft zu stärken.
 
-Herrn Dr. Mortsiefer mit der Bitte um Kenntnisnahme.
+Die Vorteile einer Genossenschaft können natürliche Personen, die als Vertragsarzt, Psychotherapeut oder Apotheker zugelassen und niedergelassen sind nutzen. Dies gilt auch für die als Arzt oder Psychotherapeut in einem Medizinischen Versorgungszentrum, bei einem zugelassenen und niedergelassenen Arzt oder Psychotherapeuten oder einer zugelassenen Leistungserbringergemeinschaft angestellt sind. Sie müssen hierfür in der Regel keine zusätzlichen monatlichen Aufwendungen in Kauf nehmen. Bei Eintritt ist einmalig ein Genossenschaftsanteil zu bezahlen, der den Mitgliedern bei Austritt aus der Genossenschaft erstattet wird.
+Wesensmerkmal und Nutzen von Genossenschaften im Gesundheitswesen sind nicht rein wirtschaftlicher Natur. Wie in allen Genossenschaften spielt auch im Gesundheitswesen der Dialog eine wichtige Rolle. Durch ihre regionale Aufstellung bieten Gesundheitsgenossenschaften insbesondere im ländlichen Raum eine wichtige fachliche Austauschplattform und stellen die medizinische Versorgung für Patienten beispielsweise in Form von Behandlungspfaden sicher.
+In vielen Bereichen wie z.B. Landwirtschaft, Handwerk, Handel oder Wohnen ist die genossenschaftliche Tradition ein von Politik und Gesellschaft geschätztes und erwünschtes Element. Im Gesundheitswesen schafft dies vielfältige positive Effekte, weshalb es nicht im Sinne des Gesetzgebers sein kann, Genossenschaften den Zugang zu diesem Feld zu erschweren.
 
-gez. v. Pommer Esche
+" Rechtssicherheit schaffen - klare Definitionen und Formulierungen
+
+1) "in unlauterer Weise"
+Es ist notwendig, das Adjektiv "unlauter" mit Bezug auf das Gesundheitswesen zu präzisieren und gegen das Adjektiv "lauter" genau abzugrenzen. Ansonsten werden die niedergelassenen Ärzte, Apotheker oder Angehörige weiterer Heilberufe aus Gründen der Vorsicht jede Art von Kooperation im Gesundheitswesen in Zukunft vermeiden und sich aus bestehenden zurückziehen. Dies kann nicht gewollt sein, da der Gesetzgeber mit dem Versorgungsstärkungsgesetz genau das Gegenteil, nämlich Kooperationen fördern möchte. Wünschenswert sind deshalb möglichst umfangreiche Auflistungen von Beispielen mit lauteren und unlauteren Handlungen durch niedergelassene Ärzte, Apotheker oder Angehörige weiterer Heilberufe. °
+
+2) "in sonstiger Weise seine Berufsausübungspflichten verletze"
+Die Ausführungen unter Punkt 1 gelten in analoger Weise für die Formulierung "in sonstiger Weise seine Berufsausübungspflichten verletze". Zusätzlich ist zu fragen, wer die Verletzung der ärztlichen Berufsausübungspflichten beurteilt. Den Wirtschaftsstrafkammern selbst fehlt hierzu die fachliche Kompetenz. Insofern muss sichergestellt werden, dass in die Beurteilung die Ärztekammern, medizinischen Fachgesellschaften und ärztlichen sowie therapeutischen Berufsverbände einbezogen werden.
+
+3) "gewerbsmäßig oder als Mitglied einer Bande"
+Hier muss dringend klargestellt werden, ob und in wie weit die Mitglieder, Vorstandsmitglieder, Aufsichtsratsmitglieder und Geschäftsführer einer Gesundheitsgenossenschaft allein aufgrund ihrer Mitgliedschaft in bzw. Tätigkeit für eine Ärztegenossenschaft gewerbsmäßig oder als Mitglied einer Bande handeln (können).
+
+4) Rabatte, Skonti, Boni
+Wie stellt sich die Situation dar, wenn Lieferanten Rabatte, Skonti und/oder Boni gewähren
+- bei Praxisbedarf, der in die Produktkategorien des 8 299a fällt;
+- bei Produkten, die in die Produktkategorien des $ 299a fallen (z.B. Katheter, Zangen, Sonden, Stents, Herzschrittmachern etc.) und Bestandteil von pauschal vergüteten Leistungen, z.B. im Rahmen von integrierten Versorgungsverträgen, sind?
+
+Wir möchten Sie bitten, die Position der Genossenschaften im Gesetzgebungsprozess zu unterstützen. Gerne stehen wir für vertiefende Informationen zu Ärztegenossenschaften, aber auch zu den weiteren 2300 Genossenschaften in unserem Verbandsgebiet, zur Verfügung.
+
+Mit freundlichen Grüßen
+
+Genossenschaftsverband e.V.
+a
+
+Rene Rothe i.V. Daniel ibe aus Verbandsdirektor Stv. Leiter Vorstandsstab 
+
+u
+KYA gol (6) 94) 
+
+Genossenschaftsverband e.V. Sitz Frankfurt am Main, Vereinsregister-Nummer 14109
+Vorstand: WP/StB Dipl.-Kfm. Michael Bockelmann (Verbandspräsident und Vorstandsvorsitzender), Dipl.-Ök. Klaus Bellmann, WPIStB Dipl.-Betriebsw. (FH) Horst Kessel, WP Dipl.-Ök. Rene Rothe, WP/StB Dipl.-Betriebsw. (FH) Edgar Schneider
+Vorsitzender des Verbandsrates: Michael Siegers, Stellvertreter: Claus-Rüdiger Bauer
+USt-IdNr.: DE 116688346 Bankverbindungen: DZ BANK AG Frankfurt, IBAN DE89 5006 0000 0000 0127 00, BIC GENODE55XXX DZ BANK AG Hannover, IBAN DE62 2606 0000 0000 0404 41, BIC GENODEFF250 - Mitglied der DIERVIFRS ‚Advisory Group
 

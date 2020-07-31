@@ -1,13 +1,19 @@
+"""Document represenation after extraction stuff from parsr
+"""
+
 import re
 
+from ddd.utils import flatten
 from tqdm import tqdm
 
 from .dehyphen import is_split_paragraph
 
 
 class Document:
-    def __init__(self, data, order):
+    def __init__(self, data, header, footer, order):
         self.data = data or []
+        self.header = header or []
+        self.footer = footer or []
         self.order = order or []
         self.merged_elements = {}
 
@@ -74,8 +80,7 @@ class Document:
             self.merged_elements[next_element.id] = last_element.id
 
     def reorder_footnotes(self):
-        new_data = []
-        all_footsnotes = []
+        new_data, all_footsnotes = [], []
         for element in self:
             if element.type == "footnotes":
                 all_footsnotes.append(element)
@@ -89,24 +94,38 @@ class Document:
 
     def text(self, markdown=False):
         txt = ""
+
+        txt += "\n\n".join([str(x) for x in flatten(self.header)])
+
         for element in self:
             if markdown and element.type == "heading":
                 # prepend dashes
                 txt += "#" * element.level + " "
             txt += str(element)
 
+        txt += "\n\n".join([str(x) for x in flatten(self.footer)])
+
         # hotfix, there are sometimes too many newlines
-        txt = re.sub(r"(\n){3}", "\n\n", txt)
+        txt = re.sub(r"(\n){3,}", "\n\n", txt)
         return txt
 
 
 class Element:
-    def __init__(self, element_type, lines, element_id, num_newlines=0, level=None):
+    def __init__(
+        self,
+        element_type,
+        lines,
+        element_id,
+        page_number=None,
+        num_newlines=0,
+        level=None,
+    ):
         assert element_type in ("body", "heading", "footnotes")
         self.type = element_type
         self.lines = lines
         self.id = element_id
         self.level = level
+        self.page_number = page_number
         self.num_newlines = num_newlines
 
     def __getitem__(self, key):

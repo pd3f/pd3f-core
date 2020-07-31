@@ -4,6 +4,9 @@
 from collections import Counter
 from statistics import median
 
+from textdistance import jaccard
+
+from .geometry import sim_bbox
 from .utils import flatten
 
 
@@ -67,6 +70,59 @@ def median_from_counter(c):
         data += [value] * count
     return median(data)
 
+def only_text(es):
+    r = []
+    for e in es:
+        for x in extract_elements(e, 'word'):
+            r.append(x['content'])
+    return ' '.join(r)
+
+def only_points(es):
+    r = []
+    for e in es:
+        b = e['box']
+        r.append((b['t'], b['l']))
+        r.append((b['t'] + b['h'], b['l']))
+        r.append((b['t'], b['l'] + b['w']))
+        r.append((b['t'] + b['h'], b['l'] + b['w']))
+    return r
+
+def super_similiar(es1, es2, sim_factor = 0.8, sim_box=0.6):
+    #
+    # 1. check jaccard
+    # 2. check if box is similar
+
+    text1 = only_text(es1)
+    text2 = only_text(es2)
+
+    points1 = only_points(es1)
+    points2 = only_points(es2)
+    j_sim = jaccard(text1, text2)
+    b_sim = sim_bbox(points1, points2)
+
+    print(j_sim, b_sim)
+
+    return j_sim > sim_factor and b_sim > sim_box
+
+
+def remove_duplicates(page_items):
+    results = [page_items[0]]
+    for elements in page_items[1:]:
+        cool = True
+        for r in results:
+            if len(r) == 0:
+                continue
+            # only choose the best first one?
+            if super_similiar(r, elements):
+                print('removing duplicates')
+                # print(elements)
+                cool = False
+                break
+        if cool:
+            results.append(elements)
+        else:
+            results.append([])
+    return results
 
 class DocumentInfo:
     def __init__(self, input_data, debug) -> None:

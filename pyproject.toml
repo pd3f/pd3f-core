@@ -22,6 +22,8 @@ joblib = "*"
 clean-text = { version = "^0.1.1", extras = [ "gpl" ] }
 tqdm = "*"
 dehyphen = {path = "../dehyphen"}
+textdistance = "*"
+shapely = "*"
 
 
 [tool.poetry.dev-dependencies]
