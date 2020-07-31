@@ -29,6 +29,7 @@ shapely = "*"
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
 jupyterlab = "*"
+black = {version = "^19.10b0", allow-prereleases = true}
 
 
 [build-system]
