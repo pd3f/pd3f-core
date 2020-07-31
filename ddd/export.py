@@ -238,7 +238,9 @@ class Export:
         if next_line is None or not next_line:
             if available_space > avg_space:
                 # if text_line[-1].strip()[-1] in string.punctuation:
-                logger.debug(f"No next line, but adding \\n {text_line}")
+                logger.debug(
+                    f"No next line, but adding \\n, avail space: {available_space} avg space: {avg_space} {text_line}"
+                )
                 return True
             else:
                 if num_lines == 1:
@@ -342,6 +344,7 @@ class Export:
         else:
             # ordinary paragraph
             num_newlines = 0
+            ends_newline = False
             # don't test on last line
             for i in lines:
                 # decide whether newline or simple space
@@ -356,8 +359,13 @@ class Export:
                     lines[i][-1] += "\n"
                     logger.debug(f"adding newline here {lines[i]}")
                     num_newlines += 1
+                    if i == lines.last_line:
+                        ends_newline = True
                 else:
-                    lines[i][-1] += " "
+                    if i == lines.last_line:
+                        logger.debug("last line, not adding space")
+                    else:
+                        lines[i][-1] += " "
 
             # finally remove Nones here
             lines = lines.valid
@@ -370,6 +378,7 @@ class Export:
                 paragraph["id"],
                 page_number=page_number,
                 num_newlines=num_newlines,
+                ends_newline=ends_newline,
             )
 
     # not working right now
@@ -411,7 +420,9 @@ class Export:
             prev_elem_words, _ = self.line_to_words(prev_elem["content"][-1])
             if prev_elem_words[-1].endswith(":"):
                 logger.debug(f"Id of cur para: {paragraph['id']}")
-                logger.debug(f"not a footnote para because of : in {prev_elem_words[-1]}")
+                logger.debug(
+                    f"not a footnote para because of : in {prev_elem_words[-1]}"
+                )
                 return False
 
         # first line has to start with a numeral

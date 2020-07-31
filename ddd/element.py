@@ -58,24 +58,28 @@ class Document:
             next_element = self.get_first_of_type_on_page(("body", "heading"), idx + 1)
 
             if last_element is None or next_element is None:
+                logger.debug("some element is none, cannot test")
                 continue
 
             if last_element.type == "heading" or next_element.type == "heading":
+                logger.debug("some element is a header, cannot test")
                 continue
 
             # It cannot contain newlines
-            if last_element.num_newlines > 0:
+            if last_element.ends_newline:
                 logger.debug(
-                    f"the last element has {last_element.num_newlines} newlines. Do not try to join with the next one."
+                    f"the last element has ends with a newline. Do not try to join with the next one."
                 )
                 continue
 
             fixed = is_split_paragraph(last_element, next_element)
             if fixed is None:
+                logger.debug("looks like a split paragraph")
                 continue
 
             logger.debug("joining the following paragraphs")
-            logger.debug(f"{last_element} {next_element}")
+            logger.debug(f"{last_element}\n{next_element}\n{fixed}")
+
             # set new paragraph
             self[self.data.index(last_element)] = fixed
             self.data.remove(next_element)
@@ -121,6 +125,7 @@ class Element:
         page_number=None,
         num_newlines=0,
         level=None,
+        ends_newline=None,
     ):
         assert element_type in ("body", "heading", "footnotes")
         self.type = element_type
@@ -129,6 +134,7 @@ class Element:
         self.level = level
         self.page_number = page_number
         self.num_newlines = num_newlines
+        self.ends_newline = ends_newline
 
     def __getitem__(self, key):
         return self.lines[key]
