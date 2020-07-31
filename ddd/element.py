@@ -1,12 +1,16 @@
 """Document represenation after extraction stuff from parsr
 """
 
+import logging
 import re
 
-from ddd.utils import flatten
 from tqdm import tqdm
 
+from ddd.utils import flatten
+
 from .dehyphen import is_split_paragraph
+
+logger = logging.getLogger(__name__)
 
 
 class Document:
@@ -42,7 +46,7 @@ class Document:
                 return ele
         return None
 
-    def reverse_page_break(self, debug=False):
+    def reverse_page_break(self):
         """join paragraphs that were split between pages
 
         gets complicated when footnotes are not re-ordered
@@ -61,19 +65,17 @@ class Document:
 
             # It cannot contain newlines
             if last_element.num_newlines > 0:
-                if debug:
-                    print(
-                        f"the last element has {last_element.num_newlines} newlines. Do not try to join with the next one."
-                    )
+                logger.debug(
+                    f"the last element has {last_element.num_newlines} newlines. Do not try to join with the next one."
+                )
                 continue
 
             fixed = is_split_paragraph(last_element, next_element)
             if fixed is None:
                 continue
 
-            if debug:
-                print("joining the following paragraphs")
-                print(last_element, next_element)
+            logger.debug("joining the following paragraphs")
+            logger.debug(f"{last_element} {next_element}")
             # set new paragraph
             self[self.data.index(last_element)] = fixed
             self.data.remove(next_element)

@@ -1,4 +1,5 @@
 import json
+import logging
 import string
 from collections import Counter
 from functools import cached_property
@@ -16,6 +17,9 @@ from .docinfo import (
     roughly_same_font,
 )
 from .element import Document, Element
+
+logger = logging.getLogger(__name__)
+
 
 # see this for more
 # https://github.com/axa-group/Parsr/blob/365ad388fd5dc7ff9c3fa7db28f45460baa899b0/server/src/output/markdown/MarkdownExporter.ts
@@ -86,7 +90,6 @@ class Export:
         footnotes_last=True,
         ocrd=None,
         lang="de",
-        debug=False,
     ):
         if type(input_json) is str:
             self.input_data = json.loads(Path(input_json).read_text())
@@ -106,7 +109,6 @@ class Export:
         self.footnotes_last = footnotes_last
         self.ocrd = ocrd
         self.lang = lang  # not used atm
-        self.debug = debug
 
         if seperate_header_footer and any((remove_footer, remove_header)):
             raise ValueError(
@@ -117,7 +119,7 @@ class Export:
         # The same looking font is sometimes super different for OCRd PDFs. Is it a bug?
         self.consider_font_size_linebreak = False
 
-        self.info = DocumentInfo(self.input_data, self.debug)
+        self.info = DocumentInfo(self.input_data)
 
         self.export()
 
@@ -140,7 +142,6 @@ class Export:
                     and element["properties"]["isFooter"]
                 ):
                     footer_per_page.append(element)
-            print(n_page)
             headers.append(header_per_page)
             footers.append(footer_per_page)
 
@@ -211,9 +212,7 @@ class Export:
         self.footnotes_last and self.doc.reorder_footnotes()
 
         # only do if footnootes are reordered
-        self.footnotes_last and self.remove_hyphens and self.doc.reverse_page_break(
-            debug=self.debug
-        )
+        self.footnotes_last and self.remove_hyphens and self.doc.reverse_page_break()
 
     def add_linebreak(
         self, line, next_line, text_line, text_next_line, paragraph, num_lines
@@ -226,7 +225,7 @@ class Export:
             if not roughly_same_font(
                 self.info.font_info[line_font], self.info.font_info[next_line_font]
             ):
-                print("font", line_font, next_line_font)
+                logger.debug(" ".join("font", line_font, next_line_font))
                 return True
 
         avg_space = avg_word_space(line)
@@ -239,29 +238,26 @@ class Export:
         if next_line is None or not next_line:
             if available_space > avg_space:
                 # if text_line[-1].strip()[-1] in string.punctuation:
-                if self.debug:
-                    print(f"No next line, but adding \\n {text_line}")
+                logger.debug(f"No next line, but adding \\n {text_line}")
                 return True
             else:
                 if num_lines == 1:
                     return True
                 # if num_lines == 2:
                 #     return True
-                if self.debug:
-                    print(f"No next line, but adding space {text_line}")
+                logger.debug(f"No next line, but adding space {text_line}")
                 return False
 
         if available_space >= next_line["content"][0]["box"]["w"]:
-            if self.debug:
-                print(
-                    f"There is enough space on the lext for the next word. So adding a linebreak between {text_line}{text_next_line}"
-                )
+            logger.debug(
+                f"There is enough space on the lext for the next word. So adding a linebreak between {text_line}{text_next_line}"
+            )
             return True
 
         if self.info.on_same_page(line, next_line):
             if self.info.seperate_lines(line, next_line):
-                print("lines should be seperated")
-                print(text_line, text_next_line)
+                logger.debug("lines should be seperated")
+                logger.debug(f"{text_line} {text_next_line}")
                 return True
 
         # TODO: a more reasonable way (e.g. check if it spans whole width)
@@ -272,9 +268,8 @@ class Export:
         if text_line[-1].strip()[-1] in string.punctuation:
             return False
 
-        if self.debug:
-            print("testing the lines: ")
-            print(text_line, text_next_line)
+        logger.debug("testing the lines: ")
+        logger.debug(f"{text_line} {text_next_line}")
         return newline_or_not(" ".join(text_line), " ".join(text_next_line))
 
     def line_to_words(self, line):
@@ -300,8 +295,7 @@ class Export:
                 lines.append(rl)
                 font_counter.update(rf)
             else:
-                if self.debug:
-                    print(f"removing {rl} because not alpha num")
+                logger.debug(f"removing {rl} because not alpha num")
                 lines.append(None)
 
         lines = LinesWithNone(lines, raw_lines)
@@ -360,8 +354,7 @@ class Export:
                     len(lines),
                 ):
                     lines[i][-1] += "\n"
-                    if self.debug:
-                        print(f"adding newline here {lines[i]}")
+                    logger.debug(f"adding newline here {lines[i]}")
                     num_newlines += 1
                 else:
                     lines[i][-1] += " "
@@ -417,9 +410,8 @@ class Export:
             prev_elem = self.info.id_to_elem[self.info.order_page[page_number - 1][-2]]
             prev_elem_words, _ = self.line_to_words(prev_elem["content"][-1])
             if prev_elem_words[-1].endswith(":"):
-                if self.debug:
-                    print(f"Id of cur para: {paragraph['id']}")
-                    print(f"not a footnote para because of : in {prev_elem_words[-1]}")
+                logger.debug(f"Id of cur para: {paragraph['id']}")
+                logger.debug(f"not a footnote para because of : in {prev_elem_words[-1]}")
                 return False
 
         # first line has to start with a numeral

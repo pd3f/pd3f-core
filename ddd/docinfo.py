@@ -1,6 +1,7 @@
 """Statistics etc.
 """
 
+import logging
 from collections import Counter
 from statistics import median
 
@@ -9,10 +10,15 @@ from textdistance import jaccard
 from .geometry import sim_bbox
 from .utils import flatten
 
+logger = logging.getLogger(__name__)
+
 
 def avg_word_space(line):
-    # util for words / lines
-    # from https://github.com/axa-group/Parsr/blob/69e6b9bf33f1cc43d5a87d428cedf1132ccc48e8/server/src/types/DocumentRepresentation/Paragraph.ts#L460
+    """Average word space on a line, util for words / lines
+    
+    src: https://github.com/axa-group/Parsr/blob/69e6b9bf33f1cc43d5a87d428cedf1132ccc48e8/server/src/types/DocumentRepresentation/Paragraph.ts#L460
+    """
+
     def calc_margins(index, word):
         if index > 0:
             return word["box"]["l"] - (
@@ -60,7 +66,7 @@ def get_lineheight(l1, l2):
     if l2["box"]["t"] < l1["box"]["t"]:
         l1, l2 = l2, l1
     dif = l2["box"]["t"] - l1["box"]["t"] - l1["box"]["h"]
-    # it may happen that the lines are on the same 
+    # it may happen that the lines are on the same
     return dif if dif > 0 else None
 
 
@@ -70,28 +76,29 @@ def median_from_counter(c):
         data += [value] * count
     return median(data)
 
+
 def only_text(es):
     r = []
     for e in es:
-        for x in extract_elements(e, 'word'):
-            r.append(x['content'])
-    return ' '.join(r)
+        for x in extract_elements(e, "word"):
+            r.append(x["content"])
+    return " ".join(r)
+
 
 def only_points(es):
     r = []
     for e in es:
-        b = e['box']
-        r.append((b['t'], b['l']))
-        r.append((b['t'] + b['h'], b['l']))
-        r.append((b['t'], b['l'] + b['w']))
-        r.append((b['t'] + b['h'], b['l'] + b['w']))
+        b = e["box"]
+        r.append((b["t"], b["l"]))
+        r.append((b["t"] + b["h"], b["l"]))
+        r.append((b["t"], b["l"] + b["w"]))
+        r.append((b["t"] + b["h"], b["l"] + b["w"]))
     return r
 
-def super_similiar(es1, es2, sim_factor = 0.8, sim_box=0.6):
-    #
-    # 1. check jaccard
-    # 2. check if box is similar
 
+def super_similiar(es1, es2, sim_factor=0.8, sim_box=0.6):
+    """Check if two elements are super similiar by text (Jaccad) and visually (compare bbox).
+    """
     text1 = only_text(es1)
     text2 = only_text(es2)
 
@@ -100,7 +107,7 @@ def super_similiar(es1, es2, sim_factor = 0.8, sim_box=0.6):
     j_sim = jaccard(text1, text2)
     b_sim = sim_bbox(points1, points2)
 
-    print(j_sim, b_sim)
+    logger.debug(f"{j_sim} {b_sim}")
 
     return j_sim > sim_factor and b_sim > sim_box
 
@@ -114,8 +121,7 @@ def remove_duplicates(page_items):
                 continue
             # only choose the best first one?
             if super_similiar(r, elements):
-                print('removing duplicates')
-                # print(elements)
+                logger.debug("removing duplicates")
                 cool = False
                 break
         if cool:
@@ -124,10 +130,10 @@ def remove_duplicates(page_items):
             results.append([])
     return results
 
+
 class DocumentInfo:
-    def __init__(self, input_data, debug) -> None:
+    def __init__(self, input_data) -> None:
         self.input_data = input_data
-        self.debug = debug
 
         # needs to be done first
         self.element_order_page()
@@ -146,8 +152,8 @@ class DocumentInfo:
                 return []
             lineheights = []
             for i, _ in enumerate(lines[:-1]):
-                    if ((x := get_lineheight(lines[i], lines[i + 1])) is not None):
-                        lineheights.append(x)
+                if (x := get_lineheight(lines[i], lines[i + 1])) is not None:
+                    lineheights.append(x)
             return lineheights
 
         self.counter_width = Counter()
@@ -170,13 +176,12 @@ class DocumentInfo:
         # line space: line height
         self.median_line_space = median_from_counter(self.counter_lineheight)
 
-        if self.debug:
-            print(f"media line width: {self.median_line_width}")
-            print(f"median line height: {self.median_line_height}")
-            print(f"median line space: {self.median_line_space}")
-            print("counter width: ", self.counter_width.most_common(3))
-            print("counter height: ", self.counter_height.most_common(3))
-            print("counter lineheight: ", self.counter_lineheight.most_common(3))
+        logger.info(f"media line width: {self.median_line_width}")
+        logger.info(f"median line height: {self.median_line_height}")
+        logger.info(f"median line space: {self.median_line_space}")
+        logger.info(f"counter width: {self.counter_width.most_common(5)}")
+        logger.info(f"counter height: {self.counter_height.most_common(5)}")
+        logger.info(f"counter lineheight: {self.counter_lineheight.most_common(5)}")
 
     def document_font_stats(self):
         """Get statistics about font usage in the document
@@ -192,14 +197,16 @@ class DocumentInfo:
             self.font_info[x["id"]] = x
             assert x["sizeUnit"] == "px"
 
-    def seperate_lines(self, l1, l2):
+    def seperate_lines(self, l1, l2, factor=0.5):
         lh = get_lineheight(l1, l2)
         if lh is None:
             return False
         # space between lines can only be + 0.5x the body lineheight
-        return ((lh - self.median_line_space) / self.median_line_space) > 0.5
+        return ((lh - self.median_line_space) / self.median_line_space) > factor
 
     def on_same_page(self, e1, e2):
+        """Check if both elements are on the same page
+        """
         return (
             self.id_to_elem[e1["id"]]["page_num"]
             == self.id_to_elem[e2["id"]]["page_num"]
