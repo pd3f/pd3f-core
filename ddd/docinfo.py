@@ -1,6 +1,7 @@
 """Statistics etc.
 """
 
+from ddd.dehyphen import single_score
 import logging
 from collections import Counter
 from statistics import median
@@ -107,7 +108,7 @@ def super_similiar(es1, es2, sim_factor=0.8, sim_box=0.6):
     j_sim = jaccard(text1, text2)
     b_sim = sim_bbox(points1, points2)
 
-    logger.debug(f"{j_sim} {b_sim}")
+    logger.debug(f"footer/header sims {j_sim} {b_sim}")
 
     return j_sim > sim_factor and b_sim > sim_box
 
@@ -121,9 +122,18 @@ def remove_duplicates(page_items):
                 continue
             # only choose the best first one?
             if super_similiar(r, elements):
-                logger.debug("removing duplicates")
-                cool = False
-                break
+                logger.debug("items are super similiar")
+                if single_score(only_text(r)) < single_score(only_text(elements)):
+                    logger.debug(
+                        "okay, skipping here, the previous one got better score"
+                    )
+                    cool = False
+                    break
+                else:
+
+                    logger.debug("removing previous one, this is better")
+                    results.remove(r)
+
         if cool:
             results.append(elements)
         else:

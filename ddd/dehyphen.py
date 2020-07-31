@@ -1,5 +1,8 @@
-from dehyphen import FlairScorer
+from functools import lru_cache
+
 from joblib import Memory
+
+from dehyphen import FlairScorer
 
 memory = Memory("~/.cache/ddd/dehyphen", verbose=0)
 
@@ -29,3 +32,10 @@ def newline_or_not(l1, l2):
     scores = scorer.score(texts)
     best_score_idx = scores.index(min(scores))
     return best_score_idx != 2
+
+
+@lru_cache
+def single_score(text):
+    if len(text) == 1:
+        return 99999999999
+    return scorer.score([text])[0]
