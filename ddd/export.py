@@ -120,7 +120,7 @@ class Export:
         self.consider_font_size_linebreak = False
 
         self.info = DocumentInfo(self.input_data)
-
+        self.fix_headers_footers()
         self.export()
 
     def export_header_footer(self):
@@ -166,6 +166,20 @@ class Export:
                         cleaned_footer.append(result_para)
 
         return cleaned_header, cleaned_footer, footnotes
+
+    def fix_headers_footers(self):
+        for idx_page, page in enumerate(self.input_data["pages"]):
+            for idx_e, e in enumerate(page["elements"]):
+                if "isHeader" in e["properties"] and e["properties"]["isHeader"]:
+                    if self.info.is_body_paragrah(e):
+                        del self.input_data["pages"][idx_page]["elements"][idx_e][
+                            "properties"
+                        ]["isHeader"]
+                if "isFooter" in e["properties"] and e["properties"]["isFooter"]:
+                    if self.info.is_body_paragrah(e):
+                        del self.input_data["pages"][idx_page]["elements"][idx_e][
+                            "properties"
+                        ]["isFooter"]
 
     def export(self):
         cleaned_header = None

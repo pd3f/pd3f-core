@@ -33,6 +33,7 @@ def avg_word_space(line):
 
 
 def roughly_same_font(f1, f2):
+    # unreliable
     assert f1["sizeUnit"] == "px"
     assert f2["sizeUnit"] == "px"
     return abs(f1["size"] - f2["size"]) < max(f1["size"], f2["size"]) * 0.2
@@ -105,6 +106,14 @@ def super_similiar(es1, es2, sim_factor=0.8, sim_box=0.6):
 
     points1 = only_points(es1)
     points2 = only_points(es2)
+
+    if min(len(points1), len(points2)) < 4:
+        return False
+
+    logger.debug("points")
+    logger.debug(points1)
+    logger.debug(points2)
+
     j_sim = jaccard(text1, text2)
     b_sim = sim_bbox(points1, points2)
 
@@ -141,6 +150,16 @@ def remove_duplicates(page_items):
     return results
 
 
+def calc_line_space(lines):
+    if len(lines) <= 1:
+        return []
+    lineheights = []
+    for i, _ in enumerate(lines[:-1]):
+        if (x := get_lineheight(lines[i], lines[i + 1])) is not None:
+            lineheights.append(x)
+    return lineheights
+
+
 class DocumentInfo:
     def __init__(self, input_data) -> None:
         self.input_data = input_data
@@ -157,18 +176,10 @@ class DocumentInfo:
         """
         """
 
-        def calc_line_space(lines):
-            if len(lines) <= 1:
-                return []
-            lineheights = []
-            for i, _ in enumerate(lines[:-1]):
-                if (x := get_lineheight(lines[i], lines[i + 1])) is not None:
-                    lineheights.append(x)
-            return lineheights
-
         self.counter_width = Counter()
         self.counter_height = Counter()
         self.counter_lineheight = Counter()
+        self.counter_line_left = Counter()
 
         for n_page, p in enumerate(self.input_data["pages"]):
             for e in p["elements"]:
@@ -180,11 +191,13 @@ class DocumentInfo:
                 self.counter_width.update([x["box"]["w"] for x in lis])
                 self.counter_height.update([x["box"]["h"] for x in lis])
                 self.counter_lineheight.update(calc_line_space(lis))
+                self.counter_line_left.update([x["box"]["l"] for x in lis])
 
         self.median_line_width = median_from_counter(self.counter_width)
         self.median_line_height = median_from_counter(self.counter_height)
         # line space: line height
         self.median_line_space = median_from_counter(self.counter_lineheight)
+        self.median_line_left = median_from_counter(self.counter_line_left)
 
         logger.info(f"media line width: {self.median_line_width}")
         logger.info(f"median line height: {self.median_line_height}")
@@ -243,3 +256,22 @@ class DocumentInfo:
 
                 per_page.append(e["id"])
             self.order_page.append(per_page)
+
+    def is_body_paragrah(self, para):
+        lines = extract_elements(para, "line")
+        w_lines = [x["box"]["w"] for x in lines]
+        h_lines = [x["box"]["h"] for x in lines]
+        l_lines = [x["box"]["l"] for x in lines]
+
+        logger.debug("is it a body para?")
+        if abs(self.median_line_width - max(w_lines)) > 5:
+            return False
+
+        if abs(self.median_line_height - median(h_lines)) > 2:
+            return False
+
+        if abs(self.median_line_left - median(l_lines)) > 5:
+            return False
+        logger.debug("yes!")
+        return True
+
