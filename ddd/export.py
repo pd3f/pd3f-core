@@ -8,15 +8,15 @@ from pathlib import Path
 from cleantext import clean
 from tqdm import tqdm
 
-from .dehyphen import dehyphen_paragraph, newline_or_not
-from .docinfo import (
+from .dehyphen_wrapper import dehyphen_paragraph, newline_or_not
+from .doc_info import (
     DocumentInfo,
     avg_word_space,
     most_used_font,
     remove_duplicates,
     roughly_same_font,
 )
-from .element import Document, Element
+from .doc_output import DocumentOutput, Element
 
 logger = logging.getLogger(__name__)
 
@@ -220,7 +220,7 @@ class Export:
                 ]
                 cleaned_data += footer_on_this_page
 
-        self.doc = Document(
+        self.doc = DocumentOutput(
             cleaned_data, cleaned_header, cleaned_footer, self.info.order_page
         )
         self.footnotes_last and self.doc.reorder_footnotes()

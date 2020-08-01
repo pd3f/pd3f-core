@@ -1,13 +1,13 @@
 """Statistics etc.
 """
 
-from ddd.dehyphen import single_score
 import logging
 from collections import Counter
 from statistics import median
 
 from textdistance import jaccard
 
+from .dehyphen_wrapper import single_score
 from .geometry import sim_bbox
 from .utils import flatten
 
@@ -274,4 +274,3 @@ class DocumentInfo:
             return False
         logger.debug("yes!")
         return True
-

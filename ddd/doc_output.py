@@ -6,14 +6,13 @@ import re
 
 from tqdm import tqdm
 
-from ddd.utils import flatten
-
-from .dehyphen import is_split_paragraph
+from .dehyphen_wrapper import is_split_paragraph
+from .utils import flatten
 
 logger = logging.getLogger(__name__)
 
 
-class Document:
+class DocumentOutput:
     def __init__(self, data, header, footer, order):
         self.data = data or []
         self.header = header or []
