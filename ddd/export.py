@@ -40,7 +40,6 @@ def extract(
         input_json,
         seperate_header_footer=experimental,
         footnotes_last=experimental,
-        force_gpu=force_gpu,
         lang=lang,
         **kwargs,
     )
