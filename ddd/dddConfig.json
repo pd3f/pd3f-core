@@ -73,8 +73,8 @@
   ],
   "output": {
     "granularity": "word",
-    "includeMarginals": false,
-    "includeDrawings": false,
+    "includeMarginals": true,
+    "includeDrawings": true,
     "formats": {
       "json": true,
       "text": false,
