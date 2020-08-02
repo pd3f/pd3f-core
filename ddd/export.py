@@ -1,3 +1,8 @@
+"""Main class of this package.
+
+Transforms parsr's JSON to an internal document format, exports to text.
+"""
+
 import json
 import logging
 import string

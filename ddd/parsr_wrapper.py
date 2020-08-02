@@ -1,3 +1,6 @@
+"""Wrapper to interaction with parsr (using parsr's Python client)
+"""
+
 import importlib.resources
 import json
 import logging

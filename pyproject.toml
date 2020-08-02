@@ -21,7 +21,7 @@ parsr-client = "3.1"
 joblib = "*"
 clean-text = { version = "^0.1.1", extras = [ "gpl" ] }
 tqdm = "*"
-dehyphen = {path = "../dehyphen"}
+dehyphen = "^0.2.0"
 textdistance = "*"
 shapely = "*"
 

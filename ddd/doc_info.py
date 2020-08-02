@@ -1,4 +1,4 @@
-"""Statistics etc.
+"""Statistics and information about document elements.
 """
 
 import logging
@@ -132,14 +132,15 @@ def remove_duplicates(page_items, lang):
             # only choose the best first one?
             if super_similiar(r, elements):
                 logger.debug("items are super similiar")
-                if single_score(only_text(r), lang) < single_score(only_text(elements), lang):
+                if single_score(only_text(r), lang) <= single_score(
+                    only_text(elements), lang
+                ):
                     logger.debug(
-                        "okay, skipping here, the previous one got better score"
+                        "okay, skipping here, the previous one got better / same score"
                     )
                     cool = False
                     break
                 else:
-
                     logger.debug("removing previous one, this is better")
                     results.remove(r)
 

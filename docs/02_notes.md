@@ -11,8 +11,8 @@ https://github.com/GNOME/ocrfeeder
 https://github.com/OCR4all/LAREX
 
 
-1.  
-2.  
+1. 
+2. 
 3. Idea: Improve Text output
 
 Improve Page Deteciton
