@@ -13,11 +13,12 @@ logger = logging.getLogger(__name__)
 
 
 class DocumentOutput:
-    def __init__(self, data, header, footer, order):
+    def __init__(self, data, header, footer, order, lang):
         self.data = data or []
         self.header = header or []
         self.footer = footer or []
         self.order = order or []
+        self.lang = lang
         self.merged_elements = {}
 
     def __getitem__(self, key):
@@ -71,7 +72,7 @@ class DocumentOutput:
                 )
                 continue
 
-            fixed = is_split_paragraph(last_element, next_element)
+            fixed = is_split_paragraph(last_element, next_element, self.lang)
             if fixed is None:
                 logger.debug("looks like a split paragraph")
                 continue

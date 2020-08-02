@@ -21,6 +21,10 @@ def run_parsr(
     check_tables=False,
     hostname_port="localhost:3001",
 ):
+    """Wrapper to interaction with parsr (using parsr's Python client)
+
+    TODO: consider lang? Or not important because we don't use pars'r OCR?
+    """
     parsr = client(hostname_port)
 
     # update base config of parsr

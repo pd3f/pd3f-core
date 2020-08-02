@@ -17,12 +17,34 @@ from .doc_info import (
     roughly_same_font,
 )
 from .doc_output import DocumentOutput, Element
+from .parsr_wrapper import run_parsr
 
 logger = logging.getLogger(__name__)
 
 
-# see this for more
-# https://github.com/axa-group/Parsr/blob/365ad388fd5dc7ff9c3fa7db28f45460baa899b0/server/src/output/markdown/MarkdownExporter.ts
+def extract(
+    file_path, tables=False, experimental=False, force_gpu=False, lang="de", **kwargs
+):
+    """Outward facing api
+    """
+    if force_gpu:
+        import torch
+
+        if not torch.cuda.is_available():
+            raise ValueError("not using CUDA (GPU)")
+        else:
+            logger.debug("using CUDA")
+
+    input_json, tables_csv = run_parsr(file_path, check_tables=tables)
+    e = Export(
+        input_json,
+        seperate_header_footer=experimental,
+        footnotes_last=experimental,
+        force_gpu=force_gpu,
+        lang=lang,
+        **kwargs,
+    )
+    return e.text(), tables_csv
 
 
 class LinesWithNone:
@@ -146,8 +168,8 @@ class Export:
             footers.append(footer_per_page)
 
         if self.remove_duplicate_header_footer:
-            headers = remove_duplicates(headers)
-            footers = remove_duplicates(footers)
+            headers = remove_duplicates(headers, self.lang)
+            footers = remove_duplicates(footers, self.lang)
 
         cleaned_header, cleaned_footer, footnotes = [], [], []
         for n_page, (header_per_page, footer_per_page) in enumerate(
@@ -182,9 +204,7 @@ class Export:
                         ]["isFooter"]
 
     def export(self):
-        cleaned_header = None
-        cleaned_footer = None
-        new_footnotes = None
+        cleaned_header, cleaned_footer, new_footnotes = None, None, None
 
         if self.seperate_header_footer:
             cleaned_header, cleaned_footer, new_footnotes = self.export_header_footer()
@@ -221,7 +241,11 @@ class Export:
                 cleaned_data += footer_on_this_page
 
         self.doc = DocumentOutput(
-            cleaned_data, cleaned_header, cleaned_footer, self.info.order_page
+            cleaned_data,
+            cleaned_header,
+            cleaned_footer,
+            self.info.order_page,
+            self.lang,
         )
         self.footnotes_last and self.doc.reorder_footnotes()
 
@@ -231,7 +255,6 @@ class Export:
     def add_linebreak(
         self, line, next_line, text_line, text_next_line, paragraph, num_lines
     ):
-
         # experimental
         if self.consider_font_size_linebreak:
             line_font = most_used_font(line)
@@ -249,7 +272,7 @@ class Export:
         )
 
         # if there is no next line
-        if next_line is None or not next_line:
+        if next_line is None or not next_line or text_next_line is None:
             if available_space > avg_space:
                 # if text_line[-1].strip()[-1] in string.punctuation:
                 logger.debug(
@@ -286,7 +309,7 @@ class Export:
 
         logger.debug("testing the lines: ")
         logger.debug(f"{text_line} {text_next_line}")
-        return newline_or_not(" ".join(text_line), " ".join(text_next_line))
+        return newline_or_not(" ".join(text_line), " ".join(text_next_line), self.lang)
 
     def line_to_words(self, line):
         words, fonts = [], []
@@ -389,7 +412,7 @@ class Export:
             lines = lines.valid
 
             if self.remove_hyphens:
-                lines = dehyphen_paragraph(lines)
+                lines = dehyphen_paragraph(lines, lang=self.lang)
             return Element(
                 "body",
                 lines,
