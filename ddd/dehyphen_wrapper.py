@@ -23,7 +23,11 @@ def get_scorer(lang):
     """
     global scorer
     if scorer is None:
-        scorer = FlairScorer(lang=lang)
+        # simplify Flair's naming of models
+        if lang.endswith("-fast"):
+            scorer = FlairScorer(lang=lang[:-5], fast=True)
+        else:
+            scorer = FlairScorer(lang=lang)
     return scorer
 
 
