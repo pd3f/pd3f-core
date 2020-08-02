@@ -297,6 +297,12 @@ class Export:
         return words, fonts
 
     def lines_to_paragraph(self, paragraph, page_number, test_footnote):
+        def no_alphanum_char(text):
+            """Checks if text only contains non-alpha-num chars, e.g. puncts
+            """
+            text = clean(text, no_punct=True)
+            return any([x.isalnum() for x in text])
+
         raw_lines = paragraph["content"]
         font_counter = Counter()
         lines = []
@@ -305,9 +311,7 @@ class Export:
             rl, rf = self.line_to_words(l)
 
             # "".isalnum() => False, so only check for lenth?
-            if not self.remove_punct_paragraph or any(
-                [clean(x, no_punct=True).isalnum() for x in rl]
-            ):
+            if not self.remove_punct_paragraph or any(map(no_alphanum_char, rl)):
                 lines.append(rl)
                 font_counter.update(rf)
             else:
