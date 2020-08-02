@@ -1,11 +1,14 @@
 import importlib.resources
 import json
+import logging
 import tempfile
 from pathlib import Path
 
 from parsr_client import ParsrClient as client
 
 from .utils import update_dict, write_dict
+
+logger = logging.getLogger(__name__)
 
 
 def run_parsr(
@@ -15,6 +18,7 @@ def run_parsr(
     config={},
     text=False,
     markdown=False,
+    check_tables=False,
     hostname_port="localhost:3001",
 ):
     parsr = client(hostname_port)
@@ -35,12 +39,22 @@ def run_parsr(
                 continue
             jdata["cleaner"][idx] = [cl[0], {**cl[1], **new_cl[1]}]
 
+    if not check_tables:
+        jdata["cleaner"] = [
+            x
+            for x in jdata["cleaner"]
+            if type(x) is str or "table-detection" not in x[0]
+        ]
+
     with tempfile.NamedTemporaryFile(mode="w+") as tmp_config:
         json.dump(jdata, tmp_config)
         tmp_config.flush()  # persist
 
         # TODO: when upgrading to v3.2, use file_path and config_path
         print("sending PDF to parsr")
+
+        logger.debug(jdata)
+
         parsr.send_document(
             file=file_path,
             config=tmp_config.name,
@@ -48,6 +62,12 @@ def run_parsr(
             save_request_id=True,
             silent=False,
         )
+
+    tables = []
+    if check_tables:
+        for page, table in parsr.get_tables_info():
+            # table gets returned as panda df
+            tables.append(parsr.get_table(page=page, table=table))
 
     if not out_dir is None:
         out_dir = Path(out_dir) / Path(file_path).stem
@@ -59,5 +79,13 @@ def run_parsr(
         if markdown:
             (out_dir / "text.md").write_text(parsr.get_markdown())
 
+        if check_tables:
+            for idx, t in enumerate(tables):
+                (out_dir / f"table_{idx}.csv").write_text(t.to_csv())
+
         write_dict(parsr.get_json(), out_dir / "data.json")
-    return parsr.get_json()
+
+    if not check_tables:
+        return parsr.get_json(), None
+    return parsr.get_json(), [x.to_csv() for x in tables]
+
