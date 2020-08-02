@@ -54,6 +54,7 @@
         "maxMarginPercentage": 15
       }
     ],
+    "words-to-line-new",
     [
       "reading-order-detection",
       {
@@ -61,7 +62,6 @@
         "minColumnWidthInPagePercent": 15
       }
     ],
-    "words-to-line-new",
     [
       "lines-to-paragraph",
       {
@@ -73,7 +73,8 @@
   ],
   "output": {
     "granularity": "word",
-    "includeMarginals": true,
+    "includeMarginals": false,
+    "includeDrawings": false,
     "formats": {
       "json": true,
       "text": false,
