@@ -178,21 +178,21 @@ version = "3.0.4"
 
 [[package]]
 category = "main"
-description = "Clean Your Text to Create Normalized Text Representations"
+description = "Functions to preprocess and normalize text."
 name = "clean-text"
 optional = false
-python-versions = "*"
-version = "0.1.1"
+python-versions = ">=3.5"
+version = "0.2.1"
 
 [package.dependencies]
-ftfy = "*"
+ftfy = ">=5.8,<6.0"
 
 [package.dependencies.unidecode]
 optional = true
-version = "*"
+version = ">=1.1.1,<2.0.0"
 
 [package.extras]
-gpl = ["unidecode"]
+gpl = ["unidecode (>=1.1.1,<2.0.0)"]
 
 [[package]]
 category = "main"
@@ -754,7 +754,7 @@ description = "A web-based notebook environment for interactive computing"
 name = "notebook"
 optional = false
 python-versions = ">=3.5"
-version = "6.1.0"
+version = "6.1.1"
 
 [package.dependencies]
 Send2Trash = "*"
@@ -774,7 +774,7 @@ traitlets = ">=4.2.1"
 
 [package.extras]
 docs = ["sphinx", "nbsphinx", "sphinxcontrib-github-alt"]
-test = ["nose", "coverage", "requests", "nose-warnings-filters", "nbval", "nose-exclude", "selenium", "pytest", "pytest-cov", "requests-unixsocket", "nose-exclude"]
+test = ["nose", "coverage", "requests", "nose-warnings-filters", "nbval", "nose-exclude", "selenium", "pytest", "pytest-cov", "requests-unixsocket"]
 
 [[package]]
 category = "main"
@@ -1320,7 +1320,7 @@ description = "Fast, Extensible Progress Meter"
 name = "tqdm"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*"
-version = "4.48.0"
+version = "4.48.2"
 
 [package.extras]
 dev = ["py-make (>=0.1.0)", "twine", "argopt", "pydoc-markdown"]
@@ -1427,7 +1427,7 @@ python-versions = "*"
 version = "1.12.1"
 
 [metadata]
-content-hash = "25efd2a1fdfd7514fc52a2b74f759cc1eb7a64b816e9ba63890aeb996ff22622"
+content-hash = "eab4014be97df33e77b5d003337169c4b9312e62414752c566fc10caf391a8e3"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -1532,8 +1532,8 @@ chardet = [
     {file = "chardet-3.0.4.tar.gz", hash = "sha256:84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae"},
 ]
 clean-text = [
-    {file = "clean-text-0.1.1.tar.gz", hash = "sha256:dcd547366a35c27b49897793ec6b0ef4f0dcfa772c5b1f2343ee81b7fe2378b3"},
-    {file = "clean_text-0.1.1-py3-none-any.whl", hash = "sha256:c90bcd27aefbaf9656c9ebcc18c60deaa01ee1dedea0f6b9474c9de4b19ed83d"},
+    {file = "clean-text-0.2.1.tar.gz", hash = "sha256:15239c0a117dd574a554fd9f105ab2ed302dd2f4da12a4d39df8c24a3ebfce8d"},
+    {file = "clean_text-0.2.1-py3-none-any.whl", hash = "sha256:b219e9b0c8e2159f7f7fbaba56164bbc2ffc0e8aea1d73cac34bc0b1fb482081"},
 ]
 click = [
     {file = "click-7.1.2-py2.py3-none-any.whl", hash = "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"},
@@ -1815,8 +1815,8 @@ networkx = [
     {file = "networkx-2.4.tar.gz", hash = "sha256:f8f4ff0b6f96e4f9b16af6b84622597b5334bf9cae8cf9b2e42e7985d5c95c64"},
 ]
 notebook = [
-    {file = "notebook-6.1.0-py3-none-any.whl", hash = "sha256:d3b58a0106abbb7287fe680654665d29020a8203cb167c27ac0c37e940442836"},
-    {file = "notebook-6.1.0.tar.gz", hash = "sha256:0f44d22092896f68f7589bfdbfc912885993ddb1fd7d5779ddbbf0d8c6b73eef"},
+    {file = "notebook-6.1.1-py3-none-any.whl", hash = "sha256:4cc4e44a43a83a7c2f5e85bfdbbfe1c68bed91b857741df9e593d213a6fc2d27"},
+    {file = "notebook-6.1.1.tar.gz", hash = "sha256:42391d8f3b88676e774316527599e49c11f3a7e51c41035e9e44c1b58e1398d5"},
 ]
 numpy = [
     {file = "numpy-1.19.1-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:b1cca51512299841bf69add3b75361779962f9cee7d9ee3bb446d5982e925b69"},
@@ -2227,8 +2227,8 @@ tornado = [
     {file = "tornado-6.0.4.tar.gz", hash = "sha256:0fe2d45ba43b00a41cd73f8be321a44936dc1aba233dee979f17a042b83eb6dc"},
 ]
 tqdm = [
-    {file = "tqdm-4.48.0-py2.py3-none-any.whl", hash = "sha256:fcb7cb5b729b60a27f300b15c1ffd4744f080fb483b88f31dc8654b082cc8ea5"},
-    {file = "tqdm-4.48.0.tar.gz", hash = "sha256:6baa75a88582b1db6d34ce4690da5501d2a1cb65c34664840a456b2c9f794d29"},
+    {file = "tqdm-4.48.2-py2.py3-none-any.whl", hash = "sha256:1a336d2b829be50e46b84668691e0a2719f26c97c62846298dd5ae2937e4d5cf"},
+    {file = "tqdm-4.48.2.tar.gz", hash = "sha256:564d632ea2b9cb52979f7956e093e831c28d441c11751682f84c86fc46e4fd21"},
 ]
 traitlets = [
     {file = "traitlets-4.3.3-py2.py3-none-any.whl", hash = "sha256:70b4c6a1d9019d7b4f6846832288f86998aa3b9207c6821f3578a6a6a467fe44"},

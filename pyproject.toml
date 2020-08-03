@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "ddd"
-version = "0.1.0"
+name = "pdddf"
+version = "0.0.0"
 description = "Dehyphenation of broken text (mainly German), e.g., extracted from a PDF"
 license = "GPL-3.0-only"
 authors = ["Johannes Filter <hi@jfilter.de>"]
@@ -14,12 +14,11 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 
-# dehyphen = "*"
 [tool.poetry.dependencies]
 python = "^3.8"
 parsr-client = "3.1"
 joblib = "*"
-clean-text = { version = "^0.1.1", extras = [ "gpl" ] }
+clean-text = { version = "*", extras = [ "gpl" ] }
 tqdm = "*"
 dehyphen = "^0.2.0"
 textdistance = "*"

@@ -31,7 +31,7 @@ def run_parsr(
     parsr = client(hostname_port)
 
     # update base config of parsr
-    with importlib.resources.path("ddd", "dddConfig.json") as cfg_path:
+    with importlib.resources.path("pdddf", "pdddfConfig.json") as cfg_path:
         jdata = json.loads(cfg_path.read_text())
     jdata = update_dict(jdata, config)
 
