@@ -22,13 +22,14 @@ def run_parsr(
     text=False,
     markdown=False,
     check_tables=False,
-    hostname_port="localhost:3001",
+    parsr_location="localhost:3001",
+    **kwargs
 ):
     """Wrapper to interaction with parsr (using parsr's Python client)
 
     TODO: consider lang? Or not important because we don't use pars'r OCR?
     """
-    parsr = client(hostname_port)
+    parsr = client(parsr_location)
 
     # update base config of parsr
     with importlib.resources.path("pdddf", "pdddfConfig.json") as cfg_path:

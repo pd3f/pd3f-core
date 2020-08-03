@@ -28,7 +28,13 @@ logger = logging.getLogger(__name__)
 
 
 def extract(
-    file_path, tables=False, experimental=False, force_gpu=False, lang="de", **kwargs
+    file_path,
+    tables=False,
+    experimental=False,
+    force_gpu=False,
+    lang="multi",
+    parsr_location="localhost:3001",
+    **kwargs,
 ):
     """Outward facing api
     """
@@ -40,7 +46,9 @@ def extract(
         else:
             logger.debug("using CUDA")
 
-    input_json, tables_csv = run_parsr(file_path, check_tables=tables)
+    input_json, tables_csv = run_parsr(
+        file_path, check_tables=tables, parsr_location=parsr_location
+    )
     e = Export(
         input_json,
         seperate_header_footer=experimental,

@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "pdddf"
 version = "0.0.0"
-description = "Dehyphenation of broken text (mainly German), e.g., extracted from a PDF"
+description = "Reconstruct text from PDFs with Machine Learning"
 license = "GPL-3.0-only"
 authors = ["Johannes Filter <hi@jfilter.de>"]
+repository = "https://github.com/jfilter/pdddf"
 keywords = ['pdf', 'nlp', 'german', 'text-extraction']
 classifiers = [
     "Programming Language :: Python :: 3.6",
@@ -13,6 +14,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
