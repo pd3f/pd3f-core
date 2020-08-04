@@ -5,7 +5,7 @@ description = "Reconstruct text from PDFs with Machine Learning"
 license = "GPL-3.0-only"
 authors = ["Johannes Filter <hi@jfilter.de>"]
 repository = "https://github.com/jfilter/pdddf"
-keywords = ['pdf', 'nlp', 'german', 'text-extraction']
+keywords = ["pdf", "nlp", "german", "text-extraction"]
 classifiers = [
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",

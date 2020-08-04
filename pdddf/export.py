@@ -123,7 +123,7 @@ class Export:
         remove_hyphens=True,
         footnotes_last=True,
         ocrd=None,
-        lang="de",
+        lang="multi",
     ):
         if type(input_json) is str:
             self.input_data = json.loads(Path(input_json).read_text())
