@@ -14,6 +14,33 @@ The project is still in an early stage.
 Expect rough edges and rapid changes.
 Documentation will get improved (at some point).
 
+## Features
+
+### Dehyphenation of Lines
+
+Check if two lines can be joined by removing hyphens ('-').
+
+### Reverse Page Break
+
+Check if the last paragraph of a page und the first paragraph of the following page can be joined.
+
+### Re-order Footnotes (Experimental)
+
+In order to join paragraphs, detect Footnotes and re-order them.
+For now, the footnotes are pulled to the end of a file
+
+### Remove Duplicate Header / Footer (Experimental)
+
+If the header or the footer are the same for all pages, only display them once.
+
+Headers are pulled to the start of the document and Footer to the end.
+
+Some heuristic based on the similarity of footers are used. (Jaccard distance for text, and compare overlapping shapes)
+
+Special case for OCRd PDFs: Choose the Header / Footer with the best Flair score to display.
+Since header / footer are small, the OCR may fail to get the text output.
+
+
 ## Installation
 
 ```bash
