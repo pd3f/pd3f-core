@@ -1,11 +1,12 @@
-# `pdddf` [![PyPI](https://img.shields.io/pypi/v/pdddf.svg)](https://pypi.org/project/pdddf/) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pdddf.svg)](https://pypi.org/project/pdddf/) [![PyPI - Downloads](https://img.shields.io/pypi/dm/pdddf)](https://pypistats.org/packages/pdddf)
+# `pd3f-core` [![PyPI](https://img.shields.io/pypi/v/pd3f-core.svg)](https://pypi.org/project/pd3f-core/) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pd3f-core.svg)](https://pypi.org/project/pd3f-core/) [![PyPI - Downloads](https://img.shields.io/pypi/dm/pd3f-core)](https://pypistats.org/packages/pd3f-core)
 
 *Experimental, use with care.*
 
 Python Package to **reconstruct** the **original text** from **PDFs** using language models.
-Checkout out [pd3f](https://github.com/pd3f/pd3f) for a full Docker-based text extraction pipeline using `pdddf`.
+`pd3f-core` assumes your PDF is either text-based or already OCRd.
+Checkout out [pd3f](https://github.com/pd3f/pd3f) for a full Docker-based text extraction pipeline using `pd3f-core`.
 
-`pdddf` first uses [Parsr](https://github.com/axa-group/Parsr) to chunk PDFs into lines and paragraphs.
+`pd3f-core` first uses [Parsr](https://github.com/axa-group/Parsr) to chunk PDFs into lines and paragraphs.
 Then, it uses the underlying Python package [dehyphen](https://github.com/jfilter/dehyphen) to reconstruct the text in the most probable way.
 The probability is derived by calculating the [perplexity](https://en.wikipedia.org/wiki/Perplexity) with [Flair](https://github.com/flairNLP/flair)`s character-based [language models](https://machinelearningmastery.com/statistical-language-modeling-and-neural-language-models/).
 
@@ -44,13 +45,13 @@ Since header / footer are small, the OCR may fail to get the text output.
 ## Installation
 
 ```bash
-pip install pdddf
+pip install pd3f
 ```
 
 or
 
 ```bash
-poetry add pdddf
+poetry add pd3f
 ```
 
 You need also a docker container of Parsr running on `localhost:3001` ([script](./scripts/locale_parsr.sh)).
@@ -61,7 +62,7 @@ You may also use tunnel a remote Parsr instance ([script](./scripts/locale_parsr
 ## Usage
 
 ```python
-from pdddf import extract
+from pd3f import extract
 
 text, tables = extract(file_path, tables=False, experimental=False, force_gpu=False, lang="multi", parsr_location="localhost:3001")
 ```
@@ -89,7 +90,7 @@ You need to set up your GPU with CUDA.
 1. install [conda (via miniconda)](https://docs.conda.io/en/latest/miniconda.html) and [poetry](https://python-poetry.org/docs/)
 2. create a new conda enviroment & activate it
 3. Install [PyTorch](https://pytorch.org/) with CUDA: `conda install pytorch torchvision cudatoolkit=10.2 -c pytorch` (example)
-4. Install pdddf with poetry: `poetry add pdddf`
+4. Install `pd3f-core` with poetry: `poetry add pd3f`
 
 Poetry realizes that it is run within a conda virtual env so it doesn't create a new one.
 Since setting up CUDA is hard, install it with the most easy way (with conda).
@@ -99,7 +100,7 @@ Since setting up CUDA is hard, install it with the most easy way (with conda).
 
 ### Parsr Config
 
-At the heart of `pdddf` is the JSON output of parsr.
+At the heart of `pd3f-core` is the JSON output of parsr.
 Some comments on how and why certain things were chosen.
 [Parsr's documentation about the different modules](https://github.com/axa-group/Parsr/tree/master/server/src/processing)
 

@@ -23,7 +23,7 @@ def run_parsr(
     markdown=False,
     check_tables=False,
     parsr_location="localhost:3001",
-    **kwargs
+    **kwargs,
 ):
     """Wrapper to interaction with parsr (using parsr's Python client)
 
@@ -32,7 +32,7 @@ def run_parsr(
     parsr = client(parsr_location)
 
     # update base config of parsr
-    with importlib.resources.path("pdddf", "pdddfConfig.json") as cfg_path:
+    with importlib.resources.path("pdddf", "pd3fConfig.json") as cfg_path:
         jdata = json.loads(cfg_path.read_text())
     jdata = update_dict(jdata, config)
 

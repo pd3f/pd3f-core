@@ -1,4 +1,4 @@
-from pdddf.utils import *
+from pd3f.utils import *
 
 
 def test_flatten():

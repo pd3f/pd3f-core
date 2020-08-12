@@ -1,4 +1,4 @@
-from pdddf.geometry import *
+from pd3f.geometry import *
 
 
 def test_flatten():
