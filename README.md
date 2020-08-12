@@ -1,14 +1,15 @@
-# `pd3f-core` [![PyPI](https://img.shields.io/pypi/v/pd3f-core.svg)](https://pypi.org/project/pd3f-core/) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pd3f-core.svg)](https://pypi.org/project/pd3f-core/) [![PyPI - Downloads](https://img.shields.io/pypi/dm/pd3f-core)](https://pypistats.org/packages/pd3f-core)
+# `pd3f-core` [![PyPI](https://img.shields.io/pypi/v/pd3f.svg)](https://pypi.org/project/pd3f/) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pd3f.svg)](https://pypi.org/project/pd3f/) [![PyPI - Downloads](https://img.shields.io/pypi/dm/pd3f)](https://pypistats.org/packages/pd3f)
 
 *Experimental, use with care.*
 
-Python Package to **reconstruct** the **original text** from **PDFs** using language models.
+Python Package to **reconstruct** the original **continuous text** from **PDFs** with language models.
 `pd3f-core` assumes your PDF is either text-based or already OCRd.
 Checkout out [pd3f](https://github.com/pd3f/pd3f) for a full Docker-based text extraction pipeline using `pd3f-core`.
 
 `pd3f-core` first uses [Parsr](https://github.com/axa-group/Parsr) to chunk PDFs into lines and paragraphs.
-Then, it uses the underlying Python package [dehyphen](https://github.com/jfilter/dehyphen) to reconstruct the text in the most probable way.
-The probability is derived by calculating the [perplexity](https://en.wikipedia.org/wiki/Perplexity) with [Flair](https://github.com/flairNLP/flair)`s character-based [language models](https://machinelearningmastery.com/statistical-language-modeling-and-neural-language-models/).
+Then, it uses the Python package [dehyphen](https://github.com/jfilter/dehyphen) to reconstruct the paragraphs in the most probable way.
+The probability is derived by calculating the [perplexity](https://en.wikipedia.org/wiki/Perplexity) with [Flair](https://github.com/flairNLP/flair)'s character-based [language models](https://machinelearningmastery.com/statistical-language-modeling-and-neural-language-models/).
+Unnecessary hyphens are removed, space or new lines are kept or dropt depending on the surround words.
 
 It's mainly developed for German but should work with other languages as well.
 The project is still in an early stage.
@@ -25,21 +26,20 @@ Check if two lines can be joined by removing hyphens ('-').
 
 Check if the last paragraph of a page und the first paragraph of the following page can be joined.
 
-### Re-order Footnotes (Experimental)
+### Footnote to Endnotes (Experimental)
 
-In order to join paragraphs, detect Footnotes and re-order them.
-For now, the footnotes are pulled to the end of a file
+In order to join paragraphs (and reverse page breaks), detect footnotes and turn them into endnotes.
+For now, the footnotes are pulled to the end of a file.
 
-### Remove Duplicate Header / Footer (Experimental)
+### Deduplication of Pager Header / Footer (Experimental)
 
 If the header or the footer are the same for all pages, only display them once.
-
-Headers are pulled to the start of the document and Footer to the end.
-
+Headers are pulled to the start of the document and footer to the end.
 Some heuristic based on the similarity of footers are used. (Jaccard distance for text, and compare overlapping shapes)
 
-Special case for OCRd PDFs: Choose the Header / Footer with the best Flair score to display.
-Since header / footer are small, the OCR may fail to get the text output.
+<!-- TODO -->
+<!-- Special case for OCRd PDFs: Choose the Header / Footer with the best Flair score to display.
+Since header / footer are small, the OCR may fail to get the text output. -->
 
 
 ## Installation
@@ -64,21 +64,23 @@ You may also use tunnel a remote Parsr instance ([script](./scripts/locale_parsr
 ```python
 from pd3f import extract
 
-text, tables = extract(file_path, tables=False, experimental=False, force_gpu=False, lang="multi", parsr_location="localhost:3001")
+text, tables = extract(file_path, tables=False, experimental=False, force_gpu=False, lang="multi", fast=False, parsr_location="localhost:3001")
 ```
 
 `file_path`: path a to a PDF. If it's a scanned PDF it needs to get OCR beforehand (outside of this package).
 
 `tables`: extract tables via Parsr (with Camelot / Tabula), results into list of CSV strings
 
-`experimental`: leave out duplicate text in headers / footers and pull all footnotes to the end of the document. Working unreliable right now.
+`experimental`: leave out duplicate text in headers / footers and turn footnotes to endnotes. Working unreliable right now.
 
 `force_gpu`: Raise error if CUDA is not available
 
 `lang`: Set the language, `de` for German, `en` for English, `es` for Spanish, `fr` for French. Some fast (less accurate) models exists.
 So set `multi-v0-fast` to get fast model for German, French (and some other languages). [Background](https://github.com/jfilter/dehyphen#usage)
 
-`parsr_location`: Setting a remote parsr location
+`fast`: Drop some Parsr steps to speed up computations
+
+`parsr_location`: Set Parsr location
 
 ### GPU Support (CUDA)
 

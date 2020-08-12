@@ -22,6 +22,7 @@ def run_parsr(
     text=False,
     markdown=False,
     check_tables=False,
+    fast=False,
     parsr_location="localhost:3001",
     **kwargs,
 ):
@@ -54,12 +55,19 @@ def run_parsr(
             if type(x) is str or "table-detection" not in x[0]
         ]
 
+    if fast:
+        jdata["cleaner"] = [
+            x
+            for x in jdata["cleaner"]
+            if type(x) is str and x != "drawing-detection" or x[0] != "image-detection"
+        ]
+
     with tempfile.NamedTemporaryFile(mode="w+") as tmp_config:
         json.dump(jdata, tmp_config)
         tmp_config.flush()  # persist
 
         # TODO: when upgrading to v3.2, use file_path and config_path
-        print("sending PDF to parsr")
+        logger.info("sending PDF to Parsr")
 
         logger.debug(jdata)
 
@@ -70,6 +78,8 @@ def run_parsr(
             save_request_id=True,
             silent=False,
         )
+
+    logger.info("got response from Parsr")
 
     tables = []
     if check_tables:

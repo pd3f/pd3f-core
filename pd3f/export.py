@@ -11,7 +11,6 @@ from functools import cached_property
 from pathlib import Path
 
 from cleantext import clean
-from tqdm import tqdm
 
 from .dehyphen_wrapper import dehyphen_paragraph, newline_or_not
 from .doc_info import (
@@ -34,6 +33,7 @@ def extract(
     force_gpu=False,
     lang="multi",
     parsr_location="localhost:3001",
+    fast=False,
     **kwargs,
 ):
     """Outward facing api
@@ -47,7 +47,7 @@ def extract(
             logger.debug("using CUDA")
 
     input_json, tables_csv = run_parsr(
-        file_path, check_tables=tables, parsr_location=parsr_location
+        file_path, check_tables=tables, parsr_location=parsr_location, fast=fast
     )
     e = Export(
         input_json,
@@ -160,9 +160,7 @@ class Export:
     def export_header_footer(self):
         headers, footers = [], []
 
-        for n_page, page in enumerate(
-            tqdm(self.input_data["pages"], desc="exporting pages")
-        ):
+        for n_page, page in enumerate(self.input_data["pages"]):
             header_per_page, footer_per_page = [], []
             for element in page["elements"]:
                 if (
@@ -222,9 +220,8 @@ class Export:
             cleaned_header, cleaned_footer, new_footnotes = self.export_header_footer()
 
         cleaned_data = []
-        for n_page, page in enumerate(
-            tqdm(self.input_data["pages"], desc="exporting pages")
-        ):
+        for n_page, page in enumerate(self.input_data["pages"]):
+            logger.info(f"export page #{n_page}")
             for element in page["elements"]:
                 if (
                     (self.seperate_header_footer or self.remove_header)

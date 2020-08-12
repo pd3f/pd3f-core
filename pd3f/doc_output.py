@@ -4,8 +4,6 @@
 import logging
 import re
 
-from tqdm import tqdm
-
 from .dehyphen_wrapper import is_split_paragraph
 from .utils import flatten
 
@@ -51,9 +49,8 @@ class DocumentOutput:
 
         gets complicated when footnotes are not re-ordered
         """
-        for idx, page in tqdm(
-            enumerate(self.order[:-1]), desc="trying to reverse page breaks"
-        ):
+        for idx, page in enumerate(self.order[:-1]):
+            logger.info(f"reversing page break page #{idx}")
             last_element = self.get_last_of_type_on_page(("body", "heading"), idx)
             next_element = self.get_first_of_type_on_page(("body", "heading"), idx + 1)
 
