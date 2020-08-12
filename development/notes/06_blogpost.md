@@ -1,31 +1,39 @@
-# Dokumente zu Text mit DDD
+# Jenseitz des PDF: Text-Extraktion mit Maschinellen Lernen
+
+> `pd3f` bringt Text aus PDFs in digitalen Fließtext.
+> Damit kann dieser für weiter Anwendungen bearbeitet werden.
+> Gerade im Deutschen gibt es aufgrund von Wortbrüchen am Zeilenende kaputten Text.
+> `pd3f` reapiert diesen mithilfe von Maschinen Lernen.
+> Damit wird der wahrscheinlichste Text
 
 PDFs sind für Menschen gemacht und nicht für Maschinen.
 Das führt dazu, dass wir sie lesen können, aber Maschinen Probleme haben Text zu extrahieren.
 Das ist jedoch notwendig, um z. B. über große Mengen von PDFs im Rahmen journalistischer Recherchen auszuwerten.
-Oder auch Menschen mit Seheinschränkungen sind darauf angewiesen, dass Computer ihnen Text vorlesen.
+Oder auch Menschen mit Seheinschränkungen sind darauf angewiesen, dass Computer ihnen Texte vorlesen.
+Und auch im Rahmen der bereits erfolgen oder geplanten Digitaliserung Deutscher Behörden müssen großen Aktenbestände digitalisert werden.
 
-Im Rahmen der Förderung von “DDD: Deutsche Dokumente Digitalisieren” sind mehrere Software-Lösung entstanden, um `guten` Text aus PDF zu rekonstruieren.
+Im Rahmen der Förderung von “DDD: Deutsche Dokumente Digitalisieren” ist eine Software-Lösung entstanden, um `guten` Text aus PDF zu rekonstruieren.
 Gut in dem Sinne, dass der ursprüngliche Text – ohne unnötige Zeilenumbrüche – wiederhergestellt werden kann.
-Gerade im Deutschen gibt’s auf Grund der Besonderheiten mit langen (zusammengesetzen) Wörtern den Fall, dass Wörter getrennt werden.
+Aus dem zerstückelten Text im PDF wird somit ein digitaler Fließtext.
+Gerade im Deutschen gibt es auf Grund der Besonderheiten mit langen (zusammengesetzen) Wörtern den Fall, dass Wörter am Zeilenende getrennt werden.
 So kommt es dazu, dass Wörter aufgeteilt werden.
 Bei einer üblichen Text-Extraktion werden so durchgetrennte Wörter genommen.
+Damit kann das ursprüngliche Wort nicht mehr per Suche gefunden werden.
 
 ## Texterkennung
 
 Text auf gescannten Dokumenten zu erkennen (OCR) erfolgt schon heute zufriedenstellend mit Open-Source-Lösungen.
 Aber es ist aber weiterhin ein Problem die Wörter aus einem PDF zu Text zusammenfassen.
 Das hängt mit dem veralteten Portable Document Format (PDF) zu tun.
-In diesem wird Fließtext nicht als Text dargestellt.
-Es kam aus der Idee des Druckens.
-So wird teilweise jedem einzelnen Buchstaben eine Position (x- und y-Wert für Höhe und Breite) auf dem (virtuellen) Blatt Papier zugewiesen.
+Das Format stammt aus der Idee des Druckens und in ihm wird Fließtext nicht als Text dargestellt.
+So wird teilweise jedem einzelnen Buchstaben als Zeichen kodiert und eine Position (x- und y-Wert für Höhe und Breite) auf dem (virtuellen) Blatt Papier zugewiesen.
 
-Um jetzt aus disem Buchstaben-Salat nutzen bestehen Tools Heuristiken, um Buchstaben zu Wörter zuzusammen zu setzen.
+Um aus diesem Buchstaben-Salat nutzen bestehen Tools Heuristiken, um Buchstaben zu Wörter zuzusammen zu setzen.
 Aus Wörter müssen wieder Zeilen werden und anschließend müssen die Zeilen zu Paragraphen zusammenzufassen.
 Das ist eine ohnehin schwierige Aufgabe.
-Das Open-Source-Tool `parsr` von dem französischen Versicherungskonzern Axa sorg immerhin hier schon für Besserung.
+Das Open-Source-Tool [Parsr](https://github.com/axa-group/Parsr) von dem französischen Versicherungskonzern Axa sorg immerhin hier schon für Besserung.
 Es zerlegt relativ erfolgreich ein PDF in seine Zeilen und Paragrafen.
-Das Tool ist erst einige wenige Monate vor start von DDD erschienen und erwieß sich als nützlich.
+Das Tool ist erst einige wenige Monate vor dem Start der Projektförderung erschienen und erwieß sich als nützlich.
 Doch Ziel von DDD ist es, guten Text zu extrahieren.
 Denn auch der Text-Output von parsr sorg dafür, dass
 
@@ -45,18 +53,18 @@ Ja, aber dann gibt es Beispiele wie hier:
 Um da weiterzukommen, braucht es mehr Verständnis über die deutsche Sprache.
 Hier kommt Sprachmodelle zum Einsatz.
 
-## Exkurs Sprachmodelle (Language Models)
+## Was sind Sprachmodelle? (Language Models)
 
 Bei Sprachmodelle geht es darum, dass das Modell zukünftige Wörter auf der Basis von vergangen Wörter lernt.
-Das passiert auf großen Textmengen, die gerade frei zu verfügung stehen.
+Das passiert auf großen Textmengen, die gerade frei zu Verfügung stehen.
 Dann wird das Modell trainiert um zukünftige Wörter zu lernen.
 Ein Einsatz finden das auf Smart phones und der Autovervollständigung.
 Es gibt es auf Wörtern oder Buchstaben.
 Wir ben
 
-## pdddf
+## dehyphen
 
-Ein Tool das im Rahmen von DDD gefördert wurde ist `pdddf`.
+Ein Tool das im Rahmen von DDD gefördert wurde ist `dehyphen`.
 Es benutzt Sprachmodelle, um zu entschieden ob "-" entfernt werden oder nicht.
 Die Grundidee: Zunächst werden Kandidaten gefunden, wie zwei Zeilen verbunden werden könnten.
 Mit –, ohne – und space weg und mit normalen Space.
@@ -67,7 +75,7 @@ Das am wahrscheinlichsten ist, wird genommen.
 Bei dem obiegen Beispiel spuckt `pdddf` das richtige Ergebnisse aus.
 `pdddf` ist ein Modul, welches von anderen Software-Entwickler:innen einfach wiederverwendet werden kann.
 
-## pd3f
+## Pipeline pd3f
 
 Im Rahmen von DDD ist nicht nur das Packet entscheiden, sondern auch eine komplette Anwendung, eine Datenverarbeitungs Pipeline.
 Diese kann betrieben werden, um (Deutsche) Dokumente zu digitalisieren.
