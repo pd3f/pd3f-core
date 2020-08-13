@@ -1,31 +1,30 @@
-# Jenseitz des PDF: Text-Extraktion mit Maschinellen Lernen
+# PDF zu Fließtext mit Maschinellem Lernen
 
-> `pd3f` bringt Text aus PDFs in digitalen Fließtext.
-> Damit kann dieser für weiter Anwendungen bearbeitet werden.
-> Gerade im Deutschen gibt es aufgrund von Wortbrüchen am Zeilenende kaputten Text.
-> `pd3f` reapiert diesen mithilfe von Maschinen Lernen.
-> Damit wird der wahrscheinlichste Text
+> Durch lange Wörter in der Deutschen Sprache ist Text in PDF bei Zeilenumbrüchen zerstückelt.
+> `pd3f` rekonsturiert mithilfe von Maschinellem Lernen den ursprünglichen Fließtext.
 
 PDFs sind für Menschen gemacht und nicht für Maschinen.
 Das führt dazu, dass wir sie lesen können, aber Maschinen Probleme haben Text zu extrahieren.
 Das ist jedoch notwendig, um z. B. über große Mengen von PDFs im Rahmen journalistischer Recherchen auszuwerten.
-Oder auch Menschen mit Seheinschränkungen sind darauf angewiesen, dass Computer ihnen Texte vorlesen.
+Oder Personen mit Seheinschränkungen sind darauf angewiesen, dass Computer ihnen Texte vorlesen.
 Und auch im Rahmen der bereits erfolgen oder geplanten Digitaliserung Deutscher Behörden müssen großen Aktenbestände digitalisert werden.
 
-Im Rahmen der Förderung von “DDD: Deutsche Dokumente Digitalisieren” ist eine Software-Lösung entstanden, um `guten` Text aus PDF zu rekonstruieren.
+## `pd3f`
+
+Im Rahmen der Protoype-Förderung von “DDD: Deutsche Dokumente Digitalisieren” ist die Software-Lösung `pd3f` entstanden, um `guten` Text aus PDF zu rekonstruieren.
 Gut in dem Sinne, dass der ursprüngliche Text – ohne unnötige Zeilenumbrüche – wiederhergestellt werden kann.
 Aus dem zerstückelten Text im PDF wird somit ein digitaler Fließtext.
 Gerade im Deutschen gibt es auf Grund der Besonderheiten mit langen (zusammengesetzen) Wörtern den Fall, dass Wörter am Zeilenende getrennt werden.
-So kommt es dazu, dass Wörter aufgeteilt werden.
-Bei einer üblichen Text-Extraktion werden so durchgetrennte Wörter genommen.
-Damit kann das ursprüngliche Wort nicht mehr per Suche gefunden werden.
+Bei einer üblichen Text-Extraktion werden durchgetrennte Wörter nicht wiederzusammengefügt.
+Damit kann das ursprüngliche Wort z. B. nicht mehr per Suche gefunden werden.
+Und weiterführenden Anwendung, wie z. B. die automatisierte Erkennung von Eigennamen (Named-Entity Recognition) wird erschwert.
 
-## Texterkennung
+## Automatsierte Texterkennung
 
 Text auf gescannten Dokumenten zu erkennen (OCR) erfolgt schon heute zufriedenstellend mit Open-Source-Lösungen.
 Aber es ist aber weiterhin ein Problem die Wörter aus einem PDF zu Text zusammenfassen.
 Das hängt mit dem veralteten Portable Document Format (PDF) zu tun.
-Das Format stammt aus der Idee des Druckens und in ihm wird Fließtext nicht als Text dargestellt.
+Das Format folgt der Idee des Druckens und in ihm wird Fließtext nicht als Text dargestellt.
 So wird teilweise jedem einzelnen Buchstaben als Zeichen kodiert und eine Position (x- und y-Wert für Höhe und Breite) auf dem (virtuellen) Blatt Papier zugewiesen.
 
 Um aus diesem Buchstaben-Salat nutzen bestehen Tools Heuristiken, um Buchstaben zu Wörter zuzusammen zu setzen.
@@ -34,60 +33,69 @@ Das ist eine ohnehin schwierige Aufgabe.
 Das Open-Source-Tool [Parsr](https://github.com/axa-group/Parsr) von dem französischen Versicherungskonzern Axa sorg immerhin hier schon für Besserung.
 Es zerlegt relativ erfolgreich ein PDF in seine Zeilen und Paragrafen.
 Das Tool ist erst einige wenige Monate vor dem Start der Projektförderung erschienen und erwieß sich als nützlich.
-Doch Ziel von DDD ist es, guten Text zu extrahieren.
-Denn auch der Text-Output von parsr sorg dafür, dass
+Unsere Software `pd3f` nutzt die Ausgabe von Parsr, um darauf aufbauen guten Text wiederherzustellen.
 
-Eigentlich eine Einfache Aufgabe: Alle Wörter mit – am Ende werden mit dem Wort auf der Darauffolgenden Zeile zusammengefügt, hier ein Beispiel.
+Eigentlich eine einfache Aufgabe: Alle Wörter mit einem "–" am Zeilende werden mit dem Wort auf der darauffolgenden Zeile zusammengefügt wie in diesem Beispiel.
 
-> die Bedeutung der finan-
+> ... die Bedeutung der finan-
 >
-> ziellen Interessen der Union
+> ziellen Interessen der Union ...
 
-Ja, aber dann gibt es Beispiele wie hier:
+Das Wort "finanziellen" entspricht dem ursprünglichen Text.
+
+Es gibt aber auch "-" am Zeilenden, das nicht entfernt werden darf, weil es Bestandteil des Worter ist.
+Anbei ein Beispiel.
 
 > Auch andere EU-
 >
-> Staaten, wie bspw. Polen,
+> Staaten, wie bspw. Polen, ...
 
 "EUStaaten" wären nicht korrekt.
 Um da weiterzukommen, braucht es mehr Verständnis über die deutsche Sprache.
-Hier kommt Sprachmodelle zum Einsatz.
+Hier kommt Maschinelles Lernen in Form von Sprachmodellen zum Einsatz.
 
 ## Was sind Sprachmodelle? (Language Models)
 
-Bei Sprachmodelle geht es darum, dass das Modell zukünftige Wörter auf der Basis von vergangen Wörter lernt.
-Das passiert auf großen Textmengen, die gerade frei zu Verfügung stehen.
-Dann wird das Modell trainiert um zukünftige Wörter zu lernen.
-Ein Einsatz finden das auf Smart phones und der Autovervollständigung.
-Es gibt es auf Wörtern oder Buchstaben.
-Wir ben
+Bei Sprachmodelle geht es darum, dass ein Computer-Programm zukünftige Wörter auf der Basis von vergangen Wörter lernt.
+Zum Einsatz kommen Sprachmodelle z. B. auf Smartphones bei der Autovervollständigung.
+Sprachmodelle verinnerlichen die Characteristiken der Deutschen Sprachen und können vorhersagen, welche Wörter oder Buchstaben wahrscheinlich als nächsten Kommen.
+So kommt nach den beiden Wörtern "Sehr geehrte" wahrscheinlich das Wort "Frau" als nächstes.
 
-## dehyphen
+Solche Sprachmodelle operieren auf ganzen Wörtern oder auch nur auf Buchstaben.
 
-Ein Tool das im Rahmen von DDD gefördert wurde ist `dehyphen`.
-Es benutzt Sprachmodelle, um zu entschieden ob "-" entfernt werden oder nicht.
-Die Grundidee: Zunächst werden Kandidaten gefunden, wie zwei Zeilen verbunden werden könnten.
-Mit –, ohne – und space weg und mit normalen Space.
-Das am wahrscheinlichsten ist, wird genommen.
+## `dehyphen`
 
-(Konkret wird perplexity mit Flair berechnet)
+Eine Unterkomponente von `pd3f` ist das Software-Packet `dehyphen`, welches ebenfalls im Rahmen der Förderung entstand.
+Es benutzt Sprachmodelle, um zu entschieden ob ein "-" am Zeilenende entfernt werden sollte oder nicht.
+Die Grundidee: Es wird berechntet, welche die wahrscheinliche Weg ist zwei Zeilen zu verbinden.
 
-Bei dem obiegen Beispiel spuckt `pdddf` das richtige Ergebnisse aus.
-`pdddf` ist ein Modul, welches von anderen Software-Entwickler:innen einfach wiederverwendet werden kann.
+> Auch andere EU-
+>
+> Staaten, wie bspw. Polen, ...
 
-## Pipeline pd3f
+Bei dem obrigen Beispiel spuckt `dehyphen` das richtige Ergebnisse aus: "EU-Staaten" und nicht "EUStaaten".
+`dehyphen` ist ein Modul, welches von anderen Software-Entwickler:innen einfach wiederverwendet werden kann.
 
-Im Rahmen von DDD ist nicht nur das Packet entscheiden, sondern auch eine komplette Anwendung, eine Datenverarbeitungs Pipeline.
+## Datenverarbeitungs-Pipeline `pd3f`
+
+Das Hauptergebnis der Förderung ist `pd3f`: Eine komplette Anwendung und eine Datenverarbeitungs-Pipeline für PDFs.
 Diese kann betrieben werden, um (Deutsche) Dokumente zu digitalisieren.
-Eine große Anzahl von Software wird genutzt.
+Auf einem gescannten Dokument wird der Text automatsiert gescannt, dass wird mithilfe von Parsr der Text in Wörter, Linies und Paragraphenn unterteilt.
+Anschließend wird mithilfe von `dehyphen`
 Anbei eine schematische Auflistung.
 
-[TODO]
+![flow.jpg]()
 
 Der Fokus liegt auf dem Deutschen mit seinem langen Wörtern, es kann aber auch für andere Sprachen angewandt werden.
-In `pd3f` sind aktuell auch Englisch, Spanisch und Französisch verfügbar.
+`pd3f` ist aktuell auch für Englisch, Spanisch und Französisch verfügbar.
 
-[Zur Demo von `pd3f`](demo.pd3f.com)
+[Zur Demo von `pd3f`](https://demo.pd3f.com)
 
-Es gibt aber noch viel zu tun: Viele PDFs sehen unterschiedliche aus. Gerade bei schlecht gescannten PDFs ist der Text nicht so gut. Vieles ist noch möglich.
-Was jetzt noch fehlt ist eine systematische Veröffentlichung. Diese wird vorraussichtlich im Septerm 2020 erscheiben.
+## Weitere Arbeit
+
+Da Dokumente in so vielen unterschiedlichen Formen vorkommt, funktioniert `pd3f` nicht für alle.
+Gerade bei schlecht gescannten PDFs ist der Text nicht so gut.
+Was jetzt noch fehlt ist eine systematische Veröffentlichung der Resultate von `p3d`.
+Diese wird vorraussichtlich im September 2020 erfolgen.
+Der Code wird online <https://github.com/pd3f> stehen und weiter gepflegt.
+Ich danke dem BMBF für die Förderung des Projekts.
