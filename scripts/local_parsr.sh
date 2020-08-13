@@ -3,8 +3,8 @@ set -e
 set -x
 
 # had to user different versions to make it work
-parsr_version="v1.0.0"
-parsr_ui_version="v1.0.0"
+parsr_version="V1.1.0"
+parsr_ui_version="V1.1.0"
 
 if [ "$1" = "stop" ]; then
     docker stop parsr-api || true
