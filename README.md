@@ -6,6 +6,8 @@ Python Package to **reconstruct** the original **continuous text** from **PDFs**
 `pd3f-core` assumes your PDF is either text-based or already OCRd.
 Checkout out [pd3f](https://github.com/pd3f/pd3f) for a full Docker-based text extraction pipeline using `pd3f-core`.
 
+👉 [pd3f - PDF Text Extractor](https://github.com/pd3f/pd3f)
+
 `pd3f-core` first uses [Parsr](https://github.com/axa-group/Parsr) to chunk PDFs into lines and paragraphs.
 Then, it uses the Python package [dehyphen](https://github.com/jfilter/dehyphen) to reconstruct the paragraphs in the most probable way.
 The probability is derived by calculating the [perplexity](https://en.wikipedia.org/wiki/Perplexity) with [Flair](https://github.com/flairNLP/flair)'s character-based [language models](https://machinelearningmastery.com/statistical-language-modeling-and-neural-language-models/).
@@ -22,7 +24,11 @@ Documentation will get improved (at some point).
 
 Check if two lines can be joined by removing hyphens ('-').
 
-### Reverse Page Break
+### Reasonable Joining of Lines
+
+Decide between adding a simple space (' ') or a new line ('\n') when joining lines.
+
+### Reverse Page Break (Experimental)
 
 Check if the last paragraph of a page und the first paragraph of the following page can be joined.
 
@@ -102,22 +108,23 @@ Since setting up CUDA is hard, install it with the most easy way (with conda).
 
 ### Parsr Config
 
-At the heart of `pd3f-core` is the JSON output of parsr.
+At the heart of `pd3f-core` is the JSON output of Parsr.
 Some comments on how and why certain things were chosen.
 [Parsr's documentation about the different modules](https://github.com/axa-group/Parsr/tree/master/server/src/processing)
 
 Parsr has several module to classify paragraphs into certain types.
 They offer a list detections as well as an heading detection.
-In my experience, the accuracy is to low for both, so we don't use it right now.
-This also means all the text is flat (no headings, different formattings etc.).
+In my experience, the accuracy is too low for both, so we don't use it right now.
+This also means all the extracted (output) text is flat (no headings, different formattings etc.).
 
 We enable Drawing + Image Detection because we may need to understand what paragraph is following which other one.
 This may be helpful when to decide whether to join paragraphs.
+But it's dropped when activating the `fast` setting.
 
 In the JSON output is a field `pageNumber`.
 This comes from the page detection module.
-`pageNumber`: Derived from header / footer of each page.
-So it may be different from the array of pages.
+So `pageNumber` is derived from header / footer of each page.
+So it may be different from the index in the page array.
 Don't relay on `pageNumber` in the JSON output.
 
 `words-to-line-new` has be used like this.
@@ -130,6 +137,10 @@ There is no error but the accuracy decreases if it used otherwise.
 ```
 
 Don't do OCR with Parsr because the results are worse than OCRmyPDF (because the latter uses image preprocessing).
+
+## Future Work / TODO
+
+- make reverse page break work without requiring the experimental features
 
 ## Developement
 
