@@ -11,7 +11,7 @@ from dehyphen import FlairScorer
 
 # cache max 100mb
 memory = Memory(
-    "~/.cache/pdddf/dehyphen", verbose=0, compress=5, bytes_limit=100 * 1000 * 1000
+    "~/.cache/pd3f/dehyphen", verbose=0, compress=5, bytes_limit=100 * 1000 * 1000
 )
 
 
