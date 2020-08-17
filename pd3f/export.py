@@ -56,6 +56,7 @@ def extract(
         footnotes_last=experimental,
         remove_page_number=experimental,
         lang=lang,
+        fast=fast,
         **kwargs,
     )
     return e.text(), tables_csv
@@ -127,6 +128,7 @@ class Export:
         footnotes_last=True,
         ocrd=None,
         lang="multi",
+        fast=False,
     ):
         if type(input_json) is str:
             self.input_data = json.loads(Path(input_json).read_text())
@@ -157,9 +159,20 @@ class Export:
         # The same looking font is sometimes super different for OCRd PDFs. Is it a bug?
         self.consider_font_size_linebreak = False
 
+        if fast:
+            # In the fast mode, not all elments are classified via Parsr. So we may have some leftover values with None.
+            # pd3f-core only works with non-none elements so remove them here.
+            self.delete_none_elements()
+
         self.info = DocumentInfo(self.input_data)
         self.fix_headers_footers()
         self.export()
+
+    def delete_none_elements(self):
+        for p in self.input_data["pages"]:
+            for e in p["elements"]:
+                if e is None:
+                    p["elements"].remove(e)
 
     def export_header_footer(self):
         headers, footers = [], []
