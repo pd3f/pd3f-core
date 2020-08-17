@@ -146,3 +146,6 @@ class Element:
         assert self.type == other_element.type
         self.lines += other_element.lines
         return self
+
+    def __len__(self):
+        return len(self.lines)
