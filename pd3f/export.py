@@ -162,6 +162,8 @@ class Export:
         if fast:
             # In the fast mode, not all elments are classified via Parsr. So we may have some leftover values with None.
             # pd3f-core only works with non-none elements so remove them here.
+
+            # FIXME: This is dirty because `fast` is also encoded in `lang`
             self.delete_none_elements()
 
         self.info = DocumentInfo(self.input_data)
