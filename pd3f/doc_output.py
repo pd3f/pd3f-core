@@ -30,15 +30,15 @@ class DocumentOutput:
             elem_id = self.merged_elements[elem_id]
         return list(filter(lambda x: x.id == elem_id, self))[0]
 
-    def get_first_of_type_on_page(self, find_types, page_num):
-        for ele_id in self.order[page_num]:
+    def get_first_of_type_on_page(self, find_types, idx_page):
+        for ele_id in self.order[idx_page]:
             ele = self.get_element(ele_id)
             if ele.type in find_types:
                 return ele
         return None
 
-    def get_last_of_type_on_page(self, find_types, page_num):
-        for ele_id in reversed(self.order[page_num]):
+    def get_last_of_type_on_page(self, find_types, idx_page):
+        for ele_id in reversed(self.order[idx_page]):
             ele = self.get_element(ele_id)
             if ele.type in find_types:
                 return ele
@@ -119,7 +119,7 @@ class Element:
         element_type,
         lines,
         element_id,
-        page_number=None,
+        idx_page=None,
         num_newlines=0,
         level=None,
         ends_newline=None,
@@ -129,7 +129,7 @@ class Element:
         self.lines = lines
         self.id = element_id
         self.level = level
-        self.page_number = page_number
+        self.idx_page = idx_page
         self.num_newlines = num_newlines
         self.ends_newline = ends_newline
 

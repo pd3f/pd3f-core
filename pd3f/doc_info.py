@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 def avg_word_space(line):
     """Average word space on a line, util for words / lines
-    
+
     src: https://github.com/axa-group/Parsr/blob/69e6b9bf33f1cc43d5a87d428cedf1132ccc48e8/server/src/types/DocumentRepresentation/Paragraph.ts#L460
     """
 
@@ -237,15 +237,15 @@ class DocumentInfo:
         )
 
     def element_order_page(self):
-        """Save the order of paragraphes for each page
+        """Save the order of paragraphes for each page, exclude header / footer
         """
         self.order_page = []
         self.id_to_elem = {}
-        for n_page, p in enumerate(self.input_data["pages"]):
+        for idx_page, p in enumerate(self.input_data["pages"]):
             per_page = []
             for e in p["elements"]:
                 # not all elements are included here
-                e["page_num"] = n_page
+                e["idx_page"] = idx_page
                 self.id_to_elem[e["id"]] = e
 
                 if not e["type"] in ("paragraph", "heading"):

@@ -160,7 +160,7 @@ class Export:
     def export_header_footer(self):
         headers, footers = [], []
 
-        for n_page, page in enumerate(self.input_data["pages"]):
+        for idx_page, page in enumerate(self.input_data["pages"]):
             header_per_page, footer_per_page = [], []
             for element in page["elements"]:
                 if (
@@ -182,15 +182,15 @@ class Export:
             footers = remove_duplicates(footers, self.lang)
 
         cleaned_header, cleaned_footer, footnotes = [], [], []
-        for n_page, (header_per_page, footer_per_page) in enumerate(
+        for idx_page, (header_per_page, footer_per_page) in enumerate(
             zip(headers, footers)
         ):
             for e in header_per_page:
-                result_para = self.export_paragraph(e, n_page, test_footnote=False)
+                result_para = self.export_paragraph(e, idx_page, test_footnote=False)
                 result_para and cleaned_header.append(result_para)
 
             for e in footer_per_page:
-                result_para = self.export_paragraph(e, n_page)
+                result_para = self.export_paragraph(e, idx_page)
                 if result_para is not None:
                     if result_para.type == "footnotes":
                         footnotes.append(result_para)
@@ -220,8 +220,8 @@ class Export:
             cleaned_header, cleaned_footer, new_footnotes = self.export_header_footer()
 
         cleaned_data = []
-        for n_page, page in enumerate(self.input_data["pages"]):
-            logger.info(f"export page #{n_page}")
+        for idx_page, page in enumerate(self.input_data["pages"]):
+            logger.info(f"export page #{idx_page}")
             for element in page["elements"]:
                 if (
                     (self.seperate_header_footer or self.remove_header)
@@ -239,13 +239,13 @@ class Export:
                 if element["type"] == "heading":
                     cleaned_data.append(self.export_heading(element))
                 if element["type"] == "paragraph":
-                    result_para = self.export_paragraph(element, n_page)
+                    result_para = self.export_paragraph(element, idx_page)
                     result_para and cleaned_data.append(result_para)
 
             # only append new foofnotes here, most likel get reorced anyhow
             if new_footnotes is not None:
                 footer_on_this_page = [
-                    x for x in new_footnotes if x.page_number == n_page
+                    x for x in new_footnotes if x.idx_page == idx_page
                 ]
                 cleaned_data += footer_on_this_page
 
@@ -328,7 +328,7 @@ class Export:
                 fonts.append(word["font"])
         return words, fonts
 
-    def lines_to_paragraph(self, paragraph, page_number, test_footnote):
+    def lines_to_paragraph(self, paragraph, idx_page, test_footnote):
         def no_alphanum_char(text):
             """Checks if text only contains non-alpha-num chars, e.g. puncts
             """
@@ -357,7 +357,7 @@ class Export:
             return None
 
         if test_footnote and self.is_footnotes_paragraph(
-            paragraph, font_counter, page_number, lines
+            paragraph, font_counter, idx_page, lines
         ):
             # don't test on last line
             for i in list(lines)[:-1]:
@@ -389,7 +389,7 @@ class Export:
                         lines[i].append(" ")
             # TODO: dehyphen
             return Element(
-                "footnotes", lines.valid, paragraph["id"], page_number=page_number
+                "footnotes", lines.valid, paragraph["id"], idx_page=idx_page
             )
         else:
             # ordinary paragraph
@@ -426,7 +426,7 @@ class Export:
                 "body",
                 lines,
                 paragraph["id"],
-                page_number=page_number,
+                idx_page=idx_page,
                 num_newlines=num_newlines,
                 ends_newline=ends_newline,
             )
@@ -440,10 +440,10 @@ class Export:
             lines.append(rl)
         return Element("heading", lines, e["id"], e["level"])
 
-    def export_paragraph(self, e, page_number, test_footnote=True):
-        return self.lines_to_paragraph(e, page_number, test_footnote)
+    def export_paragraph(self, e, idx_page, test_footnote=True):
+        return self.lines_to_paragraph(e, idx_page, test_footnote)
 
-    def is_footnotes_paragraph(self, paragraph, counter, page_number, lines):
+    def is_footnotes_paragraph(self, paragraph, counter, idx_page, lines):
         # TODO: more heuristic: 1. do numbers appear in text? 2. is there a drawing in it
         # right now it expects the footnote paragraph to consists of a single paragraph
 
@@ -461,16 +461,16 @@ class Export:
             return False
 
         # can't be empty
-        if len(self.info.order_page[page_number]) == 0:
+        if len(self.info.order_page[idx_page]) == 0:
             return False
 
         # check if this is the last paragraph
-        if self.info.order_page[page_number - 1][-1] != paragraph["id"]:
+        if self.info.order_page[idx_page][-1] != paragraph["id"]:
             return False
 
         # if the previous element ends with `:` it expects something, so it can't be the last paragraph
-        if len(self.info.order_page[page_number - 1]) > 1:
-            prev_elem = self.info.id_to_elem[self.info.order_page[page_number - 1][-2]]
+        if len(self.info.order_page[idx_page]) > 1:
+            prev_elem = self.info.id_to_elem[self.info.order_page[idx_page][-2]]
             prev_elem_words, _ = self.line_to_words(prev_elem["content"][-1])
             if prev_elem_words[-1].endswith(":"):
                 logger.debug(f"Id of cur para: {paragraph['id']}")
