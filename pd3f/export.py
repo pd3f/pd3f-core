@@ -460,6 +460,10 @@ class Export:
         ):
             return False
 
+        # can't be empty
+        if len(self.info.order_page[page_number]) == 0:
+            return False
+
         # check if this is the last paragraph
         if self.info.order_page[page_number - 1][-1] != paragraph["id"]:
             return False
