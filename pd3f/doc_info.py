@@ -166,7 +166,7 @@ def remove_page_number_header_footer(page_items):
 
     results = []
     for idx, x in enumerate(page_items):
-        if texts[idx] != "":
+        if texts[idx].strip() != "":
             results.append(x)
     return results
 
