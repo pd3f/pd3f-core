@@ -19,6 +19,7 @@ from .doc_info import (
     most_used_font,
     remove_duplicates,
     roughly_same_font,
+    remove_page_number_header_footer,
 )
 from .doc_output import DocumentOutput, Element
 from .parsr_wrapper import run_parsr
@@ -53,6 +54,7 @@ def extract(
         input_json,
         seperate_header_footer=experimental,
         footnotes_last=experimental,
+        remove_page_number=experimental,
         lang=lang,
         **kwargs,
     )
@@ -118,6 +120,7 @@ class Export:
         remove_punct_paragraph=True,
         seperate_header_footer=True,
         remove_duplicate_header_footer=True,
+        remove_page_number=True,
         remove_header=False,
         remove_footer=False,
         remove_hyphens=True,
@@ -137,12 +140,13 @@ class Export:
         self.remove_punct_paragraph = remove_punct_paragraph
         self.seperate_header_footer = seperate_header_footer
         self.remove_duplicate_header_footer = remove_duplicate_header_footer
+        self.remove_page_number = remove_page_number
         self.remove_header = remove_header
         self.remove_footer = remove_footer
         self.remove_hyphens = remove_hyphens
         self.footnotes_last = footnotes_last
-        self.ocrd = ocrd
-        self.lang = lang  # not used atm
+        self.ocrd = ocrd  # not used atm
+        self.lang = lang  # name of Flair model (where the language is included)
 
         if seperate_header_footer and any((remove_footer, remove_header)):
             raise ValueError(
@@ -200,6 +204,8 @@ class Export:
         return cleaned_header, cleaned_footer, footnotes
 
     def fix_headers_footers(self):
+        """The output for header and footer for Parsr is not the best. Make use of some simple heuristics based on the font to improve it.
+        """
         for idx_page, page in enumerate(self.input_data["pages"]):
             for idx_e, e in enumerate(page["elements"]):
                 if "isHeader" in e["properties"] and e["properties"]["isHeader"]:
@@ -248,6 +254,10 @@ class Export:
                     x for x in new_footnotes if x.idx_page == idx_page
                 ]
                 cleaned_data += footer_on_this_page
+
+        if self.remove_page_number:
+            cleaned_header = remove_page_number_header_footer(cleaned_header)
+            cleaned_footer = remove_page_number_header_footer(cleaned_footer)
 
         self.doc = DocumentOutput(
             cleaned_data,
@@ -388,9 +398,7 @@ class Export:
                     else:
                         lines[i].append(" ")
             # TODO: dehyphen
-            return Element(
-                "footnotes", lines.valid, paragraph["id"], idx_page=idx_page
-            )
+            return Element("footnotes", lines.valid, paragraph["id"], idx_page=idx_page)
         else:
             # ordinary paragraph
             num_newlines = 0

@@ -6,6 +6,7 @@ from collections import Counter
 from statistics import median
 
 from textdistance import jaccard
+from cleantext import clean
 
 from .dehyphen_wrapper import single_score
 from .geometry import sim_bbox
@@ -148,6 +149,25 @@ def remove_duplicates(page_items, lang):
             results.append(elements)
         else:
             results.append([])
+    return results
+
+
+def remove_page_number_header_footer(page_items):
+    """Rough check to remove elements with text such as `Seite $NUM von $NUM` or just `$NUM`.
+
+    TODO: Make it work if the pager number is part of a bigger header/footer. And also consider the language.
+    """
+    texts = [
+        clean(only_text(x), replace_with_number="", no_punct=True)
+        .replace("seite", "")
+        .replace("von", "")
+        for x in page_items
+    ]
+
+    results = []
+    for idx, x in enumerate(page_items):
+        if texts[idx] != "":
+            results.append(x)
     return results
 
 
