@@ -206,7 +206,7 @@ class DocumentInfo:
             for e in p["elements"]:
                 lis = extract_elements(e, "line")
                 for x in lis:
-                    x["page_num"] = n_page
+                    x["idx_page"] = n_page
                     self.id_to_elem[x["id"]] = x
 
                 self.counter_width.update([x["box"]["w"] for x in lis])
@@ -252,8 +252,8 @@ class DocumentInfo:
         """Check if both elements are on the same page
         """
         return (
-            self.id_to_elem[e1["id"]]["page_num"]
-            == self.id_to_elem[e2["id"]]["page_num"]
+            self.id_to_elem[e1["id"]]["idx_page"]
+            == self.id_to_elem[e2["id"]]["idx_page"]
         )
 
     def element_order_page(self):
