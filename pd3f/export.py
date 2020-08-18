@@ -172,9 +172,7 @@ class Export:
 
     def delete_none_elements(self):
         for p in self.input_data["pages"]:
-            for e in p["elements"]:
-                if e is None:
-                    p["elements"].remove(e)
+            p["elements"] = list(filter(None, p["elements"]))
 
     def export_header_footer(self):
         headers, footers = [], []
