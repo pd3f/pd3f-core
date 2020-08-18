@@ -26,13 +26,22 @@ class DocumentOutput:
         self.data[key] = value
 
     def get_element(self, elem_id):
+        """Returns element from the data. Returns `None` if the element is not part out of the output anymore.
+        """
         if elem_id in self.merged_elements:
             elem_id = self.merged_elements[elem_id]
-        return list(filter(lambda x: x.id == elem_id, self))[0]
+        result = list(filter(lambda x: x.id == elem_id, self))
+
+        # `result` may be empty if the elem was port of footer / header and is gone now (due to dudeplication)
+        if len(result) == 1:
+            return result[0]
+        return None
 
     def get_first_of_type_on_page(self, find_types, idx_page):
         for ele_id in self.order[idx_page]:
             ele = self.get_element(ele_id)
+            if ele is None:
+                continue
             if ele.type in find_types:
                 return ele
         return None
@@ -40,6 +49,8 @@ class DocumentOutput:
     def get_last_of_type_on_page(self, find_types, idx_page):
         for ele_id in reversed(self.order[idx_page]):
             ele = self.get_element(ele_id)
+            if ele is None:
+                continue
             if ele.type in find_types:
                 return ele
         return None
