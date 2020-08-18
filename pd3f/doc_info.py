@@ -234,6 +234,12 @@ class DocumentInfo:
         for p in self.input_data["pages"]:
             for e in p["elements"]:
                 c.update(font_stats(e))
+
+        if len(c) == 0:
+            raise ValueError(
+                "Something is wrong with the document. Is the text in the PDF broken (copy the text out of the doc and see how it looks)?"
+            )
+
         self.body_font = c.most_common(1)[0][0]
         self.font_counter = c
         self.font_info = {}
