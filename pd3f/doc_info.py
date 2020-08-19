@@ -84,7 +84,7 @@ def only_text(es):
     r = []
     for e in es:
         for x in extract_elements(e, "word"):
-            r.append(x["content"])
+            r.append(x["content"].strip())
     return fix_bad_unicode(" ".join(r))
 
 

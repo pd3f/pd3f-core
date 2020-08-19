@@ -348,7 +348,7 @@ class Export:
         for word in line["content"]:
             if word["type"] == "word":
                 w_fixed = word["content"]
-                w_fixed = fix_bad_unicode(w_fixed)
+                w_fixed = fix_bad_unicode(w_fixed).strip()
                 words.append(w_fixed)
                 fonts.append(word["font"])
         return words, fonts
