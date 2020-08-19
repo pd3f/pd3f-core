@@ -214,6 +214,24 @@ class DocumentInfo:
                 self.counter_lineheight.update(calc_line_space(lis))
                 self.counter_line_left.update([x["box"]["l"] for x in lis])
 
+        if (
+            min(
+                map(
+                    len,
+                    [
+                        self.counter_width,
+                        self.counter_height,
+                        self.counter_lineheight,
+                        self.counter_line_left,
+                    ],
+                )
+            )
+            == 0
+        ):
+            raise ValueError(
+                "Something is wrong with the document. Is the text in the PDF broken (copy the text out of the doc and see how it looks)?"
+            )
+
         self.median_line_width = median_from_counter(self.counter_width)
         self.median_line_height = median_from_counter(self.counter_height)
         # line space: line height
