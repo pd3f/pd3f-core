@@ -260,7 +260,7 @@ description = "Dehyphenation of broken text (mainly German), i.e., extracted fro
 name = "dehyphen"
 optional = false
 python-versions = ">=3.6"
-version = "0.3.0"
+version = "0.3.1"
 
 [package.dependencies]
 flair = ">=0.5,<0.6"
@@ -1595,8 +1595,8 @@ defusedxml = [
     {file = "defusedxml-0.6.0.tar.gz", hash = "sha256:f684034d135af4c6cbb949b8a4d2ed61634515257a67299e5f940fbaa34377f5"},
 ]
 dehyphen = [
-    {file = "dehyphen-0.3.0-py3-none-any.whl", hash = "sha256:ce5ad042802888896663d3d690aeaaf1b758c95ba9fe68bb04d121946a5e3f93"},
-    {file = "dehyphen-0.3.0.tar.gz", hash = "sha256:5ccaae073c1544ff88520fa4975f07e42aeb5abe503fa206f8ef4ca9e6dc62d1"},
+    {file = "dehyphen-0.3.1-py3-none-any.whl", hash = "sha256:2987a6b275334b4d1a29424ec4cfcdbb41ec6ba09c0c6aab2af60020b5aff34a"},
+    {file = "dehyphen-0.3.1.tar.gz", hash = "sha256:22904e8d37cd41239515559ee83e28e621bcd580e2e9a288c341988644141cf2"},
 ]
 deprecated = [
     {file = "Deprecated-1.2.10-py2.py3-none-any.whl", hash = "sha256:a766c1dccb30c5f6eb2b203f87edd1d8588847709c78589e1521d769addc8218"},
