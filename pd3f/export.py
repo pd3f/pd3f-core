@@ -10,7 +10,7 @@ from collections import Counter
 from functools import cached_property
 from pathlib import Path
 
-from cleantext import clean
+from cleantext import clean, fix_bad_unicode
 
 from .dehyphen_wrapper import dehyphen_paragraph, newline_or_not
 from .doc_info import (
@@ -347,7 +347,9 @@ class Export:
         words, fonts = [], []
         for word in line["content"]:
             if word["type"] == "word":
-                words.append(word["content"])
+                w_fixed = word["content"]
+                w_fixed = fix_bad_unicode(w_fixed)
+                words.append(w_fixed)
                 fonts.append(word["font"])
         return words, fonts
 

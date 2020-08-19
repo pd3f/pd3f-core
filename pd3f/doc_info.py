@@ -6,7 +6,7 @@ from collections import Counter
 from statistics import median
 
 from textdistance import jaccard
-from cleantext import clean
+from cleantext import clean, fix_bad_unicode
 
 from .dehyphen_wrapper import single_score
 from .geometry import sim_bbox
@@ -85,7 +85,7 @@ def only_text(es):
     for e in es:
         for x in extract_elements(e, "word"):
             r.append(x["content"])
-    return " ".join(r)
+    return fix_bad_unicode(" ".join(r))
 
 
 def only_points(es):
