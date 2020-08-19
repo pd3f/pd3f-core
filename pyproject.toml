@@ -19,7 +19,7 @@ python = "^3.8"
 parsr-client = "3.1"
 joblib = "*"
 clean-text = { version = "*", extras = [ "gpl" ] }
-dehyphen = "^0.2.0"
+dehyphen = "^0.3.0"
 textdistance = "*"
 shapely = "*"
 

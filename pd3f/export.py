@@ -367,13 +367,16 @@ class Export:
         for l in raw_lines:
             rl, rf = self.line_to_words(l)
 
-            # "".isalnum() => False, so only check for lenth?
-            if not self.remove_punct_paragraph or any(map(no_alphanum_char, rl)):
-                lines.append(rl)
-                font_counter.update(rf)
-            else:
-                logger.debug(f"removing {rl} because not alpha num")
+            if len(rl) == 0:
                 lines.append(None)
+            else:
+                # "".isalnum() => False, so only check for lenth?
+                if not self.remove_punct_paragraph or any(map(no_alphanum_char, rl)):
+                    lines.append(rl)
+                    font_counter.update(rf)
+                else:
+                    logger.debug(f"removing {rl} because not alpha num")
+                    lines.append(None)
 
         lines = LinesWithNone(lines, raw_lines)
 
@@ -445,6 +448,7 @@ class Export:
 
             if self.remove_hyphens:
                 lines = dehyphen_paragraph(lines, lang=self.lang)
+
             return Element(
                 "body",
                 lines,

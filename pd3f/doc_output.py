@@ -144,6 +144,9 @@ class Element:
         self.num_newlines = num_newlines
         self.ends_newline = ends_newline
 
+        for x in lines:
+            assert len(x) > 0
+
     def __getitem__(self, key):
         return self.lines[key]
 
