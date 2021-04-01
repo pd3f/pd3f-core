@@ -148,4 +148,4 @@ Install and use [poetry](https://python-poetry.org/).
 
 ## License
 
-GPLv3
+Affero General Public License 3.0
