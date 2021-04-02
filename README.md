@@ -16,8 +16,12 @@ Unnecessary hyphens are removed, space or new lines are kept or dropt depending 
 It's mainly developed for German but should work with other languages as well.
 The project is still in an early stage.
 Expect rough edges and rapid changes.
-Documentation will get improved (at some point).
 
+## Documentation
+
+API Documentation on pd3f-core: <https://pd3f.github.io/pd3f-core/index.html>
+
+Documentation on pd3f: <https://pd3f.com/docs/>
 ## Features
 
 ### Dehyphenation of Lines
