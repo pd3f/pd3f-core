@@ -1,7 +1,9 @@
 name: publish docs
 
 on:
-    workflow_dispatch:
+  push:
+    tags:
+      - "*"
 
 jobs:
     deploy:
