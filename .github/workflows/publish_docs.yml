@@ -1,0 +1,21 @@
+name: publish docs
+
+on:
+    workflow_dispatch:
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-python@v2
+            - uses: Gr1N/setup-poetry@v4
+
+            - name: build docs
+              run: poetry install && poetry run pdoc3 --html --output-dir docs pd3f
+
+            - name: publish docs
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: ./docs/pd3f

@@ -28,6 +28,7 @@ shapely = "*"
 pytest = "^5.2"
 jupyterlab = "*"
 black = {version = "^19.10b0", allow-prereleases = true}
+pdoc3 = "^0.9.2"
 
 
 [build-system]
