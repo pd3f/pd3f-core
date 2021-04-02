@@ -1,0 +1,1691 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>pd3f.export API documentation</title>
+<meta name="description" content="Main class of this package …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>pd3f.export</code></h1>
+</header>
+<section id="section-intro">
+<p>Main class of this package.</p>
+<p>Transforms parsr's JSON to an internal document format, exports to text.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Main class of this package.
+
+Transforms parsr&#39;s JSON to an internal document format, exports to text.
+&#34;&#34;&#34;
+
+import json
+import logging
+import string
+from collections import Counter
+from functools import cached_property
+from pathlib import Path
+
+from cleantext import clean, fix_bad_unicode
+
+from .dehyphen_wrapper import dehyphen_paragraph, newline_or_not
+from .doc_info import (
+    DocumentInfo,
+    avg_word_space,
+    most_used_font,
+    remove_duplicates,
+    roughly_same_font,
+    remove_page_number_header_footer,
+)
+from .doc_output import DocumentOutput, Element
+from .parsr_wrapper import run_parsr
+
+logger = logging.getLogger(__name__)
+
+
+def extract(
+    file_path,
+    tables=False,
+    experimental=False,
+    force_gpu=False,
+    lang=&#34;multi&#34;,
+    parsr_location=&#34;localhost:3001&#34;,
+    fast=False,
+    **kwargs,
+):
+    &#34;&#34;&#34;Outward facing api
+    &#34;&#34;&#34;
+    if force_gpu:
+        import torch
+
+        if not torch.cuda.is_available():
+            raise ValueError(&#34;not using CUDA (GPU)&#34;)
+        else:
+            logger.debug(&#34;using CUDA&#34;)
+
+    input_json, tables_csv = run_parsr(
+        file_path, check_tables=tables, parsr_location=parsr_location, fast=fast
+    )
+    e = Export(
+        input_json,
+        seperate_header_footer=experimental,
+        footnotes_last=experimental,
+        remove_page_number=experimental,
+        lang=lang,
+        fast=fast,
+        **kwargs,
+    )
+    return e.text(), tables_csv
+
+
+class LinesWithNone:
+    &#34;&#34;&#34;Utility class to make it easier to work with lines that may be None (invalid).
+    &#34;&#34;&#34;
+
+    def __init__(self, lines, raw_lines) -&gt; None:
+        self.lines = lines
+        self.raw_lines = raw_lines
+        self.first_line = 0
+        self.last_line = len(lines) - 1
+
+        for l in lines:
+            if l is None:
+                self.first_line += 1
+            else:
+                break
+
+        for l in reversed(lines):
+            if l is None:
+                self.last_line -= 1
+            else:
+                break
+
+    def __getitem__(self, key):
+        return self.lines[key]
+
+    @cached_property
+    def valid(self):
+        return [l for l in self.lines if not l is None]
+
+    def __iter__(self):
+        self.cur = self.first_line
+        return self
+
+    def __next__(self):
+        if self.cur &lt;= self.last_line:
+            cur_tmp = self.cur
+            while self.cur &lt;= self.last_line:
+                self.cur += 1
+                if len(self.lines) == self.cur or not self.lines[self.cur] is None:
+                    break
+            return cur_tmp
+        else:
+            raise StopIteration
+
+    def __len__(self):
+        return len(self.valid)
+
+
+class Export:
+    &#34;&#34;&#34;Process parsr&#39;s JSON output into an internal document represeation. This is the beginning of the pipeline.
+    Not all the magic is happing here.
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        input_json,
+        remove_punct_paragraph=True,
+        seperate_header_footer=True,
+        remove_duplicate_header_footer=True,
+        remove_page_number=True,
+        remove_header=False,
+        remove_footer=False,
+        remove_hyphens=True,
+        footnotes_last=True,
+        ocrd=None,
+        lang=&#34;multi&#34;,
+        fast=False,
+    ):
+        if type(input_json) is str:
+            self.input_data = json.loads(Path(input_json).read_text())
+        elif isinstance(input_json, Path):
+            self.input_data = json.loads(input_json.read_text())
+        elif type(input_json) is dict:
+            self.input_data = input_json
+        else:
+            raise ValueError(&#34;problem with reading input json data&#34;)
+
+        self.remove_punct_paragraph = remove_punct_paragraph
+        self.seperate_header_footer = seperate_header_footer
+        self.remove_duplicate_header_footer = remove_duplicate_header_footer
+        self.remove_page_number = remove_page_number
+        self.remove_header = remove_header
+        self.remove_footer = remove_footer
+        self.remove_hyphens = remove_hyphens
+        self.footnotes_last = footnotes_last
+        self.ocrd = ocrd  # not used atm
+        self.lang = lang  # name of Flair model (where the language is included)
+
+        if seperate_header_footer and any((remove_footer, remove_header)):
+            raise ValueError(
+                &#34;if `seperate_header_footer=True` cannot remove header/footer&#34;
+            )
+
+        # This feature is kind of buggy right now, improve in future.
+        # The same looking font is sometimes super different for OCRd PDFs. Is it a bug?
+        self.consider_font_size_linebreak = False
+
+        if fast:
+            # In the fast mode, not all elments are classified via Parsr. So we may have some leftover values with None.
+            # pd3f-core only works with non-none elements so remove them here.
+
+            # FIXME: This is dirty because `fast` is also encoded in `lang`
+            self.delete_none_elements()
+
+        self.info = DocumentInfo(self.input_data)
+        self.fix_headers_footers()
+        self.export()
+
+    def delete_none_elements(self):
+        for p in self.input_data[&#34;pages&#34;]:
+            p[&#34;elements&#34;] = list(filter(None, p[&#34;elements&#34;]))
+
+    def export_header_footer(self):
+        headers, footers = [], []
+
+        for idx_page, page in enumerate(self.input_data[&#34;pages&#34;]):
+            header_per_page, footer_per_page = [], []
+            for element in page[&#34;elements&#34;]:
+                if (
+                    &#34;isHeader&#34; in element[&#34;properties&#34;]
+                    and element[&#34;properties&#34;][&#34;isHeader&#34;]
+                ):
+                    header_per_page.append(element)
+
+                if (
+                    &#34;isFooter&#34; in element[&#34;properties&#34;]
+                    and element[&#34;properties&#34;][&#34;isFooter&#34;]
+                ):
+                    footer_per_page.append(element)
+            headers.append(header_per_page)
+            footers.append(footer_per_page)
+
+        if self.remove_duplicate_header_footer:
+            headers = remove_duplicates(headers, self.lang)
+            footers = remove_duplicates(footers, self.lang)
+
+        cleaned_header, cleaned_footer, footnotes = [], [], []
+        for idx_page, (header_per_page, footer_per_page) in enumerate(
+            zip(headers, footers)
+        ):
+            for e in header_per_page:
+                result_para = self.export_paragraph(e, idx_page, test_footnote=False)
+                result_para and cleaned_header.append(result_para)
+
+            for e in footer_per_page:
+                result_para = self.export_paragraph(e, idx_page)
+                if result_para is not None:
+                    if result_para.type == &#34;footnotes&#34;:
+                        footnotes.append(result_para)
+                    else:
+                        cleaned_footer.append(result_para)
+
+        return cleaned_header, cleaned_footer, footnotes
+
+    def fix_headers_footers(self):
+        &#34;&#34;&#34;The output for header and footer for Parsr is not the best. Make use of some simple heuristics based on the font to improve it.
+        &#34;&#34;&#34;
+        for idx_page, page in enumerate(self.input_data[&#34;pages&#34;]):
+            for idx_e, e in enumerate(page[&#34;elements&#34;]):
+                if &#34;isHeader&#34; in e[&#34;properties&#34;] and e[&#34;properties&#34;][&#34;isHeader&#34;]:
+                    if self.info.is_body_paragrah(e):
+                        del self.input_data[&#34;pages&#34;][idx_page][&#34;elements&#34;][idx_e][
+                            &#34;properties&#34;
+                        ][&#34;isHeader&#34;]
+                if &#34;isFooter&#34; in e[&#34;properties&#34;] and e[&#34;properties&#34;][&#34;isFooter&#34;]:
+                    if self.info.is_body_paragrah(e):
+                        del self.input_data[&#34;pages&#34;][idx_page][&#34;elements&#34;][idx_e][
+                            &#34;properties&#34;
+                        ][&#34;isFooter&#34;]
+
+    def export(self):
+        cleaned_header, cleaned_footer, new_footnotes = None, None, None
+
+        if self.seperate_header_footer:
+            cleaned_header, cleaned_footer, new_footnotes = self.export_header_footer()
+
+        cleaned_data = []
+        for idx_page, page in enumerate(self.input_data[&#34;pages&#34;]):
+            logger.info(f&#34;export page #{idx_page}&#34;)
+            for element in page[&#34;elements&#34;]:
+                if (
+                    (self.seperate_header_footer or self.remove_header)
+                    and &#34;isHeader&#34; in element[&#34;properties&#34;]
+                    and element[&#34;properties&#34;][&#34;isHeader&#34;]
+                ):
+                    continue
+                if (
+                    (self.seperate_header_footer or self.remove_footer)
+                    and &#34;isFooter&#34; in element[&#34;properties&#34;]
+                    and element[&#34;properties&#34;][&#34;isFooter&#34;]
+                ):
+                    continue
+                # currently not used
+                if element[&#34;type&#34;] == &#34;heading&#34;:
+                    cleaned_data.append(self.export_heading(element))
+                if element[&#34;type&#34;] == &#34;paragraph&#34;:
+                    result_para = self.export_paragraph(element, idx_page)
+                    result_para and cleaned_data.append(result_para)
+
+            # only append new foofnotes here, most likel get reorced anyhow
+            if new_footnotes is not None:
+                footer_on_this_page = [
+                    x for x in new_footnotes if x.idx_page == idx_page
+                ]
+                cleaned_data += footer_on_this_page
+
+        if self.remove_page_number:
+            cleaned_header = remove_page_number_header_footer(cleaned_header)
+            cleaned_footer = remove_page_number_header_footer(cleaned_footer)
+
+        self.doc = DocumentOutput(
+            cleaned_data,
+            cleaned_header,
+            cleaned_footer,
+            self.info.order_page,
+            self.lang,
+        )
+        self.footnotes_last and self.doc.reorder_footnotes()
+
+        # only do if footnootes are reordered
+        self.footnotes_last and self.remove_hyphens and self.doc.reverse_page_break()
+
+    def add_linebreak(
+        self, line, next_line, text_line, text_next_line, paragraph, num_lines
+    ):
+        # experimental
+        if self.consider_font_size_linebreak:
+            line_font = most_used_font(line)
+            next_line_font = most_used_font(next_line)
+            if not roughly_same_font(
+                self.info.font_info[line_font], self.info.font_info[next_line_font]
+            ):
+                logger.debug(&#34; &#34;.join(&#34;font&#34;, line_font, next_line_font))
+                return True
+
+        avg_space = avg_word_space(line)
+        space_para_line = line[&#34;box&#34;][&#34;l&#34;] - paragraph[&#34;box&#34;][&#34;l&#34;]
+        available_space = (
+            paragraph[&#34;box&#34;][&#34;w&#34;] - line[&#34;box&#34;][&#34;w&#34;] - avg_space - space_para_line
+        )
+
+        # if there is no next line
+        if next_line is None or not next_line or text_next_line is None:
+            if available_space &gt; avg_space:
+                # if text_line[-1].strip()[-1] in string.punctuation:
+                logger.debug(
+                    f&#34;No next line, but adding \\n, avail space: {available_space} avg space: {avg_space} {text_line}&#34;
+                )
+                return True
+            else:
+                if num_lines == 1:
+                    return True
+                # if num_lines == 2:
+                #     return True
+                logger.debug(f&#34;No next line, but adding space {text_line}&#34;)
+                return False
+
+        if available_space &gt;= next_line[&#34;content&#34;][0][&#34;box&#34;][&#34;w&#34;]:
+            logger.debug(
+                f&#34;There is enough space on the lext for the next word. So adding a linebreak between {text_line}{text_next_line}&#34;
+            )
+            return True
+
+        if self.info.on_same_page(line, next_line):
+            if self.info.seperate_lines(line, next_line):
+                logger.debug(&#34;lines should be seperated&#34;)
+                logger.debug(f&#34;{text_line} {text_next_line}&#34;)
+                return True
+
+        # TODO: a more reasonable way (e.g. check if it spans whole width)
+        if len(text_line) &gt; 5:
+            return False
+
+        # if it ends with a string, it most likly that flair test will fail anyhow
+        if text_line[-1].strip()[-1] in string.punctuation:
+            return False
+
+        logger.debug(&#34;testing the lines: &#34;)
+        logger.debug(f&#34;{text_line} {text_next_line}&#34;)
+        return newline_or_not(&#34; &#34;.join(text_line), &#34; &#34;.join(text_next_line), self.lang)
+
+    def line_to_words(self, line):
+        words, fonts = [], []
+        for word in line[&#34;content&#34;]:
+            if word[&#34;type&#34;] == &#34;word&#34;:
+                w_fixed = word[&#34;content&#34;]
+                w_fixed = fix_bad_unicode(w_fixed).strip()
+                words.append(w_fixed)
+                fonts.append(word[&#34;font&#34;])
+        return words, fonts
+
+    def lines_to_paragraph(self, paragraph, idx_page, test_footnote):
+        def no_alphanum_char(text):
+            &#34;&#34;&#34;Checks if text only contains non-alpha-num chars, e.g. puncts
+            &#34;&#34;&#34;
+            text = clean(text, no_punct=True)
+            return any([x.isalnum() for x in text])
+
+        raw_lines = paragraph[&#34;content&#34;]
+        font_counter = Counter()
+        lines = []
+
+        for l in raw_lines:
+            rl, rf = self.line_to_words(l)
+
+            if len(rl) == 0:
+                lines.append(None)
+            else:
+                # &#34;&#34;.isalnum() =&gt; False, so only check for lenth?
+                if not self.remove_punct_paragraph or any(map(no_alphanum_char, rl)):
+                    lines.append(rl)
+                    font_counter.update(rf)
+                else:
+                    logger.debug(f&#34;removing {rl} because not alpha num&#34;)
+                    lines.append(None)
+
+        lines = LinesWithNone(lines, raw_lines)
+
+        # NB: the returned paragraph can be None (invalid)
+        if len(lines.valid) == 0:
+            return None
+
+        if test_footnote and self.is_footnotes_paragraph(
+            paragraph, font_counter, idx_page, lines
+        ):
+            # don&#39;t test on last line
+            for i in list(lines)[:-1]:
+                # decide whether newline or simple space
+                if self.add_linebreak(
+                    raw_lines[i],
+                    raw_lines[i + 1],
+                    lines[i],
+                    lines[i + 1],
+                    paragraph,
+                    len(lines),
+                ):
+                    lines[i].append(&#34;\n&#34;)
+                else:
+                    # skip if next line was removed
+                    if lines[i + 1] is None:
+                        lines[i].append(&#34;\n&#34;)
+                        continue
+                    # if the first chars are digits -&gt; footnote
+                    # but ensure that the first digit has a different font then the last word on the previous line
+                    if (
+                        lines[i][0].isnumeric()
+                        and lines[i + 1][0].isnumeric()
+                        and raw_lines[i + 1][&#34;content&#34;][0][&#34;font&#34;]
+                        != raw_lines[i][&#34;content&#34;][-1][&#34;font&#34;]
+                    ):
+                        lines[i].append(&#34;\n&#34;)
+                    else:
+                        lines[i].append(&#34; &#34;)
+            # TODO: dehyphen
+            return Element(&#34;footnotes&#34;, lines.valid, paragraph[&#34;id&#34;], idx_page=idx_page)
+        else:
+            # ordinary paragraph
+            num_newlines = 0
+            ends_newline = False
+            # don&#39;t test on last line
+            for i in lines:
+                # decide whether newline or simple space
+                if self.add_linebreak(
+                    raw_lines[i],
+                    i != lines.last_line and raw_lines[i + 1],
+                    lines[i],
+                    i != lines.last_line and lines[i + 1],
+                    paragraph,
+                    len(lines),
+                ):
+                    lines[i][-1] += &#34;\n&#34;
+                    logger.debug(f&#34;adding newline here {lines[i]}&#34;)
+                    num_newlines += 1
+                    if i == lines.last_line:
+                        ends_newline = True
+                else:
+                    if i == lines.last_line:
+                        logger.debug(&#34;last line, not adding space&#34;)
+                    else:
+                        lines[i][-1] += &#34; &#34;
+
+            # finally remove Nones here
+            lines = lines.valid
+
+            if self.remove_hyphens:
+                lines = dehyphen_paragraph(lines, lang=self.lang)
+
+            return Element(
+                &#34;body&#34;,
+                lines,
+                paragraph[&#34;id&#34;],
+                idx_page=idx_page,
+                num_newlines=num_newlines,
+                ends_newline=ends_newline,
+            )
+
+    # not working right now
+    def export_heading(self, e):
+        raw_lines = e[&#34;content&#34;]
+        lines = []
+        for l in raw_lines:
+            rl, _ = self.line_to_words(l)
+            lines.append(rl)
+        return Element(&#34;heading&#34;, lines, e[&#34;id&#34;], e[&#34;level&#34;])
+
+    def export_paragraph(self, e, idx_page, test_footnote=True):
+        return self.lines_to_paragraph(e, idx_page, test_footnote)
+
+    def is_footnotes_paragraph(self, paragraph, counter, idx_page, lines):
+        # TODO: more heuristic: 1. do numbers appear in text? 2. is there a drawing in it
+        # right now it expects the footnote paragraph to consists of a single paragraph
+
+        para_font = counter.most_common(1)[0][0]
+
+        # footnotes has to be different
+        if para_font == self.info.body_font:
+            return False
+
+        # footnotes has to be smaller
+        if (
+            self.info.font_info[para_font][&#34;size&#34;]
+            &gt; self.info.font_info[self.info.body_font][&#34;size&#34;]
+        ):
+            return False
+
+        # can&#39;t be empty
+        if len(self.info.order_page[idx_page]) == 0:
+            return False
+
+        # check if this is the last paragraph
+        if self.info.order_page[idx_page][-1] != paragraph[&#34;id&#34;]:
+            return False
+
+        # if the previous element ends with `:` it expects something, so it can&#39;t be the last paragraph
+        if len(self.info.order_page[idx_page]) &gt; 1:
+            prev_elem = self.info.id_to_elem[self.info.order_page[idx_page][-2]]
+            prev_elem_words, _ = self.line_to_words(prev_elem[&#34;content&#34;][-1])
+            if prev_elem_words[-1].endswith(&#34;:&#34;):
+                logger.debug(f&#34;Id of cur para: {paragraph[&#39;id&#39;]}&#34;)
+                logger.debug(
+                    f&#34;not a footnote para because of : in {prev_elem_words[-1]}&#34;
+                )
+                return False
+
+        # first line has to start with a numeral
+        if not lines.valid[0][0].strip()[0].isnumeric():
+            return False
+
+        return True
+
+    def markdown(self):
+        return self.doc.markdown()
+
+    def text(self):
+        return self.doc.text()
+
+    def save_markdown(self, output_path):
+        Path(output_path).write_text(self.markdown())
+
+    def save_text(self, output_path):
+        Path(output_path).write_text(self.text())</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="pd3f.export.extract"><code class="name flex">
+<span>def <span class="ident">extract</span></span>(<span>file_path, tables=False, experimental=False, force_gpu=False, lang='multi', parsr_location='localhost:3001', fast=False, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Outward facing api</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract(
+    file_path,
+    tables=False,
+    experimental=False,
+    force_gpu=False,
+    lang=&#34;multi&#34;,
+    parsr_location=&#34;localhost:3001&#34;,
+    fast=False,
+    **kwargs,
+):
+    &#34;&#34;&#34;Outward facing api
+    &#34;&#34;&#34;
+    if force_gpu:
+        import torch
+
+        if not torch.cuda.is_available():
+            raise ValueError(&#34;not using CUDA (GPU)&#34;)
+        else:
+            logger.debug(&#34;using CUDA&#34;)
+
+    input_json, tables_csv = run_parsr(
+        file_path, check_tables=tables, parsr_location=parsr_location, fast=fast
+    )
+    e = Export(
+        input_json,
+        seperate_header_footer=experimental,
+        footnotes_last=experimental,
+        remove_page_number=experimental,
+        lang=lang,
+        fast=fast,
+        **kwargs,
+    )
+    return e.text(), tables_csv</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="pd3f.export.Export"><code class="flex name class">
+<span>class <span class="ident">Export</span></span>
+<span>(</span><span>input_json, remove_punct_paragraph=True, seperate_header_footer=True, remove_duplicate_header_footer=True, remove_page_number=True, remove_header=False, remove_footer=False, remove_hyphens=True, footnotes_last=True, ocrd=None, lang='multi', fast=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Process parsr's JSON output into an internal document represeation. This is the beginning of the pipeline.
+Not all the magic is happing here.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Export:
+    &#34;&#34;&#34;Process parsr&#39;s JSON output into an internal document represeation. This is the beginning of the pipeline.
+    Not all the magic is happing here.
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        input_json,
+        remove_punct_paragraph=True,
+        seperate_header_footer=True,
+        remove_duplicate_header_footer=True,
+        remove_page_number=True,
+        remove_header=False,
+        remove_footer=False,
+        remove_hyphens=True,
+        footnotes_last=True,
+        ocrd=None,
+        lang=&#34;multi&#34;,
+        fast=False,
+    ):
+        if type(input_json) is str:
+            self.input_data = json.loads(Path(input_json).read_text())
+        elif isinstance(input_json, Path):
+            self.input_data = json.loads(input_json.read_text())
+        elif type(input_json) is dict:
+            self.input_data = input_json
+        else:
+            raise ValueError(&#34;problem with reading input json data&#34;)
+
+        self.remove_punct_paragraph = remove_punct_paragraph
+        self.seperate_header_footer = seperate_header_footer
+        self.remove_duplicate_header_footer = remove_duplicate_header_footer
+        self.remove_page_number = remove_page_number
+        self.remove_header = remove_header
+        self.remove_footer = remove_footer
+        self.remove_hyphens = remove_hyphens
+        self.footnotes_last = footnotes_last
+        self.ocrd = ocrd  # not used atm
+        self.lang = lang  # name of Flair model (where the language is included)
+
+        if seperate_header_footer and any((remove_footer, remove_header)):
+            raise ValueError(
+                &#34;if `seperate_header_footer=True` cannot remove header/footer&#34;
+            )
+
+        # This feature is kind of buggy right now, improve in future.
+        # The same looking font is sometimes super different for OCRd PDFs. Is it a bug?
+        self.consider_font_size_linebreak = False
+
+        if fast:
+            # In the fast mode, not all elments are classified via Parsr. So we may have some leftover values with None.
+            # pd3f-core only works with non-none elements so remove them here.
+
+            # FIXME: This is dirty because `fast` is also encoded in `lang`
+            self.delete_none_elements()
+
+        self.info = DocumentInfo(self.input_data)
+        self.fix_headers_footers()
+        self.export()
+
+    def delete_none_elements(self):
+        for p in self.input_data[&#34;pages&#34;]:
+            p[&#34;elements&#34;] = list(filter(None, p[&#34;elements&#34;]))
+
+    def export_header_footer(self):
+        headers, footers = [], []
+
+        for idx_page, page in enumerate(self.input_data[&#34;pages&#34;]):
+            header_per_page, footer_per_page = [], []
+            for element in page[&#34;elements&#34;]:
+                if (
+                    &#34;isHeader&#34; in element[&#34;properties&#34;]
+                    and element[&#34;properties&#34;][&#34;isHeader&#34;]
+                ):
+                    header_per_page.append(element)
+
+                if (
+                    &#34;isFooter&#34; in element[&#34;properties&#34;]
+                    and element[&#34;properties&#34;][&#34;isFooter&#34;]
+                ):
+                    footer_per_page.append(element)
+            headers.append(header_per_page)
+            footers.append(footer_per_page)
+
+        if self.remove_duplicate_header_footer:
+            headers = remove_duplicates(headers, self.lang)
+            footers = remove_duplicates(footers, self.lang)
+
+        cleaned_header, cleaned_footer, footnotes = [], [], []
+        for idx_page, (header_per_page, footer_per_page) in enumerate(
+            zip(headers, footers)
+        ):
+            for e in header_per_page:
+                result_para = self.export_paragraph(e, idx_page, test_footnote=False)
+                result_para and cleaned_header.append(result_para)
+
+            for e in footer_per_page:
+                result_para = self.export_paragraph(e, idx_page)
+                if result_para is not None:
+                    if result_para.type == &#34;footnotes&#34;:
+                        footnotes.append(result_para)
+                    else:
+                        cleaned_footer.append(result_para)
+
+        return cleaned_header, cleaned_footer, footnotes
+
+    def fix_headers_footers(self):
+        &#34;&#34;&#34;The output for header and footer for Parsr is not the best. Make use of some simple heuristics based on the font to improve it.
+        &#34;&#34;&#34;
+        for idx_page, page in enumerate(self.input_data[&#34;pages&#34;]):
+            for idx_e, e in enumerate(page[&#34;elements&#34;]):
+                if &#34;isHeader&#34; in e[&#34;properties&#34;] and e[&#34;properties&#34;][&#34;isHeader&#34;]:
+                    if self.info.is_body_paragrah(e):
+                        del self.input_data[&#34;pages&#34;][idx_page][&#34;elements&#34;][idx_e][
+                            &#34;properties&#34;
+                        ][&#34;isHeader&#34;]
+                if &#34;isFooter&#34; in e[&#34;properties&#34;] and e[&#34;properties&#34;][&#34;isFooter&#34;]:
+                    if self.info.is_body_paragrah(e):
+                        del self.input_data[&#34;pages&#34;][idx_page][&#34;elements&#34;][idx_e][
+                            &#34;properties&#34;
+                        ][&#34;isFooter&#34;]
+
+    def export(self):
+        cleaned_header, cleaned_footer, new_footnotes = None, None, None
+
+        if self.seperate_header_footer:
+            cleaned_header, cleaned_footer, new_footnotes = self.export_header_footer()
+
+        cleaned_data = []
+        for idx_page, page in enumerate(self.input_data[&#34;pages&#34;]):
+            logger.info(f&#34;export page #{idx_page}&#34;)
+            for element in page[&#34;elements&#34;]:
+                if (
+                    (self.seperate_header_footer or self.remove_header)
+                    and &#34;isHeader&#34; in element[&#34;properties&#34;]
+                    and element[&#34;properties&#34;][&#34;isHeader&#34;]
+                ):
+                    continue
+                if (
+                    (self.seperate_header_footer or self.remove_footer)
+                    and &#34;isFooter&#34; in element[&#34;properties&#34;]
+                    and element[&#34;properties&#34;][&#34;isFooter&#34;]
+                ):
+                    continue
+                # currently not used
+                if element[&#34;type&#34;] == &#34;heading&#34;:
+                    cleaned_data.append(self.export_heading(element))
+                if element[&#34;type&#34;] == &#34;paragraph&#34;:
+                    result_para = self.export_paragraph(element, idx_page)
+                    result_para and cleaned_data.append(result_para)
+
+            # only append new foofnotes here, most likel get reorced anyhow
+            if new_footnotes is not None:
+                footer_on_this_page = [
+                    x for x in new_footnotes if x.idx_page == idx_page
+                ]
+                cleaned_data += footer_on_this_page
+
+        if self.remove_page_number:
+            cleaned_header = remove_page_number_header_footer(cleaned_header)
+            cleaned_footer = remove_page_number_header_footer(cleaned_footer)
+
+        self.doc = DocumentOutput(
+            cleaned_data,
+            cleaned_header,
+            cleaned_footer,
+            self.info.order_page,
+            self.lang,
+        )
+        self.footnotes_last and self.doc.reorder_footnotes()
+
+        # only do if footnootes are reordered
+        self.footnotes_last and self.remove_hyphens and self.doc.reverse_page_break()
+
+    def add_linebreak(
+        self, line, next_line, text_line, text_next_line, paragraph, num_lines
+    ):
+        # experimental
+        if self.consider_font_size_linebreak:
+            line_font = most_used_font(line)
+            next_line_font = most_used_font(next_line)
+            if not roughly_same_font(
+                self.info.font_info[line_font], self.info.font_info[next_line_font]
+            ):
+                logger.debug(&#34; &#34;.join(&#34;font&#34;, line_font, next_line_font))
+                return True
+
+        avg_space = avg_word_space(line)
+        space_para_line = line[&#34;box&#34;][&#34;l&#34;] - paragraph[&#34;box&#34;][&#34;l&#34;]
+        available_space = (
+            paragraph[&#34;box&#34;][&#34;w&#34;] - line[&#34;box&#34;][&#34;w&#34;] - avg_space - space_para_line
+        )
+
+        # if there is no next line
+        if next_line is None or not next_line or text_next_line is None:
+            if available_space &gt; avg_space:
+                # if text_line[-1].strip()[-1] in string.punctuation:
+                logger.debug(
+                    f&#34;No next line, but adding \\n, avail space: {available_space} avg space: {avg_space} {text_line}&#34;
+                )
+                return True
+            else:
+                if num_lines == 1:
+                    return True
+                # if num_lines == 2:
+                #     return True
+                logger.debug(f&#34;No next line, but adding space {text_line}&#34;)
+                return False
+
+        if available_space &gt;= next_line[&#34;content&#34;][0][&#34;box&#34;][&#34;w&#34;]:
+            logger.debug(
+                f&#34;There is enough space on the lext for the next word. So adding a linebreak between {text_line}{text_next_line}&#34;
+            )
+            return True
+
+        if self.info.on_same_page(line, next_line):
+            if self.info.seperate_lines(line, next_line):
+                logger.debug(&#34;lines should be seperated&#34;)
+                logger.debug(f&#34;{text_line} {text_next_line}&#34;)
+                return True
+
+        # TODO: a more reasonable way (e.g. check if it spans whole width)
+        if len(text_line) &gt; 5:
+            return False
+
+        # if it ends with a string, it most likly that flair test will fail anyhow
+        if text_line[-1].strip()[-1] in string.punctuation:
+            return False
+
+        logger.debug(&#34;testing the lines: &#34;)
+        logger.debug(f&#34;{text_line} {text_next_line}&#34;)
+        return newline_or_not(&#34; &#34;.join(text_line), &#34; &#34;.join(text_next_line), self.lang)
+
+    def line_to_words(self, line):
+        words, fonts = [], []
+        for word in line[&#34;content&#34;]:
+            if word[&#34;type&#34;] == &#34;word&#34;:
+                w_fixed = word[&#34;content&#34;]
+                w_fixed = fix_bad_unicode(w_fixed).strip()
+                words.append(w_fixed)
+                fonts.append(word[&#34;font&#34;])
+        return words, fonts
+
+    def lines_to_paragraph(self, paragraph, idx_page, test_footnote):
+        def no_alphanum_char(text):
+            &#34;&#34;&#34;Checks if text only contains non-alpha-num chars, e.g. puncts
+            &#34;&#34;&#34;
+            text = clean(text, no_punct=True)
+            return any([x.isalnum() for x in text])
+
+        raw_lines = paragraph[&#34;content&#34;]
+        font_counter = Counter()
+        lines = []
+
+        for l in raw_lines:
+            rl, rf = self.line_to_words(l)
+
+            if len(rl) == 0:
+                lines.append(None)
+            else:
+                # &#34;&#34;.isalnum() =&gt; False, so only check for lenth?
+                if not self.remove_punct_paragraph or any(map(no_alphanum_char, rl)):
+                    lines.append(rl)
+                    font_counter.update(rf)
+                else:
+                    logger.debug(f&#34;removing {rl} because not alpha num&#34;)
+                    lines.append(None)
+
+        lines = LinesWithNone(lines, raw_lines)
+
+        # NB: the returned paragraph can be None (invalid)
+        if len(lines.valid) == 0:
+            return None
+
+        if test_footnote and self.is_footnotes_paragraph(
+            paragraph, font_counter, idx_page, lines
+        ):
+            # don&#39;t test on last line
+            for i in list(lines)[:-1]:
+                # decide whether newline or simple space
+                if self.add_linebreak(
+                    raw_lines[i],
+                    raw_lines[i + 1],
+                    lines[i],
+                    lines[i + 1],
+                    paragraph,
+                    len(lines),
+                ):
+                    lines[i].append(&#34;\n&#34;)
+                else:
+                    # skip if next line was removed
+                    if lines[i + 1] is None:
+                        lines[i].append(&#34;\n&#34;)
+                        continue
+                    # if the first chars are digits -&gt; footnote
+                    # but ensure that the first digit has a different font then the last word on the previous line
+                    if (
+                        lines[i][0].isnumeric()
+                        and lines[i + 1][0].isnumeric()
+                        and raw_lines[i + 1][&#34;content&#34;][0][&#34;font&#34;]
+                        != raw_lines[i][&#34;content&#34;][-1][&#34;font&#34;]
+                    ):
+                        lines[i].append(&#34;\n&#34;)
+                    else:
+                        lines[i].append(&#34; &#34;)
+            # TODO: dehyphen
+            return Element(&#34;footnotes&#34;, lines.valid, paragraph[&#34;id&#34;], idx_page=idx_page)
+        else:
+            # ordinary paragraph
+            num_newlines = 0
+            ends_newline = False
+            # don&#39;t test on last line
+            for i in lines:
+                # decide whether newline or simple space
+                if self.add_linebreak(
+                    raw_lines[i],
+                    i != lines.last_line and raw_lines[i + 1],
+                    lines[i],
+                    i != lines.last_line and lines[i + 1],
+                    paragraph,
+                    len(lines),
+                ):
+                    lines[i][-1] += &#34;\n&#34;
+                    logger.debug(f&#34;adding newline here {lines[i]}&#34;)
+                    num_newlines += 1
+                    if i == lines.last_line:
+                        ends_newline = True
+                else:
+                    if i == lines.last_line:
+                        logger.debug(&#34;last line, not adding space&#34;)
+                    else:
+                        lines[i][-1] += &#34; &#34;
+
+            # finally remove Nones here
+            lines = lines.valid
+
+            if self.remove_hyphens:
+                lines = dehyphen_paragraph(lines, lang=self.lang)
+
+            return Element(
+                &#34;body&#34;,
+                lines,
+                paragraph[&#34;id&#34;],
+                idx_page=idx_page,
+                num_newlines=num_newlines,
+                ends_newline=ends_newline,
+            )
+
+    # not working right now
+    def export_heading(self, e):
+        raw_lines = e[&#34;content&#34;]
+        lines = []
+        for l in raw_lines:
+            rl, _ = self.line_to_words(l)
+            lines.append(rl)
+        return Element(&#34;heading&#34;, lines, e[&#34;id&#34;], e[&#34;level&#34;])
+
+    def export_paragraph(self, e, idx_page, test_footnote=True):
+        return self.lines_to_paragraph(e, idx_page, test_footnote)
+
+    def is_footnotes_paragraph(self, paragraph, counter, idx_page, lines):
+        # TODO: more heuristic: 1. do numbers appear in text? 2. is there a drawing in it
+        # right now it expects the footnote paragraph to consists of a single paragraph
+
+        para_font = counter.most_common(1)[0][0]
+
+        # footnotes has to be different
+        if para_font == self.info.body_font:
+            return False
+
+        # footnotes has to be smaller
+        if (
+            self.info.font_info[para_font][&#34;size&#34;]
+            &gt; self.info.font_info[self.info.body_font][&#34;size&#34;]
+        ):
+            return False
+
+        # can&#39;t be empty
+        if len(self.info.order_page[idx_page]) == 0:
+            return False
+
+        # check if this is the last paragraph
+        if self.info.order_page[idx_page][-1] != paragraph[&#34;id&#34;]:
+            return False
+
+        # if the previous element ends with `:` it expects something, so it can&#39;t be the last paragraph
+        if len(self.info.order_page[idx_page]) &gt; 1:
+            prev_elem = self.info.id_to_elem[self.info.order_page[idx_page][-2]]
+            prev_elem_words, _ = self.line_to_words(prev_elem[&#34;content&#34;][-1])
+            if prev_elem_words[-1].endswith(&#34;:&#34;):
+                logger.debug(f&#34;Id of cur para: {paragraph[&#39;id&#39;]}&#34;)
+                logger.debug(
+                    f&#34;not a footnote para because of : in {prev_elem_words[-1]}&#34;
+                )
+                return False
+
+        # first line has to start with a numeral
+        if not lines.valid[0][0].strip()[0].isnumeric():
+            return False
+
+        return True
+
+    def markdown(self):
+        return self.doc.markdown()
+
+    def text(self):
+        return self.doc.text()
+
+    def save_markdown(self, output_path):
+        Path(output_path).write_text(self.markdown())
+
+    def save_text(self, output_path):
+        Path(output_path).write_text(self.text())</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="pd3f.export.Export.add_linebreak"><code class="name flex">
+<span>def <span class="ident">add_linebreak</span></span>(<span>self, line, next_line, text_line, text_next_line, paragraph, num_lines)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_linebreak(
+    self, line, next_line, text_line, text_next_line, paragraph, num_lines
+):
+    # experimental
+    if self.consider_font_size_linebreak:
+        line_font = most_used_font(line)
+        next_line_font = most_used_font(next_line)
+        if not roughly_same_font(
+            self.info.font_info[line_font], self.info.font_info[next_line_font]
+        ):
+            logger.debug(&#34; &#34;.join(&#34;font&#34;, line_font, next_line_font))
+            return True
+
+    avg_space = avg_word_space(line)
+    space_para_line = line[&#34;box&#34;][&#34;l&#34;] - paragraph[&#34;box&#34;][&#34;l&#34;]
+    available_space = (
+        paragraph[&#34;box&#34;][&#34;w&#34;] - line[&#34;box&#34;][&#34;w&#34;] - avg_space - space_para_line
+    )
+
+    # if there is no next line
+    if next_line is None or not next_line or text_next_line is None:
+        if available_space &gt; avg_space:
+            # if text_line[-1].strip()[-1] in string.punctuation:
+            logger.debug(
+                f&#34;No next line, but adding \\n, avail space: {available_space} avg space: {avg_space} {text_line}&#34;
+            )
+            return True
+        else:
+            if num_lines == 1:
+                return True
+            # if num_lines == 2:
+            #     return True
+            logger.debug(f&#34;No next line, but adding space {text_line}&#34;)
+            return False
+
+    if available_space &gt;= next_line[&#34;content&#34;][0][&#34;box&#34;][&#34;w&#34;]:
+        logger.debug(
+            f&#34;There is enough space on the lext for the next word. So adding a linebreak between {text_line}{text_next_line}&#34;
+        )
+        return True
+
+    if self.info.on_same_page(line, next_line):
+        if self.info.seperate_lines(line, next_line):
+            logger.debug(&#34;lines should be seperated&#34;)
+            logger.debug(f&#34;{text_line} {text_next_line}&#34;)
+            return True
+
+    # TODO: a more reasonable way (e.g. check if it spans whole width)
+    if len(text_line) &gt; 5:
+        return False
+
+    # if it ends with a string, it most likly that flair test will fail anyhow
+    if text_line[-1].strip()[-1] in string.punctuation:
+        return False
+
+    logger.debug(&#34;testing the lines: &#34;)
+    logger.debug(f&#34;{text_line} {text_next_line}&#34;)
+    return newline_or_not(&#34; &#34;.join(text_line), &#34; &#34;.join(text_next_line), self.lang)</code></pre>
+</details>
+</dd>
+<dt id="pd3f.export.Export.delete_none_elements"><code class="name flex">
+<span>def <span class="ident">delete_none_elements</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def delete_none_elements(self):
+    for p in self.input_data[&#34;pages&#34;]:
+        p[&#34;elements&#34;] = list(filter(None, p[&#34;elements&#34;]))</code></pre>
+</details>
+</dd>
+<dt id="pd3f.export.Export.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export(self):
+    cleaned_header, cleaned_footer, new_footnotes = None, None, None
+
+    if self.seperate_header_footer:
+        cleaned_header, cleaned_footer, new_footnotes = self.export_header_footer()
+
+    cleaned_data = []
+    for idx_page, page in enumerate(self.input_data[&#34;pages&#34;]):
+        logger.info(f&#34;export page #{idx_page}&#34;)
+        for element in page[&#34;elements&#34;]:
+            if (
+                (self.seperate_header_footer or self.remove_header)
+                and &#34;isHeader&#34; in element[&#34;properties&#34;]
+                and element[&#34;properties&#34;][&#34;isHeader&#34;]
+            ):
+                continue
+            if (
+                (self.seperate_header_footer or self.remove_footer)
+                and &#34;isFooter&#34; in element[&#34;properties&#34;]
+                and element[&#34;properties&#34;][&#34;isFooter&#34;]
+            ):
+                continue
+            # currently not used
+            if element[&#34;type&#34;] == &#34;heading&#34;:
+                cleaned_data.append(self.export_heading(element))
+            if element[&#34;type&#34;] == &#34;paragraph&#34;:
+                result_para = self.export_paragraph(element, idx_page)
+                result_para and cleaned_data.append(result_para)
+
+        # only append new foofnotes here, most likel get reorced anyhow
+        if new_footnotes is not None:
+            footer_on_this_page = [
+                x for x in new_footnotes if x.idx_page == idx_page
+            ]
+            cleaned_data += footer_on_this_page
+
+    if self.remove_page_number:
+        cleaned_header = remove_page_number_header_footer(cleaned_header)
+        cleaned_footer = remove_page_number_header_footer(cleaned_footer)
+
+    self.doc = DocumentOutput(
+        cleaned_data,
+        cleaned_header,
+        cleaned_footer,
+        self.info.order_page,
+        self.lang,
+    )
+    self.footnotes_last and self.doc.reorder_footnotes()
+
+    # only do if footnootes are reordered
+    self.footnotes_last and self.remove_hyphens and self.doc.reverse_page_break()</code></pre>
+</details>
+</dd>
+<dt id="pd3f.export.Export.export_header_footer"><code class="name flex">
+<span>def <span class="ident">export_header_footer</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export_header_footer(self):
+    headers, footers = [], []
+
+    for idx_page, page in enumerate(self.input_data[&#34;pages&#34;]):
+        header_per_page, footer_per_page = [], []
+        for element in page[&#34;elements&#34;]:
+            if (
+                &#34;isHeader&#34; in element[&#34;properties&#34;]
+                and element[&#34;properties&#34;][&#34;isHeader&#34;]
+            ):
+                header_per_page.append(element)
+
+            if (
+                &#34;isFooter&#34; in element[&#34;properties&#34;]
+                and element[&#34;properties&#34;][&#34;isFooter&#34;]
+            ):
+                footer_per_page.append(element)
+        headers.append(header_per_page)
+        footers.append(footer_per_page)
+
+    if self.remove_duplicate_header_footer:
+        headers = remove_duplicates(headers, self.lang)
+        footers = remove_duplicates(footers, self.lang)
+
+    cleaned_header, cleaned_footer, footnotes = [], [], []
+    for idx_page, (header_per_page, footer_per_page) in enumerate(
+        zip(headers, footers)
+    ):
+        for e in header_per_page:
+            result_para = self.export_paragraph(e, idx_page, test_footnote=False)
+            result_para and cleaned_header.append(result_para)
+
+        for e in footer_per_page:
+            result_para = self.export_paragraph(e, idx_page)
+            if result_para is not None:
+                if result_para.type == &#34;footnotes&#34;:
+                    footnotes.append(result_para)
+                else:
+                    cleaned_footer.append(result_para)
+
+    return cleaned_header, cleaned_footer, footnotes</code></pre>
+</details>
+</dd>
+<dt id="pd3f.export.Export.export_heading"><code class="name flex">
+<span>def <span class="ident">export_heading</span></span>(<span>self, e)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export_heading(self, e):
+    raw_lines = e[&#34;content&#34;]
+    lines = []
+    for l in raw_lines:
+        rl, _ = self.line_to_words(l)
+        lines.append(rl)
+    return Element(&#34;heading&#34;, lines, e[&#34;id&#34;], e[&#34;level&#34;])</code></pre>
+</details>
+</dd>
+<dt id="pd3f.export.Export.export_paragraph"><code class="name flex">
+<span>def <span class="ident">export_paragraph</span></span>(<span>self, e, idx_page, test_footnote=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export_paragraph(self, e, idx_page, test_footnote=True):
+    return self.lines_to_paragraph(e, idx_page, test_footnote)</code></pre>
+</details>
+</dd>
+<dt id="pd3f.export.Export.fix_headers_footers"><code class="name flex">
+<span>def <span class="ident">fix_headers_footers</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The output for header and footer for Parsr is not the best. Make use of some simple heuristics based on the font to improve it.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fix_headers_footers(self):
+    &#34;&#34;&#34;The output for header and footer for Parsr is not the best. Make use of some simple heuristics based on the font to improve it.
+    &#34;&#34;&#34;
+    for idx_page, page in enumerate(self.input_data[&#34;pages&#34;]):
+        for idx_e, e in enumerate(page[&#34;elements&#34;]):
+            if &#34;isHeader&#34; in e[&#34;properties&#34;] and e[&#34;properties&#34;][&#34;isHeader&#34;]:
+                if self.info.is_body_paragrah(e):
+                    del self.input_data[&#34;pages&#34;][idx_page][&#34;elements&#34;][idx_e][
+                        &#34;properties&#34;
+                    ][&#34;isHeader&#34;]
+            if &#34;isFooter&#34; in e[&#34;properties&#34;] and e[&#34;properties&#34;][&#34;isFooter&#34;]:
+                if self.info.is_body_paragrah(e):
+                    del self.input_data[&#34;pages&#34;][idx_page][&#34;elements&#34;][idx_e][
+                        &#34;properties&#34;
+                    ][&#34;isFooter&#34;]</code></pre>
+</details>
+</dd>
+<dt id="pd3f.export.Export.is_footnotes_paragraph"><code class="name flex">
+<span>def <span class="ident">is_footnotes_paragraph</span></span>(<span>self, paragraph, counter, idx_page, lines)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_footnotes_paragraph(self, paragraph, counter, idx_page, lines):
+    # TODO: more heuristic: 1. do numbers appear in text? 2. is there a drawing in it
+    # right now it expects the footnote paragraph to consists of a single paragraph
+
+    para_font = counter.most_common(1)[0][0]
+
+    # footnotes has to be different
+    if para_font == self.info.body_font:
+        return False
+
+    # footnotes has to be smaller
+    if (
+        self.info.font_info[para_font][&#34;size&#34;]
+        &gt; self.info.font_info[self.info.body_font][&#34;size&#34;]
+    ):
+        return False
+
+    # can&#39;t be empty
+    if len(self.info.order_page[idx_page]) == 0:
+        return False
+
+    # check if this is the last paragraph
+    if self.info.order_page[idx_page][-1] != paragraph[&#34;id&#34;]:
+        return False
+
+    # if the previous element ends with `:` it expects something, so it can&#39;t be the last paragraph
+    if len(self.info.order_page[idx_page]) &gt; 1:
+        prev_elem = self.info.id_to_elem[self.info.order_page[idx_page][-2]]
+        prev_elem_words, _ = self.line_to_words(prev_elem[&#34;content&#34;][-1])
+        if prev_elem_words[-1].endswith(&#34;:&#34;):
+            logger.debug(f&#34;Id of cur para: {paragraph[&#39;id&#39;]}&#34;)
+            logger.debug(
+                f&#34;not a footnote para because of : in {prev_elem_words[-1]}&#34;
+            )
+            return False
+
+    # first line has to start with a numeral
+    if not lines.valid[0][0].strip()[0].isnumeric():
+        return False
+
+    return True</code></pre>
+</details>
+</dd>
+<dt id="pd3f.export.Export.line_to_words"><code class="name flex">
+<span>def <span class="ident">line_to_words</span></span>(<span>self, line)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def line_to_words(self, line):
+    words, fonts = [], []
+    for word in line[&#34;content&#34;]:
+        if word[&#34;type&#34;] == &#34;word&#34;:
+            w_fixed = word[&#34;content&#34;]
+            w_fixed = fix_bad_unicode(w_fixed).strip()
+            words.append(w_fixed)
+            fonts.append(word[&#34;font&#34;])
+    return words, fonts</code></pre>
+</details>
+</dd>
+<dt id="pd3f.export.Export.lines_to_paragraph"><code class="name flex">
+<span>def <span class="ident">lines_to_paragraph</span></span>(<span>self, paragraph, idx_page, test_footnote)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def lines_to_paragraph(self, paragraph, idx_page, test_footnote):
+    def no_alphanum_char(text):
+        &#34;&#34;&#34;Checks if text only contains non-alpha-num chars, e.g. puncts
+        &#34;&#34;&#34;
+        text = clean(text, no_punct=True)
+        return any([x.isalnum() for x in text])
+
+    raw_lines = paragraph[&#34;content&#34;]
+    font_counter = Counter()
+    lines = []
+
+    for l in raw_lines:
+        rl, rf = self.line_to_words(l)
+
+        if len(rl) == 0:
+            lines.append(None)
+        else:
+            # &#34;&#34;.isalnum() =&gt; False, so only check for lenth?
+            if not self.remove_punct_paragraph or any(map(no_alphanum_char, rl)):
+                lines.append(rl)
+                font_counter.update(rf)
+            else:
+                logger.debug(f&#34;removing {rl} because not alpha num&#34;)
+                lines.append(None)
+
+    lines = LinesWithNone(lines, raw_lines)
+
+    # NB: the returned paragraph can be None (invalid)
+    if len(lines.valid) == 0:
+        return None
+
+    if test_footnote and self.is_footnotes_paragraph(
+        paragraph, font_counter, idx_page, lines
+    ):
+        # don&#39;t test on last line
+        for i in list(lines)[:-1]:
+            # decide whether newline or simple space
+            if self.add_linebreak(
+                raw_lines[i],
+                raw_lines[i + 1],
+                lines[i],
+                lines[i + 1],
+                paragraph,
+                len(lines),
+            ):
+                lines[i].append(&#34;\n&#34;)
+            else:
+                # skip if next line was removed
+                if lines[i + 1] is None:
+                    lines[i].append(&#34;\n&#34;)
+                    continue
+                # if the first chars are digits -&gt; footnote
+                # but ensure that the first digit has a different font then the last word on the previous line
+                if (
+                    lines[i][0].isnumeric()
+                    and lines[i + 1][0].isnumeric()
+                    and raw_lines[i + 1][&#34;content&#34;][0][&#34;font&#34;]
+                    != raw_lines[i][&#34;content&#34;][-1][&#34;font&#34;]
+                ):
+                    lines[i].append(&#34;\n&#34;)
+                else:
+                    lines[i].append(&#34; &#34;)
+        # TODO: dehyphen
+        return Element(&#34;footnotes&#34;, lines.valid, paragraph[&#34;id&#34;], idx_page=idx_page)
+    else:
+        # ordinary paragraph
+        num_newlines = 0
+        ends_newline = False
+        # don&#39;t test on last line
+        for i in lines:
+            # decide whether newline or simple space
+            if self.add_linebreak(
+                raw_lines[i],
+                i != lines.last_line and raw_lines[i + 1],
+                lines[i],
+                i != lines.last_line and lines[i + 1],
+                paragraph,
+                len(lines),
+            ):
+                lines[i][-1] += &#34;\n&#34;
+                logger.debug(f&#34;adding newline here {lines[i]}&#34;)
+                num_newlines += 1
+                if i == lines.last_line:
+                    ends_newline = True
+            else:
+                if i == lines.last_line:
+                    logger.debug(&#34;last line, not adding space&#34;)
+                else:
+                    lines[i][-1] += &#34; &#34;
+
+        # finally remove Nones here
+        lines = lines.valid
+
+        if self.remove_hyphens:
+            lines = dehyphen_paragraph(lines, lang=self.lang)
+
+        return Element(
+            &#34;body&#34;,
+            lines,
+            paragraph[&#34;id&#34;],
+            idx_page=idx_page,
+            num_newlines=num_newlines,
+            ends_newline=ends_newline,
+        )</code></pre>
+</details>
+</dd>
+<dt id="pd3f.export.Export.markdown"><code class="name flex">
+<span>def <span class="ident">markdown</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def markdown(self):
+    return self.doc.markdown()</code></pre>
+</details>
+</dd>
+<dt id="pd3f.export.Export.save_markdown"><code class="name flex">
+<span>def <span class="ident">save_markdown</span></span>(<span>self, output_path)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_markdown(self, output_path):
+    Path(output_path).write_text(self.markdown())</code></pre>
+</details>
+</dd>
+<dt id="pd3f.export.Export.save_text"><code class="name flex">
+<span>def <span class="ident">save_text</span></span>(<span>self, output_path)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_text(self, output_path):
+    Path(output_path).write_text(self.text())</code></pre>
+</details>
+</dd>
+<dt id="pd3f.export.Export.text"><code class="name flex">
+<span>def <span class="ident">text</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def text(self):
+    return self.doc.text()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="pd3f.export.LinesWithNone"><code class="flex name class">
+<span>class <span class="ident">LinesWithNone</span></span>
+<span>(</span><span>lines, raw_lines)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Utility class to make it easier to work with lines that may be None (invalid).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LinesWithNone:
+    &#34;&#34;&#34;Utility class to make it easier to work with lines that may be None (invalid).
+    &#34;&#34;&#34;
+
+    def __init__(self, lines, raw_lines) -&gt; None:
+        self.lines = lines
+        self.raw_lines = raw_lines
+        self.first_line = 0
+        self.last_line = len(lines) - 1
+
+        for l in lines:
+            if l is None:
+                self.first_line += 1
+            else:
+                break
+
+        for l in reversed(lines):
+            if l is None:
+                self.last_line -= 1
+            else:
+                break
+
+    def __getitem__(self, key):
+        return self.lines[key]
+
+    @cached_property
+    def valid(self):
+        return [l for l in self.lines if not l is None]
+
+    def __iter__(self):
+        self.cur = self.first_line
+        return self
+
+    def __next__(self):
+        if self.cur &lt;= self.last_line:
+            cur_tmp = self.cur
+            while self.cur &lt;= self.last_line:
+                self.cur += 1
+                if len(self.lines) == self.cur or not self.lines[self.cur] is None:
+                    break
+            return cur_tmp
+        else:
+            raise StopIteration
+
+    def __len__(self):
+        return len(self.valid)</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="pd3f.export.LinesWithNone.valid"><code class="name">var <span class="ident">valid</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(self, instance, owner=None):
+    if instance is None:
+        return self
+    if self.attrname is None:
+        raise TypeError(
+            &#34;Cannot use cached_property instance without calling __set_name__ on it.&#34;)
+    try:
+        cache = instance.__dict__
+    except AttributeError:  # not all objects have __dict__ (e.g. class defines slots)
+        msg = (
+            f&#34;No &#39;__dict__&#39; attribute on {type(instance).__name__!r} &#34;
+            f&#34;instance to cache {self.attrname!r} property.&#34;
+        )
+        raise TypeError(msg) from None
+    val = cache.get(self.attrname, _NOT_FOUND)
+    if val is _NOT_FOUND:
+        with self.lock:
+            # check if another thread filled cache while we awaited lock
+            val = cache.get(self.attrname, _NOT_FOUND)
+            if val is _NOT_FOUND:
+                val = self.func(instance)
+                try:
+                    cache[self.attrname] = val
+                except TypeError:
+                    msg = (
+                        f&#34;The &#39;__dict__&#39; attribute on {type(instance).__name__!r} instance &#34;
+                        f&#34;does not support item assignment for caching {self.attrname!r} property.&#34;
+                    )
+                    raise TypeError(msg) from None
+    return val</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="pd3f" href="index.html">pd3f</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="pd3f.export.extract" href="#pd3f.export.extract">extract</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="pd3f.export.Export" href="#pd3f.export.Export">Export</a></code></h4>
+<ul class="">
+<li><code><a title="pd3f.export.Export.add_linebreak" href="#pd3f.export.Export.add_linebreak">add_linebreak</a></code></li>
+<li><code><a title="pd3f.export.Export.delete_none_elements" href="#pd3f.export.Export.delete_none_elements">delete_none_elements</a></code></li>
+<li><code><a title="pd3f.export.Export.export" href="#pd3f.export.Export.export">export</a></code></li>
+<li><code><a title="pd3f.export.Export.export_header_footer" href="#pd3f.export.Export.export_header_footer">export_header_footer</a></code></li>
+<li><code><a title="pd3f.export.Export.export_heading" href="#pd3f.export.Export.export_heading">export_heading</a></code></li>
+<li><code><a title="pd3f.export.Export.export_paragraph" href="#pd3f.export.Export.export_paragraph">export_paragraph</a></code></li>
+<li><code><a title="pd3f.export.Export.fix_headers_footers" href="#pd3f.export.Export.fix_headers_footers">fix_headers_footers</a></code></li>
+<li><code><a title="pd3f.export.Export.is_footnotes_paragraph" href="#pd3f.export.Export.is_footnotes_paragraph">is_footnotes_paragraph</a></code></li>
+<li><code><a title="pd3f.export.Export.line_to_words" href="#pd3f.export.Export.line_to_words">line_to_words</a></code></li>
+<li><code><a title="pd3f.export.Export.lines_to_paragraph" href="#pd3f.export.Export.lines_to_paragraph">lines_to_paragraph</a></code></li>
+<li><code><a title="pd3f.export.Export.markdown" href="#pd3f.export.Export.markdown">markdown</a></code></li>
+<li><code><a title="pd3f.export.Export.save_markdown" href="#pd3f.export.Export.save_markdown">save_markdown</a></code></li>
+<li><code><a title="pd3f.export.Export.save_text" href="#pd3f.export.Export.save_text">save_text</a></code></li>
+<li><code><a title="pd3f.export.Export.text" href="#pd3f.export.Export.text">text</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="pd3f.export.LinesWithNone" href="#pd3f.export.LinesWithNone">LinesWithNone</a></code></h4>
+<ul class="">
+<li><code><a title="pd3f.export.LinesWithNone.valid" href="#pd3f.export.LinesWithNone.valid">valid</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>
