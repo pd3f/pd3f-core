@@ -2,11 +2,9 @@
 
 *Experimental, use with care.*
 
-Python Package to **reconstruct** the original **continuous text** from **PDFs** with language models.
+`pd3f-core` is Python package to **reconstruct** the original **continuous text** from **PDFs** with language models.
 `pd3f-core` assumes your PDF is either text-based or already OCRd.
-Checkout out [pd3f](https://github.com/pd3f/pd3f) for a full Docker-based text extraction pipeline using `pd3f-core`.
-
-👉 [pd3f - PDF Text Extractor](https://github.com/pd3f/pd3f)
+`pd3f-core` is at the heart of [pd3f](https://github.com/pd3f/pd3f): a full Docker-based text extraction pipeline (including OCR).
 
 `pd3f-core` first uses [Parsr](https://github.com/axa-group/Parsr) to chunk PDFs into lines and paragraphs.
 Then, it uses the Python package [dehyphen](https://github.com/jfilter/dehyphen) to reconstruct the paragraphs in the most probable way.
@@ -19,9 +17,9 @@ Expect rough edges and rapid changes.
 
 ## Documentation
 
-API Documentation on pd3f-core: <https://pd3f.github.io/pd3f-core/index.html>
+API Documentation of pd3f-core: <https://pd3f.github.io/pd3f-core/index.html>
 
-Documentation on pd3f: <https://pd3f.com/docs/>
+Documentation of pd3f: <https://pd3f.com/docs/>
 ## Features
 
 ### Dehyphenation of Lines
