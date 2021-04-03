@@ -7,6 +7,10 @@ from collections.abc import Mapping
 
 
 def update_dict(d, u):
+    """Add u's keys to d. Override key in d if existing.
+    Similar to JavaScript's Object.assign (but changes d inplace as well).
+    """
+
     for k, v in u.items():
         if isinstance(v, Mapping):
             d[k] = update_dict(d.get(k, {}), v)
@@ -16,6 +20,8 @@ def update_dict(d, u):
 
 
 def write_dict(d, fn):
+    """Write dict to disk
+    """
     if not type(fn) == str:
         fn = str(fn)
     with open(fn, "w", encoding="utf-8") as f:
