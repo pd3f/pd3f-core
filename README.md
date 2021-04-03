@@ -1,6 +1,6 @@
 # `pd3f-core` [![PyPI](https://img.shields.io/pypi/v/pd3f.svg)](https://pypi.org/project/pd3f/) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pd3f.svg)](https://pypi.org/project/pd3f/) [![PyPI - Downloads](https://img.shields.io/pypi/dm/pd3f)](https://pypistats.org/packages/pd3f)
 
-*Experimental, use with care.*
+_Experimental, use with care._
 
 `pd3f-core` is Python package to **reconstruct** the original **continuous text** from **PDFs** with language models.
 `pd3f-core` assumes your PDF is either text-based or already OCRd.
@@ -19,7 +19,8 @@ Expect rough edges and rapid changes.
 
 API Documentation of pd3f-core: <https://pd3f.github.io/pd3f-core/index.html>
 
-Documentation of pd3f: <https://pd3f.com/docs/>
+Documentation of pd3f (the ): <https://pd3f.com/docs/>
+
 ## Features
 
 ### Dehyphenation of Lines
@@ -49,7 +50,6 @@ Some heuristic based on the similarity of footers are used. (Jaccard distance fo
 <!-- Special case for OCRd PDFs: Choose the Header / Footer with the best Flair score to display.
 Since header / footer are small, the OCR may fail to get the text output. -->
 
-
 ## Installation
 
 ```bash
@@ -62,12 +62,15 @@ or
 poetry add pd3f
 ```
 
-You need also a docker container of Parsr running on `localhost:3001` ([script](./scripts/locale_parsr.sh)).
-
-You may also use tunnel a remote Parsr instance ([script](./scripts/locale_parsr.sh)) or choose a remote address.
-
-
 ## Usage
+
+Start a local Parsr instance:
+
+```bash
+docker-compose up
+```
+
+(You may also use tunnel a remote Parsr instance ([script](./scripts/locale_parsr.sh)) or choose a remote address.)
 
 ```python
 from pd3f import extract
@@ -75,20 +78,7 @@ from pd3f import extract
 text, tables = extract(file_path, tables=False, experimental=False, force_gpu=False, lang="multi", fast=False, parsr_location="localhost:3001")
 ```
 
-`file_path`: path a to a PDF. If it's a scanned PDF it needs to get OCR beforehand (outside of this package).
-
-`tables`: extract tables via Parsr (with Camelot / Tabula), results into list of CSV strings
-
-`experimental`: leave out duplicate text in headers / footers and turn footnotes to endnotes. Working unreliable right now.
-
-`force_gpu`: Raise error if CUDA is not available
-
-`lang`: Set the language, `de` for German, `en` for English, `es` for Spanish, `fr` for French. Some fast (less accurate) models exists.
-So set `multi-v0-fast` to get fast model for German, French (and some other languages). [Background](https://github.com/jfilter/dehyphen#usage)
-
-`fast`: Drop some Parsr steps to speed up computations
-
-`parsr_location`: Set Parsr location
+Explanations of the paramaters in the docs: https://pd3f.github.io/pd3f-core/export.html#pd3f.export.extract
 
 ### GPU Support (CUDA)
 
@@ -104,7 +94,6 @@ You need to set up your GPU with CUDA.
 
 Poetry realizes that it is run within a conda virtual env so it doesn't create a new one.
 Since setting up CUDA is hard, install it with the most easy way (with conda).
-
 
 ## Background
 
@@ -142,7 +131,7 @@ Don't do OCR with Parsr because the results are worse than OCRmyPDF (because the
 
 ## Future Work / TODO
 
-- make reverse page break work without requiring the experimental features
+-   make reverse page break work without requiring the experimental features
 
 ## Developement
 

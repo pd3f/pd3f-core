@@ -14,24 +14,10 @@ from .utils import update_dict, write_dict
 logger = logging.getLogger(__name__)
 
 
-def run_parsr(
-    file_path,
-    out_dir=None,
-    cleaner_config=[],
-    config={},
-    text=False,
-    markdown=False,
-    check_tables=False,
-    fast=False,
-    parsr_location="localhost:3001",
-    **kwargs,
-):
-    """Wrapper to interaction with parsr (using parsr's Python client)
-
-    TODO: consider lang? Or not important because we don't use pars'r OCR?
+def setup_config(config, adjust_cleaner_config, check_tables, fast):
     """
-    parsr = client(parsr_location)
 
+    """
     # update base config of parsr
     with importlib.resources.path("pd3f", "pd3fConfig.json") as cfg_path:
         jdata = json.loads(cfg_path.read_text())
@@ -40,7 +26,7 @@ def run_parsr(
     # Update parsr cleaner config since it's more complicated.
     # The cleaner consists of a pipeline, so we first have to find the matching module.
     # Then update its configuration.
-    for new_cl in cleaner_config:
+    for new_cl in adjust_cleaner_config:
         for idx, cl in enumerate(jdata["cleaner"]):
             if type(cl) != list:
                 continue
@@ -61,15 +47,35 @@ def run_parsr(
             for x in jdata["cleaner"]
             if type(x) is str and x != "drawing-detection" or x[0] != "image-detection"
         ]
+    return jdata
+
+
+def run_parsr(
+    file_path,
+    out_dir=None,
+    config={},
+    adjust_cleaner_config=[],
+    text=False,
+    markdown=False,
+    check_tables=False,
+    fast=False,
+    parsr_location="localhost:3001",
+    **kwargs,
+):
+    """Wrapper to interact with parsr (using parsr's Python client)
+    """
+    parsr = client(parsr_location)
+
+    parsr_config = setup_config(config, adjust_cleaner_config, check_tables, fast)
 
     with tempfile.NamedTemporaryFile(mode="w+") as tmp_config:
-        json.dump(jdata, tmp_config)
+        json.dump(parsr_config, tmp_config)
         tmp_config.flush()  # persist
 
         # TODO: when upgrading to v3.2, use file_path and config_path
         logger.info("sending PDF to Parsr")
 
-        logger.debug(jdata)
+        logger.debug(parsr_config)
 
         parsr.send_document(
             file=file_path,

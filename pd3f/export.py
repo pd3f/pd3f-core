@@ -35,9 +35,45 @@ def extract(
     lang="multi",
     parsr_location="localhost:3001",
     fast=False,
+    parsr_config={},
+    parsr_adjust_cleaner_config=[],
     **kwargs,
 ):
-    """Outward facing api
+    """Run pd3f on the given PDF file.
+
+    `file_path`: path a to a PDF. If it's a scanned PDF it needs to get OCR beforehand (outside of this package).
+
+    `tables`: extract tables via Parsr (with Camelot / Tabula), results into list of CSV strings
+
+    `experimental`: leave out duplicate text in headers / footers and turn footnotes to endnotes. Working unreliable right now.
+
+    `force_gpu`: Raise error if CUDA is not available
+
+    `lang`: Set the language, `de` for German, `en` for English, `es` for Spanish, `fr` for French. Some fast (less accurate) models exists.
+    So set `multi-v0-fast` to get fast model for German, French (and some other languages). [Background](https://github.com/jfilter/dehyphen#usage)
+
+    `fast`: Drop some Parsr steps to speed up computations
+
+    `parsr_location`: Set Parsr location
+
+    pd3f provides a base config for parsr. To customize it, you have two choices:
+
+    1. use `parsr_config` to override the base config. For instance, if you want to replace the cleaners, just provide your own cleaners like this:
+
+    ```python
+    extract(pdf_path,
+        parsr_config={
+            'cleaner': [ ... your cleaners here ...]
+        })
+    ```
+
+    2. adjust the existing parameters of the cleaners:
+
+    ```python
+    extract(pdf_path,
+        parsr_adjust_cleaner_config=[["reading-order-detection", {"minVerticalGapWidth": 20}])
+    ```
+
     """
     if force_gpu:
         import torch
@@ -48,7 +84,12 @@ def extract(
             logger.debug("using CUDA")
 
     input_json, tables_csv = run_parsr(
-        file_path, check_tables=tables, parsr_location=parsr_location, fast=fast
+        file_path,
+        check_tables=tables,
+        parsr_location=parsr_location,
+        fast=fast,
+        config=parsr_config,
+        adjust_cleaner_config=parsr_adjust_cleaner_config,
     )
     e = Export(
         input_json,
