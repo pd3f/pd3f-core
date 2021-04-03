@@ -5,9 +5,8 @@ set -x
 # set ssh config
 remote_destination=$REMOTE_WORKSTATION
 
-# had to user different versions to make it work
-parsr_version="V1.1.0"
-parsr_ui_version="V1.1.0"
+parsr_version="v1.2.2"
+parsr_ui_version="v1.2.2"
 
 if [ "$1" = "stop" ]; then
     ssh $remote_destination "docker stop parsr-api; docker stop parsr-ui" || true
