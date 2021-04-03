@@ -5,6 +5,7 @@ import logging
 import re
 
 from .dehyphen_wrapper import is_split_paragraph
+from .string_utils import strip_spaces_line_end
 from .utils import flatten
 
 logger = logging.getLogger(__name__)
@@ -151,9 +152,12 @@ class Element:
         return self.lines[key]
 
     def __str__(self):
-        # FIXME
         if self.type == "footnotes":
-            return "".join([" ".join(line) for line in self.lines]) + "\n"
+            # In some cases, there were unnesary spaces added befor newlines.
+            # So this should generally not happend in the first place.
+            fixed_lines = [strip_spaces_line_end(" ".join(line)) for line in self.lines]
+            return "".join(fixed_lines) + "\n"
+
         return "".join([" ".join(line) for line in self.lines]) + "\n\n"
 
     def __add__(self, other_element):
