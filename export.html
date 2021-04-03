@@ -65,9 +65,45 @@ def extract(
     lang=&#34;multi&#34;,
     parsr_location=&#34;localhost:3001&#34;,
     fast=False,
+    parsr_config={},
+    parsr_adjust_cleaner_config=[],
     **kwargs,
 ):
-    &#34;&#34;&#34;Outward facing api
+    &#34;&#34;&#34;Run pd3f on the given PDF file.
+
+    `file_path`: path a to a PDF. If it&#39;s a scanned PDF it needs to get OCR beforehand (outside of this package).
+
+    `tables`: extract tables via Parsr (with Camelot / Tabula), results into list of CSV strings
+
+    `experimental`: leave out duplicate text in headers / footers and turn footnotes to endnotes. Working unreliable right now.
+
+    `force_gpu`: Raise error if CUDA is not available
+
+    `lang`: Set the language, `de` for German, `en` for English, `es` for Spanish, `fr` for French. Some fast (less accurate) models exists.
+    So set `multi-v0-fast` to get fast model for German, French (and some other languages). [Background](https://github.com/jfilter/dehyphen#usage)
+
+    `fast`: Drop some Parsr steps to speed up computations
+
+    `parsr_location`: Set Parsr location
+
+    pd3f provides a base config for parsr. To customize it, you have two choices:
+
+    1. use `parsr_config` to override the base config. For instance, if you want to replace the cleaners, just provide your own cleaners like this:
+
+    ```python
+    extract(pdf_path,
+        parsr_config={
+            &#39;cleaner&#39;: [ ... your cleaners here ...]
+        })
+    ```
+
+    2. adjust the existing parameters of the cleaners:
+
+    ```python
+    extract(pdf_path,
+        parsr_adjust_cleaner_config=[[&#34;reading-order-detection&#34;, {&#34;minVerticalGapWidth&#34;: 20}])
+    ```
+
     &#34;&#34;&#34;
     if force_gpu:
         import torch
@@ -78,7 +114,12 @@ def extract(
             logger.debug(&#34;using CUDA&#34;)
 
     input_json, tables_csv = run_parsr(
-        file_path, check_tables=tables, parsr_location=parsr_location, fast=fast
+        file_path,
+        check_tables=tables,
+        parsr_location=parsr_location,
+        fast=fast,
+        config=parsr_config,
+        adjust_cleaner_config=parsr_adjust_cleaner_config,
     )
     e = Export(
         input_json,
@@ -563,10 +604,33 @@ class Export:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="pd3f.export.extract"><code class="name flex">
-<span>def <span class="ident">extract</span></span>(<span>file_path, tables=False, experimental=False, force_gpu=False, lang='multi', parsr_location='localhost:3001', fast=False, **kwargs)</span>
+<span>def <span class="ident">extract</span></span>(<span>file_path, tables=False, experimental=False, force_gpu=False, lang='multi', parsr_location='localhost:3001', fast=False, parsr_config={}, parsr_adjust_cleaner_config=[], **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Outward facing api</p></div>
+<div class="desc"><p>Run pd3f on the given PDF file.</p>
+<p><code>file_path</code>: path a to a PDF. If it's a scanned PDF it needs to get OCR beforehand (outside of this package).</p>
+<p><code>tables</code>: extract tables via Parsr (with Camelot / Tabula), results into list of CSV strings</p>
+<p><code>experimental</code>: leave out duplicate text in headers / footers and turn footnotes to endnotes. Working unreliable right now.</p>
+<p><code>force_gpu</code>: Raise error if CUDA is not available</p>
+<p><code>lang</code>: Set the language, <code>de</code> for German, <code>en</code> for English, <code>es</code> for Spanish, <code>fr</code> for French. Some fast (less accurate) models exists.
+So set <code>multi-v0-fast</code> to get fast model for German, French (and some other languages). <a href="https://github.com/jfilter/dehyphen#usage">Background</a></p>
+<p><code>fast</code>: Drop some Parsr steps to speed up computations</p>
+<p><code>parsr_location</code>: Set Parsr location</p>
+<p>pd3f provides a base config for parsr. To customize it, you have two choices:</p>
+<ol>
+<li>use <code>parsr_config</code> to override the base config. For instance, if you want to replace the cleaners, just provide your own cleaners like this:</li>
+</ol>
+<pre><code class="language-python">extract(pdf_path,
+    parsr_config={
+        'cleaner': [ ... your cleaners here ...]
+    })
+</code></pre>
+<ol>
+<li>adjust the existing parameters of the cleaners:</li>
+</ol>
+<pre><code class="language-python">extract(pdf_path,
+    parsr_adjust_cleaner_config=[[&quot;reading-order-detection&quot;, {&quot;minVerticalGapWidth&quot;: 20}])
+</code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -579,9 +643,45 @@ class Export:
     lang=&#34;multi&#34;,
     parsr_location=&#34;localhost:3001&#34;,
     fast=False,
+    parsr_config={},
+    parsr_adjust_cleaner_config=[],
     **kwargs,
 ):
-    &#34;&#34;&#34;Outward facing api
+    &#34;&#34;&#34;Run pd3f on the given PDF file.
+
+    `file_path`: path a to a PDF. If it&#39;s a scanned PDF it needs to get OCR beforehand (outside of this package).
+
+    `tables`: extract tables via Parsr (with Camelot / Tabula), results into list of CSV strings
+
+    `experimental`: leave out duplicate text in headers / footers and turn footnotes to endnotes. Working unreliable right now.
+
+    `force_gpu`: Raise error if CUDA is not available
+
+    `lang`: Set the language, `de` for German, `en` for English, `es` for Spanish, `fr` for French. Some fast (less accurate) models exists.
+    So set `multi-v0-fast` to get fast model for German, French (and some other languages). [Background](https://github.com/jfilter/dehyphen#usage)
+
+    `fast`: Drop some Parsr steps to speed up computations
+
+    `parsr_location`: Set Parsr location
+
+    pd3f provides a base config for parsr. To customize it, you have two choices:
+
+    1. use `parsr_config` to override the base config. For instance, if you want to replace the cleaners, just provide your own cleaners like this:
+
+    ```python
+    extract(pdf_path,
+        parsr_config={
+            &#39;cleaner&#39;: [ ... your cleaners here ...]
+        })
+    ```
+
+    2. adjust the existing parameters of the cleaners:
+
+    ```python
+    extract(pdf_path,
+        parsr_adjust_cleaner_config=[[&#34;reading-order-detection&#34;, {&#34;minVerticalGapWidth&#34;: 20}])
+    ```
+
     &#34;&#34;&#34;
     if force_gpu:
         import torch
@@ -592,7 +692,12 @@ class Export:
             logger.debug(&#34;using CUDA&#34;)
 
     input_json, tables_csv = run_parsr(
-        file_path, check_tables=tables, parsr_location=parsr_location, fast=fast
+        file_path,
+        check_tables=tables,
+        parsr_location=parsr_location,
+        fast=fast,
+        config=parsr_config,
+        adjust_cleaner_config=parsr_adjust_cleaner_config,
     )
     e = Export(
         input_json,

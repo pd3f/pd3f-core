@@ -34,6 +34,7 @@ import logging
 import re
 
 from .dehyphen_wrapper import is_split_paragraph
+from .string_utils import strip_spaces_line_end
 from .utils import flatten
 
 logger = logging.getLogger(__name__)
@@ -180,9 +181,12 @@ class Element:
         return self.lines[key]
 
     def __str__(self):
-        # FIXME
         if self.type == &#34;footnotes&#34;:
-            return &#34;&#34;.join([&#34; &#34;.join(line) for line in self.lines]) + &#34;\n&#34;
+            # In some cases, there were unnesary spaces added befor newlines.
+            # So this should generally not happend in the first place.
+            fixed_lines = [strip_spaces_line_end(&#34; &#34;.join(line)) for line in self.lines]
+            return &#34;&#34;.join(fixed_lines) + &#34;\n&#34;
+
         return &#34;&#34;.join([&#34; &#34;.join(line) for line in self.lines]) + &#34;\n\n&#34;
 
     def __add__(self, other_element):
@@ -536,9 +540,12 @@ class Element:
         return self.lines[key]
 
     def __str__(self):
-        # FIXME
         if self.type == &#34;footnotes&#34;:
-            return &#34;&#34;.join([&#34; &#34;.join(line) for line in self.lines]) + &#34;\n&#34;
+            # In some cases, there were unnesary spaces added befor newlines.
+            # So this should generally not happend in the first place.
+            fixed_lines = [strip_spaces_line_end(&#34; &#34;.join(line)) for line in self.lines]
+            return &#34;&#34;.join(fixed_lines) + &#34;\n&#34;
+
         return &#34;&#34;.join([&#34; &#34;.join(line) for line in self.lines]) + &#34;\n\n&#34;
 
     def __add__(self, other_element):

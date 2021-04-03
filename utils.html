@@ -36,6 +36,10 @@ from collections.abc import Mapping
 
 
 def update_dict(d, u):
+    &#34;&#34;&#34;Add u&#39;s keys to d. Override key in d if existing.
+    Similar to JavaScript&#39;s Object.assign (but changes d inplace as well).
+    &#34;&#34;&#34;
+
     for k, v in u.items():
         if isinstance(v, Mapping):
             d[k] = update_dict(d.get(k, {}), v)
@@ -45,6 +49,8 @@ def update_dict(d, u):
 
 
 def write_dict(d, fn):
+    &#34;&#34;&#34;Write dict to disk
+    &#34;&#34;&#34;
     if not type(fn) == str:
         fn = str(fn)
     with open(fn, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f:
@@ -119,12 +125,17 @@ def flatten(items, keep_dict=False):
 <span>def <span class="ident">update_dict</span></span>(<span>d, u)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Add u's keys to d. Override key in d if existing.
+Similar to JavaScript's Object.assign (but changes d inplace as well).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def update_dict(d, u):
+    &#34;&#34;&#34;Add u&#39;s keys to d. Override key in d if existing.
+    Similar to JavaScript&#39;s Object.assign (but changes d inplace as well).
+    &#34;&#34;&#34;
+
     for k, v in u.items():
         if isinstance(v, Mapping):
             d[k] = update_dict(d.get(k, {}), v)
@@ -137,12 +148,14 @@ def flatten(items, keep_dict=False):
 <span>def <span class="ident">write_dict</span></span>(<span>d, fn)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Write dict to disk</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def write_dict(d, fn):
+    &#34;&#34;&#34;Write dict to disk
+    &#34;&#34;&#34;
     if not type(fn) == str:
         fn = str(fn)
     with open(fn, &#34;w&#34;, encoding=&#34;utf-8&#34;) as f:

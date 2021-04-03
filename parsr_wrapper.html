@@ -43,24 +43,10 @@ from .utils import update_dict, write_dict
 logger = logging.getLogger(__name__)
 
 
-def run_parsr(
-    file_path,
-    out_dir=None,
-    cleaner_config=[],
-    config={},
-    text=False,
-    markdown=False,
-    check_tables=False,
-    fast=False,
-    parsr_location=&#34;localhost:3001&#34;,
-    **kwargs,
-):
-    &#34;&#34;&#34;Wrapper to interaction with parsr (using parsr&#39;s Python client)
-
-    TODO: consider lang? Or not important because we don&#39;t use pars&#39;r OCR?
+def setup_config(config, adjust_cleaner_config, check_tables, fast):
     &#34;&#34;&#34;
-    parsr = client(parsr_location)
 
+    &#34;&#34;&#34;
     # update base config of parsr
     with importlib.resources.path(&#34;pd3f&#34;, &#34;pd3fConfig.json&#34;) as cfg_path:
         jdata = json.loads(cfg_path.read_text())
@@ -69,7 +55,7 @@ def run_parsr(
     # Update parsr cleaner config since it&#39;s more complicated.
     # The cleaner consists of a pipeline, so we first have to find the matching module.
     # Then update its configuration.
-    for new_cl in cleaner_config:
+    for new_cl in adjust_cleaner_config:
         for idx, cl in enumerate(jdata[&#34;cleaner&#34;]):
             if type(cl) != list:
                 continue
@@ -90,15 +76,35 @@ def run_parsr(
             for x in jdata[&#34;cleaner&#34;]
             if type(x) is str and x != &#34;drawing-detection&#34; or x[0] != &#34;image-detection&#34;
         ]
+    return jdata
+
+
+def run_parsr(
+    file_path,
+    out_dir=None,
+    config={},
+    adjust_cleaner_config=[],
+    text=False,
+    markdown=False,
+    check_tables=False,
+    fast=False,
+    parsr_location=&#34;localhost:3001&#34;,
+    **kwargs,
+):
+    &#34;&#34;&#34;Wrapper to interact with parsr (using parsr&#39;s Python client)
+    &#34;&#34;&#34;
+    parsr = client(parsr_location)
+
+    parsr_config = setup_config(config, adjust_cleaner_config, check_tables, fast)
 
     with tempfile.NamedTemporaryFile(mode=&#34;w+&#34;) as tmp_config:
-        json.dump(jdata, tmp_config)
+        json.dump(parsr_config, tmp_config)
         tmp_config.flush()  # persist
 
         # TODO: when upgrading to v3.2, use file_path and config_path
         logger.info(&#34;sending PDF to Parsr&#34;)
 
-        logger.debug(jdata)
+        logger.debug(parsr_config)
 
         parsr.send_document(
             file=file_path,
@@ -145,11 +151,10 @@ def run_parsr(
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="pd3f.parsr_wrapper.run_parsr"><code class="name flex">
-<span>def <span class="ident">run_parsr</span></span>(<span>file_path, out_dir=None, cleaner_config=[], config={}, text=False, markdown=False, check_tables=False, fast=False, parsr_location='localhost:3001', **kwargs)</span>
+<span>def <span class="ident">run_parsr</span></span>(<span>file_path, out_dir=None, config={}, adjust_cleaner_config=[], text=False, markdown=False, check_tables=False, fast=False, parsr_location='localhost:3001', **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Wrapper to interaction with parsr (using parsr's Python client)</p>
-<p>TODO: consider lang? Or not important because we don't use pars'r OCR?</p></div>
+<div class="desc"><p>Wrapper to interact with parsr (using parsr's Python client)</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -157,8 +162,8 @@ def run_parsr(
 <pre><code class="python">def run_parsr(
     file_path,
     out_dir=None,
-    cleaner_config=[],
     config={},
+    adjust_cleaner_config=[],
     text=False,
     markdown=False,
     check_tables=False,
@@ -166,50 +171,20 @@ def run_parsr(
     parsr_location=&#34;localhost:3001&#34;,
     **kwargs,
 ):
-    &#34;&#34;&#34;Wrapper to interaction with parsr (using parsr&#39;s Python client)
-
-    TODO: consider lang? Or not important because we don&#39;t use pars&#39;r OCR?
+    &#34;&#34;&#34;Wrapper to interact with parsr (using parsr&#39;s Python client)
     &#34;&#34;&#34;
     parsr = client(parsr_location)
 
-    # update base config of parsr
-    with importlib.resources.path(&#34;pd3f&#34;, &#34;pd3fConfig.json&#34;) as cfg_path:
-        jdata = json.loads(cfg_path.read_text())
-    jdata = update_dict(jdata, config)
-
-    # Update parsr cleaner config since it&#39;s more complicated.
-    # The cleaner consists of a pipeline, so we first have to find the matching module.
-    # Then update its configuration.
-    for new_cl in cleaner_config:
-        for idx, cl in enumerate(jdata[&#34;cleaner&#34;]):
-            if type(cl) != list:
-                continue
-            if cl[0] != new_cl[0]:
-                continue
-            jdata[&#34;cleaner&#34;][idx] = [cl[0], {**cl[1], **new_cl[1]}]
-
-    if not check_tables:
-        jdata[&#34;cleaner&#34;] = [
-            x
-            for x in jdata[&#34;cleaner&#34;]
-            if type(x) is str or &#34;table-detection&#34; not in x[0]
-        ]
-
-    if fast:
-        jdata[&#34;cleaner&#34;] = [
-            x
-            for x in jdata[&#34;cleaner&#34;]
-            if type(x) is str and x != &#34;drawing-detection&#34; or x[0] != &#34;image-detection&#34;
-        ]
+    parsr_config = setup_config(config, adjust_cleaner_config, check_tables, fast)
 
     with tempfile.NamedTemporaryFile(mode=&#34;w+&#34;) as tmp_config:
-        json.dump(jdata, tmp_config)
+        json.dump(parsr_config, tmp_config)
         tmp_config.flush()  # persist
 
         # TODO: when upgrading to v3.2, use file_path and config_path
         logger.info(&#34;sending PDF to Parsr&#34;)
 
-        logger.debug(jdata)
+        logger.debug(parsr_config)
 
         parsr.send_document(
             file=file_path,
@@ -248,6 +223,51 @@ def run_parsr(
     return parsr.get_json(), [x.to_csv() for x in tables]</code></pre>
 </details>
 </dd>
+<dt id="pd3f.parsr_wrapper.setup_config"><code class="name flex">
+<span>def <span class="ident">setup_config</span></span>(<span>config, adjust_cleaner_config, check_tables, fast)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup_config(config, adjust_cleaner_config, check_tables, fast):
+    &#34;&#34;&#34;
+
+    &#34;&#34;&#34;
+    # update base config of parsr
+    with importlib.resources.path(&#34;pd3f&#34;, &#34;pd3fConfig.json&#34;) as cfg_path:
+        jdata = json.loads(cfg_path.read_text())
+    jdata = update_dict(jdata, config)
+
+    # Update parsr cleaner config since it&#39;s more complicated.
+    # The cleaner consists of a pipeline, so we first have to find the matching module.
+    # Then update its configuration.
+    for new_cl in adjust_cleaner_config:
+        for idx, cl in enumerate(jdata[&#34;cleaner&#34;]):
+            if type(cl) != list:
+                continue
+            if cl[0] != new_cl[0]:
+                continue
+            jdata[&#34;cleaner&#34;][idx] = [cl[0], {**cl[1], **new_cl[1]}]
+
+    if not check_tables:
+        jdata[&#34;cleaner&#34;] = [
+            x
+            for x in jdata[&#34;cleaner&#34;]
+            if type(x) is str or &#34;table-detection&#34; not in x[0]
+        ]
+
+    if fast:
+        jdata[&#34;cleaner&#34;] = [
+            x
+            for x in jdata[&#34;cleaner&#34;]
+            if type(x) is str and x != &#34;drawing-detection&#34; or x[0] != &#34;image-detection&#34;
+        ]
+    return jdata</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -267,6 +287,7 @@ def run_parsr(
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="pd3f.parsr_wrapper.run_parsr" href="#pd3f.parsr_wrapper.run_parsr">run_parsr</a></code></li>
+<li><code><a title="pd3f.parsr_wrapper.setup_config" href="#pd3f.parsr_wrapper.setup_config">setup_config</a></code></li>
 </ul>
 </li>
 </ul>
