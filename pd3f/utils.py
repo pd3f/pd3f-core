@@ -2,8 +2,7 @@
 """
 
 import json
-from collections import Iterable
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 
 
 def update_dict(d, u):
