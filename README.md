@@ -2,140 +2,121 @@
 
 _Experimental, use with care._
 
-`pd3f-core` is Python package to **reconstruct** the original **continuous text** from **PDFs** with language models.
-`pd3f-core` assumes your PDF is either text-based or already OCRd.
-`pd3f-core` is at the heart of [pd3f](https://github.com/pd3f/pd3f): a full Docker-based text extraction pipeline (including OCR).
+`pd3f-core` is a Python package to **reconstruct** the original **continuous text** from **PDFs** with language models.
+It assumes your PDF is either text-based or already OCRd.
+`pd3f-core` is at the heart of [pd3f](https://github.com/pd3f/pd3f), a Docker-based text extraction pipeline that includes OCR and a web interface.
 
 `pd3f-core` first uses [Parsr](https://github.com/axa-group/Parsr) to chunk PDFs into lines and paragraphs.
-Then, it uses the Python package [dehyphen](https://github.com/jfilter/dehyphen) to reconstruct the paragraphs in the most probable way.
-The probability is derived by calculating the [perplexity](https://en.wikipedia.org/wiki/Perplexity) with [Flair](https://github.com/flairNLP/flair)'s character-based [language models](https://machinelearningmastery.com/statistical-language-modeling-and-neural-language-models/).
-Unnecessary hyphens are removed, space or new lines are kept or dropt depending on the surround words.
+Then it uses [dehyphen](https://github.com/pd3f/dehyphen) to reconstruct the paragraphs in the most probable way.
+The probability is derived from the [perplexity](https://en.wikipedia.org/wiki/Perplexity) of character-based [Flair](https://github.com/flairNLP/flair) language models.
+Unnecessary hyphens are removed, and spaces or new lines are kept or dropped depending on the surrounding words.
 
-It's mainly developed for German but should work with other languages as well.
-The project is still in an early stage.
-Expect rough edges and rapid changes.
+It is mainly developed for German but works with other languages as well.
 
 ## Documentation
 
-API Documentation of pd3f-core: <https://pd3f.github.io/pd3f-core/index.html>
-
-Documentation of pd3f (the ): <https://pd3f.com/docs/>
+- API documentation: <https://pd3f.github.io/pd3f-core/>
+- Documentation of the full pipeline: <https://pd3f.com/docs/>
 
 ## Features
 
-### Dehyphenation of Lines
-
-Check if two lines can be joined by removing hyphens ('-').
-
-### Reasonable Joining of Lines
-
-Decide between adding a simple space (' ') or a new line ('\n') when joining lines.
-
-### Reverse Page Break (Experimental)
-
-Check if the last paragraph of a page und the first paragraph of the following page can be joined.
-
-### Footnote to Endnotes (Experimental)
-
-In order to join paragraphs (and reverse page breaks), detect footnotes and turn them into endnotes.
-For now, the footnotes are pulled to the end of a file.
-
-### Deduplication of Pager Header / Footer (Experimental)
-
-If the header or the footer are the same for all pages, only display them once.
-Headers are pulled to the start of the document and footer to the end.
-Some heuristic based on the similarity of footers are used. (Jaccard distance for text, and compare overlapping shapes)
-
-<!-- TODO -->
-<!-- Special case for OCRd PDFs: Choose the Header / Footer with the best Flair score to display.
-Since header / footer are small, the OCR may fail to get the text output. -->
+- **Dehyphenation of lines**: join two lines by removing a hyphen ('-') if the language model prefers the joined word.
+- **Joining lines**: decide between a space (' ') and a new line ('\n') when joining lines.
+- **Reversing page breaks** (experimental): join the last paragraph of a page with the first paragraph of the next page.
+- **Footnotes to endnotes** (experimental): detect footnotes and move them to the end of the text, so the paragraphs around them can be joined.
+- **Deduplication of headers and footers** (experimental): headers and footers that repeat on every page are shown once, at the start and the end of the text.
+  Similarity is judged by text (Jaccard distance) and by position on the page.
 
 ## Installation
+
+Requires Python 3.10 or newer.
 
 ```bash
 pip install pd3f
 ```
 
-or
+`pd3f-core` sends every PDF to a Parsr server.
+The [`docker-compose.yml`](docker-compose.yml) in this repo starts one on `localhost:3001`, plus the Parsr UI on `localhost:8080`:
 
 ```bash
-poetry add pd3f
+docker compose up
 ```
+
+The Parsr images are only published for amd64 and run emulated on ARM machines such as Apple Silicon, which is slow.
+[`scripts/remote_parsr.sh`](scripts/remote_parsr.sh) starts Parsr on a remote Docker host and tunnels both ports to `localhost`.
 
 ## Usage
-
-Start a local Parsr instance:
-
-```bash
-docker-compose up
-```
-
-(You may also use tunnel a remote Parsr instance ([script](./scripts/locale_parsr.sh)) or choose a remote address.)
 
 ```python
 from pd3f import extract
 
-text, tables = extract(file_path, tables=False, experimental=False, force_gpu=False, lang="multi", fast=False, parsr_location="localhost:3001")
+text, tables = extract(
+    "document.pdf",
+    tables=False,
+    experimental=False,
+    force_gpu=False,
+    lang="multi",
+    fast=False,
+    parsr_location="localhost:3001",
+)
 ```
 
-Explanations of the paramaters in the docs: https://pd3f.github.io/pd3f-core/export.html#pd3f.export.extract
+| Parameter | Meaning |
+| --- | --- |
+| `tables` | Also extract tables. `tables` is then a list of CSV strings, ordered by page; otherwise it is `None`. |
+| `experimental` | Turn on the experimental features listed above. |
+| `force_gpu` | Raise a `ValueError` if CUDA is not available. |
+| `lang` | Flair language model: `de`, `en`, `es`, `fr`, `multi` and others; see [dehyphen](https://github.com/pd3f/dehyphen#usage). Some have a smaller `-fast` variant, e.g. `multi-v0-fast` or `en-fast`. |
+| `fast` | Skip Parsr's drawing and image detection. |
+| `parsr_location` | Host and port of the Parsr server. |
 
-### GPU Support (CUDA)
+`parsr_config` and `parsr_adjust_cleaner_config` change the Parsr configuration; see the [API documentation](https://pd3f.github.io/pd3f-core/export.html#pd3f.export.extract).
+Further keyword arguments go to [`Export`](https://pd3f.github.io/pd3f-core/export.html#pd3f.export.Export), e.g. `remove_hyphens=False`.
 
-Using CUDA speeds up the evaluation with Flair.
-But you need an (expensive) GPU.
-You need to set up your GPU with CUDA.
-[Here a guide for Ubuntu 18.04](https://towardsdatascience.com/deep-learning-gpu-installation-on-ubuntu-18-4-9b12230a1d31)
+### Models, caches and GPU
 
-1. install [conda (via miniconda)](https://docs.conda.io/en/latest/miniconda.html) and [poetry](https://python-poetry.org/docs/)
-2. create a new conda enviroment & activate it
-3. Install [PyTorch](https://pytorch.org/) with CUDA: `conda install pytorch torchvision cudatoolkit=10.2 -c pytorch` (example)
-4. Install `pd3f-core` with poetry: `poetry add pd3f`
+The language models are downloaded on first use to `~/.flair`, or to `$FLAIR_CACHE_ROOT` if set.
+The scores computed by dehyphen are cached in `~/.cache/pd3f/dehyphen`, which is trimmed to 100 MB whenever `pd3f` is imported.
 
-Poetry realizes that it is run within a conda virtual env so it doesn't create a new one.
-Since setting up CUDA is hard, install it with the most easy way (with conda).
+The models run on a CUDA GPU if PyTorch finds one, otherwise on the CPU.
+On x86-64 Linux, `pip install torch` installs the CUDA build; to save the download on machines without a GPU, install the CPU build first:
 
-## Background
-
-### Parsr Config
-
-At the heart of `pd3f-core` is the JSON output of Parsr.
-Some comments on how and why certain things were chosen.
-[Parsr's documentation about the different modules](https://github.com/axa-group/Parsr/tree/master/server/src/processing)
-
-Parsr has several module to classify paragraphs into certain types.
-They offer a list detections as well as an heading detection.
-In my experience, the accuracy is too low for both, so we don't use it right now.
-This also means all the extracted (output) text is flat (no headings, different formattings etc.).
-
-We enable Drawing + Image Detection because we may need to understand what paragraph is following which other one.
-This may be helpful when to decide whether to join paragraphs.
-But it's dropped when activating the `fast` setting.
-
-In the JSON output is a field `pageNumber`.
-This comes from the page detection module.
-So `pageNumber` is derived from header / footer of each page.
-So it may be different from the index in the page array.
-Don't relay on `pageNumber` in the JSON output.
-
-`words-to-line-new` has be used like this.
-There is no error but the accuracy decreases if it used otherwise.
-
-```json
-"words-to-line-new",
-[
-    "reading-order-detection",
+```bash
+pip install torch --index-url https://download.pytorch.org/whl/cpu
+pip install pd3f
 ```
 
-Don't do OCR with Parsr because the results are worse than OCRmyPDF (because the latter uses image preprocessing).
+## Parsr configuration
 
-## Future Work / TODO
+`pd3f-core` builds on Parsr's JSON output; its base configuration is [`pd3f/pd3fConfig.json`](pd3f/pd3fConfig.json).
+See [Parsr's module documentation](https://github.com/axa-group/Parsr/tree/master/server/src/processing) for the individual cleaners.
 
--   make reverse page break work without requiring the experimental features
+- Parsr's list and heading detection are off because their accuracy was too low.
+  The extracted text is therefore flat: no headings, no formatting.
+- Drawing and image detection are on, because they help to decide which paragraph follows which.
+  `fast=True` turns them off.
+- Table detection runs only if `tables=True`.
+- `pageNumber` in Parsr's JSON comes from the page-number detection, i.e. from the headers and footers.
+  It can differ from the index of the page in the `pages` array; do not rely on it.
+- `words-to-line-new` has to come directly before `reading-order-detection`.
+  The other order raises no error but lowers the accuracy.
+- Do not use Parsr's OCR. [OCRmyPDF](https://github.com/ocrmypdf/OCRmyPDF) preprocesses the images and gives better results; [pd3f](https://github.com/pd3f/pd3f) uses it.
 
-## Developement
+## Development
 
-Install and use [poetry](https://python-poetry.org/).
+```bash
+poetry install
+poetry run ruff check .
+poetry run pytest
+```
+
+`tests/test_pdfs.py` compares the output for real PDFs (stored with Git LFS) with reference texts.
+It needs Parsr on `localhost:3001` and downloads the `multi-v0-fast` models.
+`pytest --ignore tests/test_pdfs.py` runs everything else offline.
+
+The API documentation is built with pdoc3 and published to GitHub Pages for every tag, see [`.github/workflows/publish_docs.yml`](.github/workflows/publish_docs.yml).
+
+`development/` holds the notebooks and notes of the original research; they are not maintained.
 
 ## License
 
