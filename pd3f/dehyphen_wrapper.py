@@ -10,19 +10,13 @@ memory = Memory("~/.cache/pd3f/dehyphen", verbose=0, compress=5)
 memory.reduce_size(bytes_limit=100 * 1000 * 1000)
 
 
-scorer = None
-
-
+@lru_cache
 def get_scorer(lang):
-    """Simple singleton to avoid re-initialization of the language model."""
-    global scorer
-    if scorer is None:
-        # simplify Flair's naming of models
-        if lang.endswith("-fast"):
-            scorer = FlairScorer(lang=lang[:-5], fast=True)
-        else:
-            scorer = FlairScorer(lang=lang)
-    return scorer
+    """Load each language model only once per process."""
+    # simplify Flair's naming of models
+    if lang.endswith("-fast"):
+        return FlairScorer(lang=lang[:-5], fast=True)
+    return FlairScorer(lang=lang)
 
 
 @memory.cache
