@@ -1,12 +1,11 @@
-"""Statistics and information about document elements.
-"""
+"""Statistics and information about document elements."""
 
 import logging
 from collections import Counter
 from statistics import median
 
-from textdistance import jaccard
 from cleantext import clean, fix_bad_unicode
+from textdistance import jaccard
 
 from .dehyphen_wrapper import single_score
 from .geometry import sim_bbox
@@ -100,8 +99,7 @@ def only_points(es):
 
 
 def super_similiar(es1, es2, sim_factor=0.8, sim_box=0.6):
-    """Check if two elements are super similiar by text (Jaccad) and visually (compare bbox).
-    """
+    """Check if two elements are super similiar by text (Jaccad) and visually (compare bbox)."""
     text1 = only_text(es1)
     text2 = only_text(es2)
 
@@ -194,9 +192,6 @@ class DocumentInfo:
         del self.input_data
 
     def document_paragraph_stats(self):
-        """
-        """
-
         self.counter_width = Counter()
         self.counter_height = Counter()
         self.counter_lineheight = Counter()
@@ -246,8 +241,7 @@ class DocumentInfo:
         logger.info(f"counter lineheight: {self.counter_lineheight.most_common(5)}")
 
     def document_font_stats(self):
-        """Get statistics about font usage in the document
-        """
+        """Get statistics about font usage in the document"""
         c = Counter()
         for p in self.input_data["pages"]:
             for e in p["elements"]:
@@ -273,16 +267,14 @@ class DocumentInfo:
         return ((lh - self.median_line_space) / self.median_line_space) > factor
 
     def on_same_page(self, e1, e2):
-        """Check if both elements are on the same page
-        """
+        """Check if both elements are on the same page"""
         return (
             self.id_to_elem[e1["id"]]["idx_page"]
             == self.id_to_elem[e2["id"]]["idx_page"]
         )
 
     def element_order_page(self):
-        """Save the order of paragraphes for each page, exclude header / footer
-        """
+        """Save the order of paragraphes for each page, exclude header / footer"""
         self.order_page = []
         self.id_to_elem = {}
         for idx_page, p in enumerate(self.input_data["pages"]):

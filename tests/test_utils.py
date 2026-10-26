@@ -13,4 +13,8 @@ def test_update_dict():
 
     assert update_dict(target, source) == {"a": 1, "b": 4, "c": 5}
 
-    assert update_dict(target, {"b": [[{"d": 5}]]}) == {"a": 1, "b": [[{"d": 5}]], "c": 5}
+    assert update_dict(target, {"b": [[{"d": 5}]]}) == {
+        "a": 1,
+        "b": [[{"d": 5}]],
+        "c": 5,
+    }

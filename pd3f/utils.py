@@ -1,5 +1,4 @@
-"""Utility functions
-"""
+"""Utility functions"""
 
 import json
 from collections.abc import Iterable, Mapping
@@ -19,9 +18,8 @@ def update_dict(d, u):
 
 
 def write_dict(d, fn):
-    """Write dict to disk
-    """
-    if not type(fn) == str:
+    """Write dict to disk"""
+    if type(fn) != str:
         fn = str(fn)
     with open(fn, "w", encoding="utf-8") as f:
         json.dump(d, f, ensure_ascii=False, indent=4)
@@ -44,7 +42,6 @@ def flatten(items, keep_dict=False):
                 and not isinstance(x, (str, bytes))
                 and (not keep_dict or not isinstance(x, Mapping))
             ):
-                for sub_x in flatten(x, keep_dict):
-                    yield sub_x
+                yield from flatten(x, keep_dict)
             else:
                 yield x

@@ -1,5 +1,4 @@
-"""Compare geometric shapes
-"""
+"""Compare geometric shapes"""
 
 from shapely.geometry import MultiPoint, box
 

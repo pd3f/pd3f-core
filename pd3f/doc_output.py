@@ -1,5 +1,4 @@
-"""Document represenation after extraction stuff from parsr
-"""
+"""Document represenation after extraction stuff from parsr"""
 
 import logging
 import re
@@ -27,8 +26,7 @@ class DocumentOutput:
         self.data[key] = value
 
     def get_element(self, elem_id):
-        """Returns element from the data. Returns `None` if the element is not part out of the output anymore.
-        """
+        """Returns element from the data. Returns `None` if the element is not part out of the output anymore."""
         if elem_id in self.merged_elements:
             elem_id = self.merged_elements[elem_id]
         result = list(filter(lambda x: x.id == elem_id, self))
@@ -77,7 +75,7 @@ class DocumentOutput:
             # It cannot contain newlines
             if last_element.ends_newline:
                 logger.debug(
-                    f"the last element has ends with a newline. Do not try to join with the next one."
+                    "the last element has ends with a newline. Do not try to join with the next one."
                 )
                 continue
 

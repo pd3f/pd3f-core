@@ -6,7 +6,6 @@ def strip_spaces_line_end(text):
     """
     if len(text) < 2:
         return text
-    if text[-1] == "\n":
-        if text[-2] == " ":
-            return strip_spaces_line_end(text[:-2]) + "\n"
+    if text[-1] == "\n" and text[-2] == " ":
+        return strip_spaces_line_end(text[:-2]) + "\n"
     return text

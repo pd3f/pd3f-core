@@ -18,8 +18,8 @@ from .doc_info import (
     avg_word_space,
     most_used_font,
     remove_duplicates,
-    roughly_same_font,
     remove_page_number_header_footer,
+    roughly_same_font,
 )
 from .doc_output import DocumentOutput, Element
 from .parsr_wrapper import run_parsr
@@ -35,8 +35,8 @@ def extract(
     lang="multi",
     parsr_location="localhost:3001",
     fast=False,
-    parsr_config={},
-    parsr_adjust_cleaner_config=[],
+    parsr_config=None,
+    parsr_adjust_cleaner_config=(),
     **kwargs,
 ):
     """Run pd3f on the given PDF file.
@@ -50,7 +50,7 @@ def extract(
     `force_gpu`: Raise error if CUDA is not available
 
     `lang`: Set the language, `de` for German, `en` for English, `es` for Spanish, `fr` for French. Some fast (less accurate) models exists.
-    So set `multi-v0-fast` to get fast model for German, French (and some other languages). [Background](https://github.com/jfilter/dehyphen#usage)
+    So set `multi-v0-fast` to get fast model for German, French (and some other languages). [Background](https://github.com/pd3f/dehyphen#usage)
 
     `fast`: Drop some Parsr steps to speed up computations
 
@@ -104,8 +104,7 @@ def extract(
 
 
 class LinesWithNone:
-    """Utility class to make it easier to work with lines that may be None (invalid).
-    """
+    """Utility class to make it easier to work with lines that may be None (invalid)."""
 
     def __init__(self, lines, raw_lines) -> None:
         self.lines = lines
@@ -258,20 +257,12 @@ class Export:
         return cleaned_header, cleaned_footer, footnotes
 
     def fix_headers_footers(self):
-        """The output for header and footer for Parsr is not the best. Make use of some simple heuristics based on the font to improve it.
-        """
-        for idx_page, page in enumerate(self.input_data["pages"]):
-            for idx_e, e in enumerate(page["elements"]):
-                if "isHeader" in e["properties"] and e["properties"]["isHeader"]:
-                    if self.info.is_body_paragrah(e):
-                        del self.input_data["pages"][idx_page]["elements"][idx_e][
-                            "properties"
-                        ]["isHeader"]
-                if "isFooter" in e["properties"] and e["properties"]["isFooter"]:
-                    if self.info.is_body_paragrah(e):
-                        del self.input_data["pages"][idx_page]["elements"][idx_e][
-                            "properties"
-                        ]["isFooter"]
+        """The output for header and footer for Parsr is not the best. Make use of some simple heuristics based on the font to improve it."""
+        for page in self.input_data["pages"]:
+            for e in page["elements"]:
+                for key in ("isHeader", "isFooter"):
+                    if e["properties"].get(key) and self.info.is_body_paragrah(e):
+                        del e["properties"][key]
 
     def export(self):
         cleaned_header, cleaned_footer, new_footnotes = None, None, None
@@ -366,11 +357,12 @@ class Export:
             )
             return True
 
-        if self.info.on_same_page(line, next_line):
-            if self.info.seperate_lines(line, next_line):
-                logger.debug("lines should be seperated")
-                logger.debug(f"{text_line} {text_next_line}")
-                return True
+        if self.info.on_same_page(line, next_line) and self.info.seperate_lines(
+            line, next_line
+        ):
+            logger.debug("lines should be seperated")
+            logger.debug(f"{text_line} {text_next_line}")
+            return True
 
         # TODO: a more reasonable way (e.g. check if it spans whole width)
         if len(text_line) > 5:
@@ -396,10 +388,9 @@ class Export:
 
     def lines_to_paragraph(self, paragraph, idx_page, test_footnote):
         def no_alphanum_char(text):
-            """Checks if text only contains non-alpha-num chars, e.g. puncts
-            """
+            """Checks if text only contains non-alpha-num chars, e.g. puncts"""
             text = clean(text, no_punct=True)
-            return any([x.isalnum() for x in text])
+            return any(x.isalnum() for x in text)
 
         raw_lines = paragraph["content"]
         font_counter = Counter()
@@ -548,10 +539,7 @@ class Export:
                 return False
 
         # first line has to start with a numeral
-        if not lines.valid[0][0].strip()[0].isnumeric():
-            return False
-
-        return True
+        return lines.valid[0][0].strip()[0].isnumeric()
 
     def markdown(self):
         return self.doc.markdown()
