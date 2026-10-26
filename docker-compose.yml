@@ -3,11 +3,12 @@ services:
         image: axarev/parsr:v1.2.2
         # only published for amd64, runs emulated on ARM hosts
         platform: linux/amd64
+        # no authentication, so only reachable from the host itself
         ports:
-            - "3001:3001"
+            - "127.0.0.1:3001:3001"
 
     parsr_ui:
         image: axarev/parsr-ui-localhost:v1.2.2
         platform: linux/amd64
         ports:
-            - "8080:80"
+            - "127.0.0.1:8080:80"
