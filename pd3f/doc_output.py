@@ -22,9 +22,6 @@ class DocumentOutput:
     def __getitem__(self, key):
         return self.data[key]
 
-    def __setitem__(self, key, value):
-        self.data[key] = value
-
     def get_element(self, elem_id):
         """Returns element from the data. Returns `None` if the element is not part out of the output anymore."""
         if elem_id in self.merged_elements:
@@ -79,16 +76,18 @@ class DocumentOutput:
                 )
                 continue
 
-            fixed = is_split_paragraph(last_element, next_element, self.lang)
-            if fixed is None:
-                logger.debug("looks like a split paragraph")
+            lines = is_split_paragraph(
+                last_element.lines, next_element.lines, self.lang
+            )
+            if lines is None:
+                logger.debug("does not look like a split paragraph")
                 continue
 
             logger.debug("joining the following paragraphs")
-            logger.debug(f"{last_element}\n{next_element}\n{fixed}")
+            logger.debug(f"{last_element}\n{next_element}")
 
-            # set new paragraph
-            self[self.data.index(last_element)] = fixed
+            last_element.lines = lines
+            last_element.ends_newline = next_element.ends_newline
             self.data.remove(next_element)
             self.merged_elements[next_element.id] = last_element.id
 
@@ -157,11 +156,6 @@ class Element:
             return "".join(fixed_lines) + "\n"
 
         return "".join([" ".join(line) for line in self.lines]) + "\n\n"
-
-    def __add__(self, other_element):
-        assert self.type == other_element.type
-        self.lines += other_element.lines
-        return self
 
     def __len__(self):
         return len(self.lines)
