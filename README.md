@@ -76,7 +76,8 @@ Further keyword arguments go to [`Export`](https://pd3f.github.io/pd3f-core/expo
 ### Models, caches and GPU
 
 The language models are downloaded on first use to `~/.flair`, or to `$FLAIR_CACHE_ROOT` if set.
-The scores computed by dehyphen are cached in `~/.cache/pd3f/dehyphen`, which is trimmed to 100 MB whenever `pd3f` is imported.
+The scores computed by dehyphen are cached in `~/.cache/pd3f/dehyphen-<version>`, which is trimmed to 100 MB whenever `pd3f` is imported.
+The caches of older dehyphen versions can be deleted, as can the cache of a dehyphen checkout whose code changed without a new version.
 
 The models run on a CUDA GPU if PyTorch finds one, otherwise on the CPU.
 On x86-64 Linux, `pip install torch` installs the CUDA build; to save the download on machines without a GPU, install the CPU build first:

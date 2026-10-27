@@ -1,11 +1,13 @@
 """Interaction with `dehyphen`, cache results"""
 
 from functools import lru_cache
+from importlib.metadata import version
 
 from dehyphen import FlairScorer
 from joblib import Memory
 
-memory = Memory("~/.cache/pd3f/dehyphen", verbose=0, compress=5)
+# one cache per dehyphen version, its results change between versions
+memory = Memory(f"~/.cache/pd3f/dehyphen-{version('dehyphen')}", verbose=0, compress=5)
 # cache max 100mb, keeps the most recently used results
 memory.reduce_size(bytes_limit=100 * 1000 * 1000)
 
