@@ -298,14 +298,14 @@ sanitizer = ["nvidia-cuda-sanitizer-api (==13.0.85.*) ; sys_platform == \"linux\
 
 [[package]]
 name = "dehyphen"
-version = "0.5.0"
+version = "0.5.1"
 description = "Dehyphenation of broken text (mainly German), i.e., extracted from a PDF"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "dehyphen-0.5.0-py3-none-any.whl", hash = "sha256:97949f2e3ddd722a9b5ddae6294d96f7d86e4d27642c6ec474bc7f5697d2c3d7"},
-    {file = "dehyphen-0.5.0.tar.gz", hash = "sha256:245cd0c10041055268cea3c0bf75e8fc98fdf707c98c2c6471b32ff94384fa24"},
+    {file = "dehyphen-0.5.1-py3-none-any.whl", hash = "sha256:678b9eb221040a5c57bd8f1112af230b25440769a30b567b2170d82dd4deb87c"},
+    {file = "dehyphen-0.5.1.tar.gz", hash = "sha256:3e814360e36eca801edf8bd770b361c79668ed5ad24b5250cfd9fbead7d89813"},
 ]
 
 [package.dependencies]
