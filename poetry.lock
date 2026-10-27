@@ -298,18 +298,17 @@ sanitizer = ["nvidia-cuda-sanitizer-api (==13.0.85.*) ; sys_platform == \"linux\
 
 [[package]]
 name = "dehyphen"
-version = "0.4.0"
+version = "0.5.0"
 description = "Dehyphenation of broken text (mainly German), i.e., extracted from a PDF"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "dehyphen-0.4.0-py3-none-any.whl", hash = "sha256:d9a5f265bd7d4cdb7052dca38e01b26eb36526003f430814b9737ef45790eab1"},
-    {file = "dehyphen-0.4.0.tar.gz", hash = "sha256:82253df85751111b4809c9634dd9696e051516a5192410b3ee3148e500989b03"},
+    {file = "dehyphen-0.5.0-py3-none-any.whl", hash = "sha256:97949f2e3ddd722a9b5ddae6294d96f7d86e4d27642c6ec474bc7f5697d2c3d7"},
+    {file = "dehyphen-0.5.0.tar.gz", hash = "sha256:245cd0c10041055268cea3c0bf75e8fc98fdf707c98c2c6471b32ff94384fa24"},
 ]
 
 [package.dependencies]
-clean-text = {version = "*", extras = ["gpl"]}
 torch = "*"
 
 [[package]]
@@ -1506,4 +1505,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10"
-content-hash = "ca80e930050368f58a395b797cd8d0647296e9f516dfc155e51a3d66e14205b9"
+content-hash = "ea8f93d7aa8a01a18113f8a1dcc4909e71c343531cd9e1f3217293de2d508dce"
