@@ -490,14 +490,10 @@ class Export:
                 ends_newline=ends_newline,
             )
 
-    # not working right now
     def export_heading(self, e):
-        raw_lines = e["content"]
-        lines = []
-        for l in raw_lines:
-            rl, _ = self.line_to_words(l)
-            lines.append(rl)
-        return Element("heading", lines, e["id"], e["level"])
+        # the lines of a heading form one line of text
+        words = [w for line in e["content"] for w in self.line_to_words(line)[0]]
+        return Element("heading", [words], e["id"], level=e["level"])
 
     def export_paragraph(self, e, idx_page, test_footnote=True):
         return self.lines_to_paragraph(e, idx_page, test_footnote)
