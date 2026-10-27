@@ -1,5 +1,8 @@
 # `pd3f-core` [![PyPI](https://img.shields.io/pypi/v/pd3f.svg)](https://pypi.org/project/pd3f/) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pd3f.svg)](https://pypi.org/project/pd3f/) [![PyPI - Downloads](https://img.shields.io/pypi/dm/pd3f)](https://pypistats.org/packages/pd3f)
 
+**Archived.** Since pd3f 1.0, `pd3f-core` is part of [pd3f](https://github.com/pd3f/pd3f), and `pip install pd3f` installs the whole pipeline.
+This repository keeps the code of the 0.x versions; `pip install "pd3f<1"` installs the last of them.
+
 _Experimental, use with care._
 
 `pd3f-core` is a Python package to **reconstruct** the original **continuous text** from **PDFs** with language models.
